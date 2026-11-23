@@ -349,14 +349,19 @@
           </div>
         </section>
 
-        <!-- 區塊 4：我該如何使用？實戰工作流 -->
+        <!-- 區塊 4：我該如何使用？實戰工作流與 10 大角色應用範例 -->
         <section id="how-to-use" class="doc-section space-y-6">
           <div class="border-b border-slate-800 pb-3">
-            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-              <i data-lucide="play-circle" class="w-6 h-6 text-sky-400"></i>
-              <span>4. 我該如何使用？（實戰流程與操作步驟）</span>
-            </h2>
-            <p class="text-slate-400 text-xs mt-1">在 Antigravity 中，你可以直接透過自然語言或專屬指令讓 AI 代理你操作 Chrome：</p>
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-6 h-6 text-sky-400"></i>
+                <span>4. 我該如何使用？（實戰流程與 10 大角色應用範例）</span>
+              </h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-950 text-sky-400 border border-sky-800">
+                10 大專業場景全面覆蓋
+              </span>
+            </div>
+            <p class="text-slate-400 text-xs mt-1">不僅是單純打指令，不同專業角色（開發、測試、架構、SEO、資安）都能藉由 Chrome DevTools MCP 大幅倍增生產力：</p>
           </div>
 
           <!-- 4 步驟標準工作流 -->
@@ -383,47 +388,267 @@
             </div>
           </div>
 
-          <!-- 實用提示詞對話範例 (Playbook) -->
-          <div class="space-y-4">
-            <h3 class="text-sm font-bold text-slate-200">實戰 Prompt 推薦範例：</h3>
-
-            <!-- 範例 1 -->
-            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
-              <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
-                <span class="flex items-center gap-1.5 text-sky-400">
-                  <i data-lucide="message-square" class="w-4 h-4"></i> 情境 1：全自動端到端登入測試
-                </span>
-                <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono">自動化</span>
-              </div>
-              <p class="text-xs text-slate-300 font-mono leading-relaxed bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-                「請用 Chrome DevTools 打開 http://localhost:5173/login，在帳號欄位輸入 admin，密碼輸入 123456，點擊登入按鈕，並截圖確認登入成功後的首頁儀表板。」
-              </p>
+          <!-- 10 大實戰角色範例清單 -->
+          <div class="space-y-4 pt-2">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                <span>10 大專業實戰對話提示詞 (Prompt Playbook)：</span>
+              </h3>
+              <span class="text-[11px] text-slate-400">可直接複製提示詞至對話框使用</span>
             </div>
 
-            <!-- 範例 2 -->
-            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
-              <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
-                <span class="flex items-center gap-1.5 text-amber-400">
-                  <i data-lucide="message-square" class="w-4 h-4"></i> 情境 2：網頁載入太慢，效能抓漏
-                </span>
-                <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono">LCP 調校</span>
-              </div>
-              <p class="text-xs text-slate-300 font-mono leading-relaxed bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-                「/debug-optimize-lcp 幫我分析我們官網的載入瀑布圖，指出到底是哪張圖片或外部腳本拖慢了最大內容繪製（LCP），並直接修改程式碼幫我最佳化。」
-              </p>
-            </div>
+            <div class="grid grid-cols-1 gap-4">
 
-            <!-- 範例 3 -->
-            <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
-              <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
-                <span class="flex items-center gap-1.5 text-emerald-400">
-                  <i data-lucide="message-square" class="w-4 h-4"></i> 情境 3：API 傳輸失敗與 Cookie 遺失
-                </span>
-                <span class="text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 font-mono">認證排查</span>
+              <!-- 範例 1：前端工程師 -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-sky-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-blue-950 text-blue-400 text-xs font-semibold border border-blue-800">
+                      範例 01 · 前端工程師
+                    </span>
+                    <h4 class="text-white font-bold text-sm">跨裝置 RWD 斷點與移動端選單視覺抓漏</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用工具: emulate, take_screenshot, get_css_styles
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>在桌機版開發正常，但特定手機解析度下抽屜式選單（Drawer）無法彈出，或被背景遮罩擋住點擊。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-sky-300 leading-relaxed mb-2">
+                  &gt; 「請幫我模擬 iPhone 14 Pro 視窗尺寸（393x852，DPR 3），打開 http://localhost:5173，點擊右上角漢堡選單按鈕，截圖檢查側邊抽屜導航是否完整展開，並用 get_css_styles 檢查導航欄的 z-index 與 CSS 變數是否被遮擋。」
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>AI 自動調整 viewport、模擬點擊展開、輸出渲染截圖並列出樣式層級衝突原因。</span>
+                </div>
               </div>
-              <p class="text-xs text-slate-300 font-mono leading-relaxed bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
-                「/cookie-debugging 幫我監聽點擊結帳時發出的 /api/checkout 請求，確認 Header 裡是否有帶上 session_id Cookie，並檢查伺服器回傳 403 的詳細原因。」
-              </p>
+
+              <!-- 範例 2：效能調校工程師 / SRE -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                      範例 02 · 效能工程師 / SRE
+                    </span>
+                    <h4 class="text-white font-bold text-sm">電商大促促銷活動頁 LCP 與阻塞資源優化</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用指令: /debug-optimize-lcp, lighthouse_audit
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>重大行銷活動上線前夕，首頁最大內容繪製（LCP）高達 3.8 秒，影響 SEO 排名且大幅增加跳出率。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                  &gt; /debug-optimize-lcp 針對我們的雙 11 促銷頁 https://shop.example.com 進行 Core Web Vitals 診斷，找出是哪張 Hero 大圖或外部 JS 阻塞了渲染，並給出使用 fetchpriority="high" 預先載入或轉換 WebP 格式的具體修正代碼。
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>AI 生成完整的瀑布流資源圖、指出 LCP 元素位置，並直接給出 HTML/CSS 最佳化改寫建議。</span>
+                </div>
+              </div>
+
+              <!-- 範例 3：QA 自動化測試工程師 -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-emerald-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-emerald-950 text-emerald-400 text-xs font-semibold border border-emerald-800">
+                      範例 03 · QA / 測試工程師
+                    </span>
+                    <h4 class="text-white font-bold text-sm">電商端到端 (E2E) 購物車結帳與折價券自動化驗證</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用工具: fill_form, click, wait_for, take_screenshot
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>每次版本更新都要手動測試 20 分鐘重複的加購物車、填地址、套折扣碼與確認訂單流程。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-emerald-300 leading-relaxed mb-2">
+                  &gt; 「打開測試環境商城 http://localhost:8080/products，搜尋商品『無線降噪耳機』，將第一筆搜尋結果加入購物車，前往結帳頁面在折扣碼欄位填入『OFF2026』並送出，驗證總金額是否扣減 20%，最後將訂單確認畫面截圖回傳。」
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>全程無需人手干預，AI 自動化走完整個結帳流程，並驗證金額文字與保存確認截圖。</span>
+                </div>
+              </div>
+
+              <!-- 範例 4：全端 / 後端工程師 -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-teal-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-teal-950 text-teal-400 text-xs font-semibold border border-teal-800">
+                      範例 04 · 全端 / 後端工程師
+                    </span>
+                    <h4 class="text-white font-bold text-sm">跨域認證 Cookie 遺失與 CORS 403 授權排錯</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用指令: /cookie-debugging, list_network_requests
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>前端從 app.domain.com 呼叫 api.domain.com 時，授權 Cookie 莫名沒有附帶，導致 API 一律回傳 401/403。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-teal-300 leading-relaxed mb-2">
+                  &gt; /cookie-debugging 前端在呼叫 https://api.example.com/v1/auth/session 時回傳 403，請幫我監聽該請求，檢查 Request Headers 中的 Cookie 是否被 SameSite 限制或缺少 Partitioned 屬性所攔截，並檢查 Response 的 Access-Control-Allow-Credentials 設定。
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>精準指出 Cookie 缺少 `SameSite=None; Secure` 或 CORS 未允許 Credentials，並提供修正標頭。</span>
+                </div>
+              </div>
+
+              <!-- 範例 5：資安工程師 / DevSecOps -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-rose-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-rose-950 text-rose-400 text-xs font-semibold border border-rose-800">
+                      範例 05 · 資安工程師 / DevSecOps
+                    </span>
+                    <h4 class="text-white font-bold text-sm">第三方腳本監控、CSP 違規與敏感 Cookie 安全標誌稽核</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用工具: list_network_requests, evaluate_script
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>需要定期確認網站沒有載入未經審核的惡意第三方 CDN 腳本，且敏感 Cookie 必須包含 HttpOnly 與 Secure。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-rose-300 leading-relaxed mb-2">
+                  &gt; 「稽核登入頁面 https://admin.example.com 的網路安全性：列出頁面載入的所有外部 JavaScript 網域名稱，檢查是否有違反 Content-Security-Policy (CSP) 的行為，並確認儲存 Token 的 Cookie 是否皆有設上 HttpOnly、Secure 與 SameSite=Strict 標誌。」
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>整理所有外部腳本依賴來源清單、回報缺失的安全標誌，防範 XSS 與 Session 劫持漏洞。</span>
+                </div>
+              </div>
+
+              <!-- 範例 6：前端架構師 / 資深工程師 -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-purple-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-purple-950 text-purple-400 text-xs font-semibold border border-purple-800">
+                      範例 06 · 前端架構師
+                    </span>
+                    <h4 class="text-white font-bold text-sm">SPA 單頁應用長期運行記憶體洩漏與游離 DOM 排查</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用指令: /memory-leak-debugging, take_heapsnapshot
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>監控儀表板應用在連續運作數小時後瀏覽器頁面 RAM 暴增超過 1.5GB，最後出現 Aw, Snap! 當機。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-purple-300 leading-relaxed mb-2">
+                  &gt; /memory-leak-debugging 打開 http://localhost:3000/analytics，模擬點擊在『總覽儀表板』與『即時圖表』之間切換 8 次。在切換前後各擷取一份 Heap Snapshot 快照進行比對，抓出未被 GC 回收的 Chart.js 實例與游離的 Detached DOM 元素。
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>分析 Retainer 樹、找出忘記呼叫 `chart.destroy()` 或未解綁的 `resize` 事件監聽器位置。</span>
+                </div>
+              </div>
+
+              <!-- 範例 7：政府 / 學校無障礙審查員 -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-teal-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-cyan-950 text-cyan-400 text-xs font-semibold border border-cyan-800">
+                      範例 07 · 無障礙專員 / 公共網站維護者
+                    </span>
+                    <h4 class="text-white font-bold text-sm">政府機關網站 WCAG 2.1 AA 無障礙標章法規稽核</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用指令: /a11y-debugging, take_snapshot
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>教育或政府機關網站必須通過無障礙 AA 標章認證，人工逐頁點擊檢查色彩對比度與報讀器標籤費時費力。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-cyan-300 leading-relaxed mb-2">
+                  &gt; /a11y-debugging 稽核市立圖書館預約圖書流程頁面：檢查送出按鈕與輸入框是否有正確的 aria-label 與 aria-describedby，文字色彩對比度是否達到 4.5:1，並全程使用鍵盤 Tab 鍵導航確認焦點可視指示器（Focus Outline）是否正常顯示。
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>產出無障礙缺失清單，標示不符合標準的 DOM 選擇器與色彩十六進位值，並提供符合 WCAG 規範的修復代碼。</span>
+                </div>
+              </div>
+
+              <!-- 範例 8：SEO 專家與數位行銷人員 -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-indigo-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-indigo-950 text-indigo-400 text-xs font-semibold border border-indigo-800">
+                      範例 08 · SEO 顧問 / 成長行銷人員
+                    </span>
+                    <h4 class="text-white font-bold text-sm">客戶端渲染 (CSR) 爬蟲收錄與 JSON-LD 結構化資料驗證</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用工具: evaluate_script, take_snapshot
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>React/Vue 單頁應用動態渲染容易讓搜尋引擎抓不到完整的 Meta Description，或 Schema.org 欄位有語法錯誤。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-indigo-300 leading-relaxed mb-2">
+                  &gt; 「打開最新發布的部落格文章頁面 http://localhost:3000/blog/post-101，從最終渲染完成的 DOM 中擷取 title、meta description、canonical 網址，並檢驗 script[type='application/ld+json'] 中的 Article 結構化資料欄位是否包含完整的 headline, image, author 與 datePublished。」
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>驗證動態注入的 SEO 標籤是否已在客戶端正確就緒，避免搜尋引擎抓取到空白範本。</span>
+                </div>
+              </div>
+
+              <!-- 範例 9：Chrome 擴充套件開發者 -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-sky-700/60 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-sky-950 text-sky-400 text-xs font-semibold border border-sky-800">
+                      範例 09 · Chrome Extension 開發者
+                    </span>
+                    <h4 class="text-white font-bold text-sm">Manifest V3 Service Worker 背景通訊與 Popup 行為除錯</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用參數: --categoryExtensions, evaluate_script
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>Manifest V3 的背景腳本改為 Service Worker，經常因為背景休眠導致 Content Script 訊息傳遞逾時失敗。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-sky-300 leading-relaxed mb-2">
+                  &gt; 「請載入我本地編譯完成的 Chrome 擴充套件目錄 ./extension-dist，觸發擴充功能的 Popup 彈出面板，點擊『開始擷取』按鈕，並進入 Background Service Worker 監聽 chrome.runtime.onMessage 事件，確認 Content Script 是否成功回傳選取的網頁文字。」
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>自動載入未封裝套件（Unpacked）、觸發 UI 行為並直接檢查 Service Worker 內部狀態。</span>
+                </div>
+              </div>
+
+              <!-- 範例 10：技術客服與維運工程師 -->
+              <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-slate-600 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                      範例 10 · 技術客服與維運工程師
+                    </span>
+                    <h4 class="text-white font-bold text-sm">100% 精準重現特定機型與螢幕解析度下的偶發性 Bug</h4>
+                  </div>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                    使用工具: emulate, get_console_message, list_network_requests
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 mb-2">
+                  <strong>痛點情境：</strong>使用者回報「使用 iPad 點擊送出按鈕毫無反應」，但工程師在自己電腦上卻完全無法重現。
+                </p>
+                <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-200 leading-relaxed mb-2">
+                  &gt; 「重現客戶回報工單 #5082：客戶使用 iPad 10.2 吋橫向視窗（解析度 1080x810），在結帳步驟點擊『確認付款』卡住。請模擬該螢幕尺寸與 iPad User-Agent，執行該操作並抓取當下的 Console 報錯日誌與失敗的網路請求，整理成問題重現報告。」
+                </div>
+                <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                  <span><strong>預期成果：</strong>精準捕捉到觸控事件（TouchEvent）未適配所造成的 JS 報錯，生成完整 Bug 重現日誌附截圖。</span>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>

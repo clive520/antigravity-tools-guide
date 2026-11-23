@@ -17,6 +17,7 @@
 - **Chrome DevTools MCP 專屬指南 (`chrome-devtools.html`)**：
   - 由 Chrome DevTools 官方團隊維護的 MCP 擴充套件完整解析（v1.10.1）。
   - 六大內建指令（Slash Commands）深度解析：`/chrome-devtools`、`/debug-optimize-lcp`、`/cookie-debugging`、`/memory-leak-debugging`、`/a11y-debugging`、`/troubleshooting`。
+  - **10 大跨角色實戰應用範例**：涵蓋前端工程師、QA 測試、SRE 效能工程師、全端 API 排錯、資安審查、前端架構師、無障礙專員、SEO 顧問、Chrome Extension 開發者與客服技術維運。
   - 30+ 款底層 MCP API 參考表、實務對話 Prompt 範本與進階設定。
 
 ---
