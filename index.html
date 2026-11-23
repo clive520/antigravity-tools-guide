@@ -98,6 +98,7 @@
       <!-- 篩選標籤 -->
       <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto" id="filter-container">
         <button onclick="filterCards('all')" class="filter-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sky-500 text-white transition-all shadow-sm shadow-sky-500/20" data-filter="all">全部工具 (All)</button>
+        <button onclick="filterCards('workspace')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="workspace">Google 家族</button>
         <button onclick="filterCards('debug')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="debug">除錯與效能</button>
         <button onclick="filterCards('automation')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="automation">瀏覽器自動化</button>
         <button onclick="filterCards('design')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="design">創意設計</button>
@@ -175,42 +176,61 @@
         </a>
       </div>
 
-      <!-- 卡片 2：Canva MCP (預告/即將推出) -->
-      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group opacity-75 hover:opacity-100" data-category="design" data-title="Canva MCP 設計 自動化 簡報 圖片 貼文">
+      <!-- 卡片 2：Google Drive & Docs (Google家族第一棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace" data-title="Google Drive Docs 文件 雲端硬碟 知識庫 辦公協作 備課 ADR PRD">
+        <!-- 標記光條 -->
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        
         <div>
+          <!-- 頂部圖示與狀態 -->
           <div class="flex items-start justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner">
-              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-indigo-600 flex items-center justify-center font-bold text-white text-base font-serif">
-                C
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <div class="relative w-full h-full flex items-center justify-center">
+                <svg viewBox="0 0 24 24" class="w-6 h-6 text-blue-500 absolute -top-0.5 -left-0.5">
+                  <path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+                </svg>
+                <svg viewBox="0 0 24 24" class="w-5 h-5 text-sky-400 absolute -bottom-0.5 -right-0.5">
+                  <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                </svg>
               </div>
             </div>
             <div class="flex flex-col items-end gap-1.5">
               <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-950/80 text-blue-400 border border-blue-800/60">
-                合作夥伴外掛
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Google 家族首推
               </span>
-              <span class="text-[10px] text-slate-500">準備中</span>
+              <span class="text-[10px] text-slate-500 font-mono">Official MCP</span>
             </div>
           </div>
 
-          <h2 class="text-xl font-bold text-white mb-2">Canva MCP</h2>
+          <!-- 標題與簡介 -->
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors flex items-center gap-2">
+            <span>Google Drive & Docs</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-blue-400"></i>
+          </h2>
           <p class="text-slate-400 text-xs leading-relaxed mb-4">
-            透過 AI Agent 自然語言直接產生海報、社群貼文、批次套版、匯出圖片，並能透過品牌套件進行自動化排版與審查。
+            AI 雲端知識庫與長文創作中心。支援全硬碟內文檢索、自動撰寫排版 Google 文件、修訂批註與跨部門協作權限分享。
           </p>
 
-          <div class="space-y-1.5 mb-5 bg-slate-900/40 p-3 rounded-xl border border-slate-800/60">
-            <div class="text-[11px] font-medium text-slate-400">主要能力亮點</div>
+          <!-- 核心能力預覽 -->
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>雙外掛整合 · 實戰手冊</span>
+              <span class="text-blue-400 font-mono text-[10px]">7 大工具 · 10 大角色範本</span>
+            </div>
             <div class="flex flex-wrap gap-1.5 pt-1">
-              <span class="px-2 py-0.5 rounded bg-slate-800/60 text-[10px] font-mono text-slate-400">設計產生</span>
-              <span class="px-2 py-0.5 rounded bg-slate-800/60 text-[10px] font-mono text-slate-400">批次套版 (Bulk)</span>
-              <span class="px-2 py-0.5 rounded bg-slate-800/60 text-[10px] font-mono text-slate-400">品牌檢核</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-blue-300">gdrive_search</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-blue-300">gdocs_draft</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-blue-300">gdrive_share</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
             </div>
           </div>
         </div>
 
-        <button disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-800/70 text-slate-400 cursor-not-allowed border border-slate-700/50">
-          <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-          <span>教學即將上線</span>
-        </button>
+        <!-- 底部前往按鈕 -->
+        <a href="google-drive-docs.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
       </div>
 
       <!-- 卡片 3：GitHub CLI 與自動化 (預告) -->

@@ -19,6 +19,11 @@
   - 六大內建指令（Slash Commands）深度解析：`/chrome-devtools`、`/debug-optimize-lcp`、`/cookie-debugging`、`/memory-leak-debugging`、`/a11y-debugging`、`/troubleshooting`。
   - **10 大跨角色實戰應用範例**：涵蓋前端工程師、QA 測試、SRE 效能工程師、全端 API 排錯、資安審查、前端架構師、無障礙專員、SEO 顧問、Chrome Extension 開發者與客服技術維運。
   - 30+ 款底層 MCP API 參考表、實務對話 Prompt 範本與進階設定。
+- **Google Drive & Docs 官方指南 (`google-drive-docs.html`)**：
+  - Google 官方原生 Workspace 雙外掛 (`gdrive` + `gdocs`) 深度解析。
+  - 雲端硬碟全文檢索、自動撰寫排版 Google 文件、多版本修訂與跨團隊共享。
+  - **10 大跨角色實戰應用範例**：涵蓋教師備課教案、文史田野調查、軟體工程 ADR、產品經理 PRD、專案會議紀錄、行銷文案、合約審查、主管 OKR 彙報、客服 SOP 與學生考前衝刺筆記。
+  - OAuth 2.0 授權綁定與常見問題 (FAQ)。
 
 ---
 
@@ -26,10 +31,11 @@
 
 ```tree
 antigravity-tools-guide/
-├── index.html           # 導覽首頁：模組化字卡網格系統
-├── chrome-devtools.html # Chrome DevTools MCP 詳細教學指南
-├── .nojekyll            # 確保 GitHub Pages 靜態檔案正常運作
-└── README.md            # 專案說明文件
+├── index.html              # 導覽首頁：模組化字卡網格系統
+├── chrome-devtools.html    # Chrome DevTools MCP 詳細教學指南
+├── google-drive-docs.html  # Google Drive & Docs 完整使用指南
+├── .nojekyll               # 確保 GitHub Pages 靜態檔案正常運作
+└── README.md               # 專案說明文件
 ```
 
 ---

@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Drive & Docs 擴充功能完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[600px] h-[400px] bg-gradient-to-tr from-blue-600/15 to-emerald-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[500px] h-[500px] bg-sky-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 48 48" class="w-full h-full">
+              <path fill="#4285F4" d="M16 6h16l10 17-8 15H18L6 23z"/>
+              <path fill="#34A853" d="M18 38h18l6-10H24z"/>
+              <path fill="#FBBC05" d="M6 23l6 15 6-10-6-10z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Google Drive & Docs 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">3. 核心 MCP 工具對照表</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#auth-setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">5. 安裝與 OAuth 授權流程</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">6. 常見問題與安全性 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-950/40 to-slate-900 border border-blue-900/30 text-xs">
+            <div class="flex items-center gap-2 text-blue-400 font-bold mb-1">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Google 家族第一棒</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              個人與企業 AI 知識庫的核心中樞！先具備讀取與產生文件的能力，後續搭配 Sheets 與 Slides 更能發揮綜效。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow min-w-0 space-y-12">
+
+        <!-- 標頭英雄區 -->
+        <div id="overview" class="doc-section">
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-950 text-blue-400 border border-blue-800">
+              <span class="w-2 h-2 rounded-full bg-blue-400"></span> Google 官方原生擴充套件
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-slate-400 border border-slate-800">
+              Workspace Ecosystem
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-emerald-400 border border-slate-800">
+              雙外掛合壁：gdrive + gdocs
+            </span>
+          </div>
+
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center p-3 shadow-xl shrink-0">
+              <!-- Drive & Docs 組合圖示 -->
+              <div class="relative w-full h-full flex items-center justify-center">
+                <svg viewBox="0 0 24 24" class="w-7 h-7 text-blue-500 absolute -top-1 -left-1">
+                  <path fill="currentColor" d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+                </svg>
+                <svg viewBox="0 0 24 24" class="w-6 h-6 text-sky-400 absolute -bottom-1 -right-1">
+                  <path fill="currentColor" d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Google Drive & Docs</h1>
+              <p class="text-slate-400 text-sm mt-1">開發者：<span class="text-slate-200 font-medium">Google Workspace Official</span></p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-sm text-slate-300 leading-relaxed font-mono">
+            "Read, search, draft, and edit documents directly in Google Docs; manage, upload, download, and share files across Google Drive seamlessly."
+          </div>
+          <p class="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+            在 Antigravity 的 AI 工作流中，**Google Drive & Docs** 是所有知識處理的樞紐。<strong class="text-blue-400">Google Drive</strong> 負責整個雲端空間的智慧檢索、下載讀檔、上傳備份與共享權限管理；而 <strong class="text-sky-400">Google Docs</strong> 則賦予 AI 直接起草長篇文章、教案、規格書、研發紀錄與結構化排版編輯的能力。兩者搭配，徹底擺脫手動複製貼上的繁瑣作業。
+          </p>
+        </div>
+
+        <!-- 區塊 2：這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="layers" class="w-6 h-6 text-blue-400"></i>
+              <span>2. 這個功能能做什麼？（核心能力架構）</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-blue-950 flex items-center justify-center text-blue-400 mb-3 border border-blue-800/60">
+                <i data-lucide="search" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">雲端硬碟全內文深層搜尋</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                不僅能搜尋檔名，AI 還能根據檔案類型（PDF、Docs、試算表）與關鍵字進行全文檢索，快速定位散落在各目錄中的重要參考資料。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-sky-950 flex items-center justify-center text-sky-400 mb-3 border border-sky-800/60">
+                <i data-lucide="file-pen" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">自動起草排版 Google Docs</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                直接在使用者指定的雲端目錄中建立結構化的新文件，自動套用大標題（H1/H2）、段落、粗體重點、項目清單與結論摘要。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-emerald-950 flex items-center justify-center text-emerald-400 mb-3 border border-emerald-800/60">
+                <i data-lucide="edit-3" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">現有文件智慧修訂與批註追加</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                讀取現有 Docs 內容並在指定段落後方追加章節、更新版本紀錄、替換過期內容或進行文法與錯別字批改潤飾。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-amber-950 flex items-center justify-center text-amber-400 mb-3 border border-amber-800/60">
+                <i data-lucide="share-2" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">多團隊協作與權限分享管理</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                AI 完成文件起草後，可自動產生共用連結、指派特定同事的檢視（Viewer）或編輯（Editor）權限，並即時回傳文件線上網址。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-purple-950 flex items-center justify-center text-purple-400 mb-3 border border-purple-800/60">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">跨文件資料彙整與知識庫提煉</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                一次讀取多份 Drive 中的 PDF 論文、會議紀錄或參考手冊，由 AI 融會貫通後提煉出核心綜述，輸出為統一的報告文件。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-teal-950 flex items-center justify-center text-teal-400 mb-3 border border-teal-800/60">
+                <i data-lucide="upload-cloud" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">本機檔案同步備份至雲端</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                本機產生的 Markdown 筆記、匯出圖表或專案代碼封裝檔，可藉由 Drive 擴充功能一鍵安全同步上傳至 Google 雲端保存。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 3：核心 MCP 工具對照表 -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="wrench" class="w-6 h-6 text-blue-400"></i>
+              <span>3. 支援的核心 MCP 工具對照表</span>
+            </h2>
+            <p class="text-slate-400 text-xs mt-1">Google Workspace 官方擴充套件向 Antigravity 註冊的底層能力清單：</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 bg-slate-900/50">
+                  <th class="py-2.5 px-3 font-semibold">外掛來源</th>
+                  <th class="py-2.5 px-3 font-semibold">底層 MCP 工具名稱</th>
+                  <th class="py-2.5 px-3 font-semibold">功能作用與典型參數</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr>
+                  <td class="py-2.5 px-3 text-blue-400 font-sans font-medium">Google Drive</td>
+                  <td class="py-2.5 px-3 text-slate-200">gdrive_search</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">搜尋檔案與資料夾，支援名稱比對、mimeType 過濾與全文檢索</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-blue-400 font-sans font-medium">Google Drive</td>
+                  <td class="py-2.5 px-3 text-slate-200">gdrive_download / read</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">讀取並下載雲端檔案內容（PDF、純文字、匯出 Docs 內文）</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-blue-400 font-sans font-medium">Google Drive</td>
+                  <td class="py-2.5 px-3 text-slate-200">gdrive_upload</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">上傳本機檔案至指定雲端資料夾，支援設定 MIME 格式</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-blue-400 font-sans font-medium">Google Drive</td>
+                  <td class="py-2.5 px-3 text-slate-200">gdrive_share</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">設定共用權限（reader / writer / commenter）並產出共用網址</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-sky-400 font-sans font-medium">Google Docs</td>
+                  <td class="py-2.5 px-3 text-slate-200">gdocs_read</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">解析指定 documentId 的完整章節、大綱與文字結構</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-sky-400 font-sans font-medium">Google Docs</td>
+                  <td class="py-2.5 px-3 text-slate-200">gdocs_draft / create</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">新建空白或帶排版的文件，設定標題並寫入首批章節</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-sky-400 font-sans font-medium">Google Docs</td>
+                  <td class="py-2.5 px-3 text-slate-200">gdocs_edit</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">針對既有文件插入段落、替換文字、追加表格與更新樣式</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 區塊 4：10 大跨角色實戰應用範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-6 h-6 text-blue-400"></i>
+                <span>4. 我該如何使用？（10 大跨角色實戰 Prompt Playbook）</span>
+              </h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-950 text-blue-400 border border-blue-800">
+                日常辦公到深度研發
+              </span>
+            </div>
+            <p class="text-slate-400 text-xs mt-1">不管是老師備課、工程師寫規格、行銷做內容或法務審合約，複製以下範本即可直接在對話中呼叫 AI 執行：</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+
+            <!-- 範例 1：教師與教育工作者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-blue-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-blue-950 text-blue-400 text-xs font-semibold border border-blue-800">
+                    範例 01 · 教師 / 教育工作者
+                  </span>
+                  <h4 class="text-white font-bold text-sm">單元備課教案自動起草與學生學習單產出</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_search, gdocs_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要參考雲端硬碟中的「108 課綱自然領域綱要」，為國小五年級設計水溶液實驗的三節課教案並產生學生學習單。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-blue-300 leading-relaxed mb-2">
+                &gt; 「請搜尋我 Google Drive 裡的『自然科課綱草案.pdf』，研讀水溶液酸鹼性相關指標，在我的『教學備課』資料夾中建立一份名為『五年級水溶液探索教案與學習單』的 Google Docs。內容須包含教學目標、3 節課的探究活動設計、安全注意事項，以及附帶兩題思考題的學習單格式，完成後給我編輯連結。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>AI 幾十秒內自動完成課綱比對並產出排版工整的教學文件，節省 1~2 小時手工編寫時間。</span>
+              </div>
+            </div>
+
+            <!-- 範例 2：文史與學術研究者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                    範例 02 · 文史與學術研究員
+                  </span>
+                  <h4 class="text-white font-bold text-sm">田野調查筆記彙整與地方文史研究論文初稿</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_download, gdocs_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>硬碟裡有多份田野訪談錄音摘要、清代文獻記載與廟宇碑文抄錄，需要彙集成完整文史報告。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                &gt; 「請搜尋我的 Drive 中『沙鹿地方文史』資料夾內的所有筆記，比對三塊厝與保安宮的歷史沿革，起草一份名為『沙鹿三鹿里文史與信仰變遷研究』的 Google 文件。包含引言、歷史地理背景、信仰中心考證、現代社會意涵與參考文獻，並自動加上小標題與引用註腳。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>自動穿針引線將分散的多份田野筆記濃縮成學術結構分明的長篇論文初稿。</span>
+              </div>
+            </div>
+
+            <!-- 範例 3：軟體研發工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-sky-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-sky-950 text-sky-400 text-xs font-semibold border border-sky-800">
+                    範例 03 · 軟體研發工程師
+                  </span>
+                  <h4 class="text-white font-bold text-sm">架構決策紀錄 (ADR) 與 API 規格書自動產出</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdocs_draft, gdrive_share
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>在 IDE 本地完成新版認證模組的重構後，需要寫一份架構設計文件給其他前後端成員審閱。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-sky-300 leading-relaxed mb-2">
+                &gt; 「根據我們剛才重構的 JWT 與 Refresh Token 認證邏輯，在 Google Docs 上建立一份『ADR-012: OAuth2與雙Token認證架構決策書』，詳細列出背景、考量方案比較、架構循序圖說明、API 端點清單與安全防護措施，完成後將文件設定為公司群組可註解（Commenter）並提供連結。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>工程師無需離開 AI 開發環境即可完成團隊技術文檔的起草與權限指派。</span>
+              </div>
+            </div>
+
+            <!-- 範例 4：產品經理 (Product Manager) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-emerald-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-emerald-950 text-emerald-400 text-xs font-semibold border border-emerald-800">
+                    範例 04 · 產品經理 (PM)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">競品調研資料萃取與 PRD 產品需求規格書撰寫</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_search, gdocs_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>收集了 3 份競品分析 PDF，需要提煉關鍵差異並撰寫下一季度「智慧搜尋功能」的 PRD。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-emerald-300 leading-relaxed mb-2">
+                &gt; 「搜尋我 Google Drive 裡檔名包含『競品分析』的所有文件，比對各家在搜尋過濾機制上的優劣勢，在『產品規格』資料夾開一份『PRD: 2026 Q1 全域智慧搜尋需求規格書』，包含用戶故事（User Story）、功能範圍、驗收條件（AC）與資料欄位定義。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>快速從大量分析資料中提取精華，產生標準化、工程師看得懂的 PRD。</span>
+              </div>
+            </div>
+
+            <!-- 範例 5：專案管理與行政秘書 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-purple-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-purple-950 text-purple-400 text-xs font-semibold border border-purple-800">
+                    範例 05 · 專案管理 / 行政秘書
+                  </span>
+                  <h4 class="text-white font-bold text-sm">會議錄音逐字稿濃縮、決議清單與行動事項 (Action Items)</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_download, gdocs_draft, gdrive_share
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>開完 1 小時跨部門產銷協調會，上傳了長達萬字的逐字稿文字檔，需盡快寄發正式會議紀錄。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-purple-300 leading-relaxed mb-2">
+                &gt; 「讀取我剛上傳到 Drive 根目錄的『20261123_跨部門會議逐字稿.txt』，過濾閒聊贅字，提煉出三大核心討論議題、五項關鍵決議，以及帶有指派人（Owner）與完成期限（Deadline）的行動清單，產出一份正式的 Google Docs 會議紀錄，並設定為任何人持連結可檢視。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>會議結束 3 分鐘內產出條理清晰的行動事項表，大幅提高跨部門執行力。</span>
+              </div>
+            </div>
+
+            <!-- 範例 6：行銷與內容創作者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-teal-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-teal-950 text-teal-400 text-xs font-semibold border border-teal-800">
+                    範例 06 · 行銷與內容創作者
+                  </span>
+                  <h4 class="text-white font-bold text-sm">品牌風格長篇文章起草與多平台社群文案矩陣</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_search, gdocs_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要依據公司 Drive 中的品牌語調指引（Tone of Voice），為新功能撰寫 2,000 字官方部落格文章與社群貼文。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-teal-300 leading-relaxed mb-2">
+                &gt; 「搜尋我雲端硬碟中的『品牌風格指南.pdf』，以專業且親切的筆觸，在 Google Docs 開一份名為『AI開發新時代_官方專案發布稿』。文章需包含吸睛引言、三大亮點深度介紹、實測數據圖表位置提示，並在文章文末追加適用於 Facebook、LinkedIn、X (Twitter) 的不同長度推廣文案。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>一篇核心文章自動延伸為社群傳播矩陣，品牌調性統一不走味。</span>
+              </div>
+            </div>
+
+            <!-- 範例 7：法務與合約審查人員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-rose-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-rose-950 text-rose-400 text-xs font-semibold border border-rose-800">
+                    範例 07 · 法務與合約審查
+                  </span>
+                  <h4 class="text-white font-bold text-sm">多份採購合約跨版本條款交叉比對與合規風險報告</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_download, gdocs_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>合作夥伴寄來了修改後的合約 PDF，需與 Drive 中既有的標準合約範本對照，抓出不利條款。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-rose-300 leading-relaxed mb-2">
+                &gt; 「下載並比對我 Drive 裡的『標準供應商協議_v2.pdf』與『廠商回簽修改版_2026.pdf』，特別聚焦在智慧財產權歸屬、保密條款與違約賠償上限。在 Google Docs 起草一份『合約審查風險備忘錄』，以表格標出修訂前後差異、潛在法律風險與建議修改條文。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>大幅減少律師與法務人員人工比對逐行條文的心力，敏銳抓出陷阱條款。</span>
+              </div>
+            </div>
+
+            <!-- 範例 8：跨團隊部門主管 (Team Lead) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-indigo-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-indigo-950 text-indigo-400 text-xs font-semibold border border-indigo-800">
+                    範例 08 · 跨團隊主管 / 部門主管
+                  </span>
+                  <h4 class="text-white font-bold text-sm">季度 OKR / KPI 部門彙報彙整與管理層執行摘要</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_search, gdocs_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>季末需要將工程組、設計組、運營組分別提交的進度報告匯總成一份給 CEO 審查的總結。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-indigo-300 leading-relaxed mb-2">
+                &gt; 「搜尋我雲端硬碟『2026_Q3部門彙報』資料夾下的所有 Google 文件，提取各組別的目標達成率（OKR）、關鍵亮點里程碑與當前阻礙（Blockers）。為我起草一份『Q3 跨部門營運總結報告』Google Docs，首頁放高階主管摘要（Executive Summary），次頁放各組數據比較表。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>自動穿透多個分散資料夾，將繁雜的組別進度濃縮成具備決策價值的高階報告。</span>
+              </div>
+            </div>
+
+            <!-- 範例 9：技術支援與客服主管 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-slate-600 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                    範例 09 · 技術客服主管 / 維運負責人
+                  </span>
+                  <h4 class="text-white font-bold text-sm">熱門客戶工單分析與客服知識庫 (KB) 標準 SOP 文件產出</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_download, gdocs_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>客服常被重複問題轟炸，需要將累積的常見故障排除紀錄整理成標準知識庫。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-200 leading-relaxed mb-2">
+                &gt; 「讀取 Drive 中這份『2026年10月份客戶諮詢統計.csv』，統計出現頻率最高的 5 大問題類型（如忘記密碼、發票載具綁定失敗、退款處理等），為客服團隊在 Google Docs 撰寫一份『客戶服務常見問題應對 SOP 手冊』，附上標準排解步驟與回覆話術模板。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>將零散的客訴日誌迅速轉化為團隊共用的制度化知識資產，縮短新人培訓期。</span>
+              </div>
+            </div>
+
+            <!-- 範例 10：學生與各類考試考生 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-cyan-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-cyan-950 text-cyan-400 text-xs font-semibold border border-cyan-800">
+                    範例 10 · 學生 / 考生
+                  </span>
+                  <h4 class="text-white font-bold text-sm">歷屆考古題檢索、錯題概念辨析與複習衝刺筆記本</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gdrive_search, gdocs_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>在 Drive 收集了近 5 年的期末或國考考古題 PDF，需要針對常錯觀念做系統性統整。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-cyan-300 leading-relaxed mb-2">
+                &gt; 「搜尋我 Drive 裡『歷屆試題』目錄下的所有 PDF，找出所有跟『光合作用與呼吸作用比較』相關的題目與解析，幫我建立一份『考前衝刺錯題與核心觀念筆記』Google Docs。請用對照表呈現兩者在場所、原料、產物與能量轉換的差異，並附帶 3 題經典易錯題防呆解析。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>AI 成為專屬家教，自動將死板考古題轉化為觀念清晰的個人化精華考前寶典。</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5：安裝與 OAuth 授權流程 -->
+        <section id="auth-setup" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="key" class="w-6 h-6 text-blue-400"></i>
+              <span>5. 如何在 Antigravity 中啟用與授權？</span>
+            </h2>
+            <p class="text-slate-400 text-xs mt-1">Google 官方套件使用標準 OAuth 2.0 協議，資料傳輸安全無虞：</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-blue-400 font-bold text-sm mb-1">步驟 1：安裝套件</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                在左側邊欄「Skills & Customizations」搜尋 <code class="text-slate-200">Google Docs</code> 或 <code class="text-slate-200">Google Drive</code>，或對 AI 說「我想安裝 Google Docs」點擊卡片一鍵安裝。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-blue-400 font-bold text-sm mb-1">步驟 2：登入授權</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                首次呼叫時，系統會彈出 Google 官方授權視窗，選取您要關聯的 Google 帳號（個人 Gmail 或 Google Workspace 學校/公司帳號）。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-blue-400 font-bold text-sm mb-1">步驟 3：開始協同作業</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                授權完成後 Token 自動儲存於本機安全金鑰庫，隨時可在對話框用自然語言指示 AI 讀檔、查資料與寫文章！
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6：常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-6 h-6 text-blue-400"></i>
+              <span>6. 常見問題與安全性 (FAQ)</span>
+            </h2>
+          </div>
+
+          <div class="space-y-3">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q1：AI 能讀取我 Google Drive 裡的所有隱私檔案嗎？安全嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                只有在您發出明確提示詞（如「讀取某某檔案」或「搜尋特定資料夾」）時，擴充套件才會按需存取該指定檔案。所有連線皆走 Google 官方加密 API，不會擅自後台爬取或將未經許可的檔案外洩。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q2：AI 建立的 Google Docs 檔案會存放在哪裡？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                預設會儲存在您 Google 雲端硬碟的「根目錄（我的雲端硬碟）」。若您在對話中特別指名「存放在『教學備課』資料夾」，AI 就會自動先尋找該資料夾的 ID，並將文件直接歸檔至該目錄中。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q3：它可以和 Google Sheets 或 Google Slides 一起連動嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                可以！這正是 Google 家族的強項。例如您可以指示 AI「先讀取 Google Drive 裡的試算表（Sheets）做統計分析，再把總結分析報告寫成一份 Google Docs，最後轉成簡報投影片」。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="font-semibold text-slate-300 hover:text-white transition-colors">Antigravity Tools Hub</a>
+        <span>• Google Drive & Docs 官方指南</span>
+      </div>
+      <div>
+        <span>本專案支援 GitHub Pages 即時瀏覽</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
