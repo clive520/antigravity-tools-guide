@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canva 擴充功能與 AI 視覺設計完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              teal: '#00c4cc',
+              purple: '#7d2ae8',
+              blue: '#0073e6',
+              50: '#f0fdfa',
+              100: '#ccfbf1',
+              500: '#00c4cc',
+              600: '#0d9488',
+              700: '#0f766e',
+              900: '#134e4a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+    .canva-gradient-text {
+      background: linear-gradient(135deg, #00c4cc 0%, #7d2ae8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-teal-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-teal-500/15 via-purple-600/15 to-blue-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-purple-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-gradient-to-tr from-teal-400 to-purple-600 flex items-center justify-center p-0.5">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-white" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2zm4 8h-2v-4h2v4zm0-6h-2v-2h2v2z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Canva AI 視覺設計指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-teal-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態架構</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-teal-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#skills-matrix" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-teal-400 hover:bg-slate-900/80 transition-colors">3. 7 大專屬技能 (Skills) 矩陣</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-teal-400 hover:bg-slate-900/80 transition-colors">4. 核心工具架構與 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-teal-400 hover:bg-slate-900/80 transition-colors">5. 10 大跨角色實戰範例</a>
+              <a href="#best-practices" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-teal-400 hover:bg-slate-900/80 transition-colors">6. 視覺設計與防呆守則</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-teal-400 hover:bg-slate-900/80 transition-colors">7. 安裝與 Canva Connect 授權</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-teal-400 hover:bg-slate-900/80 transition-colors">8. 常見問題與除錯指南</a>
+            </nav>
+          </div>
+
+          <!-- 快速狀態卡片 -->
+          <div class="glass-card rounded-2xl p-4 border border-teal-900/40 bg-gradient-to-br from-teal-950/40 to-slate-900/60">
+            <div class="flex items-center gap-2 mb-2 text-teal-400 text-xs font-semibold">
+              <i data-lucide="palette" class="w-4 h-4"></i>
+              <span>Canva 官方生態原生支援</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              整合 <code class="text-teal-300">canva_canva</code> MCP 伺服器與 7 大專屬技能，支援從表格批次套印設計、社群多尺寸自動重適配到品牌識別自動稽核。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區塊 -->
+      <main class="flex-1 min-w-0 space-y-12">
+
+        <!-- 頂部 Hero Header -->
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-teal-900/60 text-teal-300 border border-teal-700/50">Canva Official MCP</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-purple-900/50 text-purple-300 border border-purple-700/40">7 大內建 Skills</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">Canva CLI (canva api)</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-400 via-purple-600 to-blue-600 flex items-center justify-center p-2 shadow-lg shadow-teal-500/20">
+              <i data-lucide="palette" class="w-6 h-6 text-white"></i>
+            </div>
+            Canva AI 視覺設計與行銷自動化
+          </h1>
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+            透過自然語言指揮全球領先的視覺設計平台 Canva。無需手動一張張點擊複製，Antigravity 能從試算表批次套印 100 份宣傳海報、自動將單一視覺重適配至 IG/TikTok/YouTube 6 大社群尺寸、利用 AI 去背並分離圖層，甚至自動讀取協同評論並精準修改設計！
+          </p>
+        </div>
+
+        <!-- 區塊 1: 功能概述與生態架構 -->
+        <section id="overview" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="layers" class="w-5 h-5 text-teal-400"></i>
+            <h2>1. 功能概述與生態架構</h2>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            傳統視覺設計面臨「改字改圖繁瑣」、「全平台尺寸需手動調整」、「品牌配色常脫靶」等痛點。Antigravity 的 Canva 擴充套件由三大支柱組成，讓行銷企劃、產品設計師與開發工程師都能釋放視覺產能：
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center mb-3">
+                <i data-lucide="cpu" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">原生 Canva MCP 伺服器</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                提供超過 35 個底層 API 工具，涵蓋設計建立、元素精確修改、非同步去背、圖層分離、範本檢索與雲端資料夾管理。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center mb-3">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">7 大工作流 Skills</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                將複雜的多步驟設計操作封裝成高級智慧技能，如批次套印 (<code class="text-purple-300">bulk-create</code>)、社群尺寸轉換 (<code class="text-purple-300">resize-for-social-media</code>) 與品牌核查。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center mb-3">
+                <i data-lucide="terminal" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">Canva CLI (canva api)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                專為工程師與 CI/CD 管線打造的命令列工具，支援本機素材上傳、自動批次匯出高解析 PNG/PDF 並整合進自動發布流水線。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-teal-400"></i>
+            <h2>2. 這個功能能做什麼？</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-teal-300 text-sm">
+                <i data-lucide="table" class="w-4 h-4"></i>
+                <span>表格資料批次大量生成 (Bulk Create)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                上傳或貼上 CSV/JSON 表格（如商品清單、活動嘉賓名單、學員證書），AI 自動比對品牌範本的標籤欄位（`{{name}}`、`{{price}}`、`{{photo}}`），一次自動產生數十到數百份客製化設計。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-purple-300 text-sm">
+                <i data-lucide="scaling" class="w-4 h-4"></i>
+                <span>全通路社群媒體尺寸自適應 (Smart Resize)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                只需一張主視覺，自動衍生出 Instagram 正方形貼文 (1:1)、限時動態 / Reels (9:16)、YouTube 封面縮圖 (16:9)、Facebook 橫幅與 LinkedIn 尺寸，並智能保持安全區域 (Safe Area) 不裁切主體。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-pink-300 text-sm">
+                <i data-lucide="wand-2" class="w-4 h-4"></i>
+                <span>AI 智慧去背與多圖層分離 (Layer Separation)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                一鍵調用 Canva 雲端影像引擎，將靜態圖片的前景主體（人物、商品、吉祥物）乾淨去背，或將單一平面點陣圖切分分解為多層可獨立編輯位移的圖層。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-amber-300 text-sm">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span>品牌規範自動核查 (Brand Checker)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                自動將設計與企業 Brand Kit（品牌色票、標準字型、Logo 邊界）進行逐頁比對，標註非標準色碼、字型違規或標誌變形，確保所有宣傳物 100% 符合品牌規範。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 3: 7 大專屬技能 (Skills) 矩陣 -->
+        <section id="skills-matrix" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-teal-400"></i>
+            <h2>3. 7 大專屬工作流技能 (Canva Skills)</h2>
+          </div>
+          <p class="text-xs text-slate-400">
+            Antigravity 已內建 7 個高度優化的 Canva 專屬技能，能根據使用者的自然語言意圖自動觸發：
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+            <div class="glass-card p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+              <div class="font-bold text-teal-300 font-mono">canva-bulk-create</div>
+              <div class="text-[11px] text-slate-400">表格資料批量套印</div>
+              <p class="text-slate-500 text-[11px]">輸入 CSV/Excel 資料與品牌範本 ID，自動一對一填入文字與替換資產，產出整組設計。</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+              <div class="font-bold text-purple-300 font-mono">canva-resize-for-social-media</div>
+              <div class="text-[11px] text-slate-400">社群全通路尺寸重構</div>
+              <p class="text-slate-500 text-[11px]">查詢標準頻道格式表，自動生成 TikTok, IG, FB, X, YouTube 適用規格之副本並返回連結。</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+              <div class="font-bold text-blue-300 font-mono">canva-brand-check</div>
+              <div class="text-[11px] text-slate-400">品牌手冊規範檢核</div>
+              <p class="text-slate-500 text-[11px]">唯讀比對 Brand Kit 與頁面元素，輸出 On brand / Off brand / 待確認之審查報告。</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+              <div class="font-bold text-amber-300 font-mono">canva-design-feedback</div>
+              <div class="text-[11px] text-slate-400">專業視覺評鑑與診斷</div>
+              <p class="text-slate-500 text-[11px]">客觀分析視覺層次 (Hierarchy)、版面留白、易讀性 (Contrast) 與排版結構並給予具體建議。</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+              <div class="font-bold text-emerald-300 font-mono">canva-edit-design</div>
+              <div class="text-[11px] text-slate-400">精準編輯與版面修改</div>
+              <p class="text-slate-500 text-[11px]">安全交易機制：替換字樣、修改字級色彩、調整元素座標尺寸、增刪或替換圖片。</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border border-slate-800 space-y-1.5">
+              <div class="font-bold text-rose-300 font-mono">canva-implement-feedback</div>
+              <div class="text-[11px] text-slate-400">審閱評論一鍵實裝</div>
+              <p class="text-slate-500 text-[11px]">自動遍歷設計上的批註與評論線程 (Comments)，將具體修改意見自動套用回畫布。</p>
+            </div>
+            <div class="glass-card p-3.5 rounded-xl border border-slate-800 space-y-1.5 lg:col-span-3">
+              <div class="font-bold text-cyan-300 font-mono">canva-cli</div>
+              <div class="text-[11px] text-slate-400">命令列與自動化整合</div>
+              <p class="text-slate-500 text-[11px]">在終端機中以 `canva api` 執行資產同步、匯出 PDF/PNG、非同步工作進度輪詢與腳本整合。</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 4: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-teal-400"></i>
+            <h2>4. 核心工具架構與 MCP API</h2>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider">
+                  <tr>
+                    <th class="py-3 px-4">MCP 工具名稱</th>
+                    <th class="py-3 px-4">核心參數</th>
+                    <th class="py-3 px-4">回傳型態</th>
+                    <th class="py-3 px-4">功能說明與安全機制</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-mono">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-teal-400">autofill-design</td>
+                    <td class="py-3 px-4 text-slate-400">brand_template_id, data, title</td>
+                    <td class="py-3 px-4 text-slate-300">Design Object</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">將具名鍵值對（如文字、圖片資產 ID）注入品牌範本自動生成新設計</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-teal-400">resize-design</td>
+                    <td class="py-3 px-4 text-slate-400">design_id, width, height, unit</td>
+                    <td class="py-3 px-4 text-slate-300">Design Object</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">智慧縮放複製新版本，自動保持元件比例與內容相對位置</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-purple-400">remove-background</td>
+                    <td class="py-3 px-4 text-slate-400">asset_id 或 image_url</td>
+                    <td class="py-3 px-4 text-slate-300">Asset Job ID</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">調用 Canva 雲端 AI 進行前景主體去背，回傳去背後之透明 PNG 資產</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-purple-400">separate-image-layers</td>
+                    <td class="py-3 px-4 text-slate-400">image_asset_id</td>
+                    <td class="py-3 px-4 text-slate-300">Job ID</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">AI 分析影像結構，將平面的單張圖檔切分成多個可獨立操作的圖層</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-blue-400">list-brand-kits</td>
+                    <td class="py-3 px-4 text-slate-400">limit, continuation</td>
+                    <td class="py-3 px-4 text-slate-300">BrandKit List</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">查詢組織內已設定之品牌工具包（含色票、字體、Logo 素材庫）</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-emerald-400">edit-design</td>
+                    <td class="py-3 px-4 text-slate-400">design_id, operations</td>
+                    <td class="py-3 px-4 text-slate-300">Edit Result</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">原子性操作集合：支援 updateText, replaceImage, setStyle, moveElement</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-amber-400">export-design</td>
+                    <td class="py-3 px-4 text-slate-400">design_id, format, pages, quality</td>
+                    <td class="py-3 px-4 text-slate-300">Export Job</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">支援匯出為 PNG, JPG, PDF (列印/標準), MP4 或 GIF 格式</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-rose-400">list-comments</td>
+                    <td class="py-3 px-4 text-slate-400">design_id</td>
+                    <td class="py-3 px-4 text-slate-300">Comment Thread</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">讀取協同作者在各頁面、元素上留下的審閱批註與修改反饋</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 5: 10 大跨角色實戰範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100">
+              <i data-lucide="sparkles" class="w-5 h-5 text-teal-400"></i>
+              <h2>5. 10 大跨角色實戰範例 (Real-World Prompts)</h2>
+            </div>
+            <span class="text-xs text-slate-400">點擊右上角按鈕即可複製完整指令</span>
+          </div>
+
+          <!-- 範例列表 (1-10) -->
+          <div class="space-y-6">
+
+            <!-- 範例 1: 社群行銷經理 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 01</span>
+                  <span class="text-sm font-bold text-slate-200">社群行銷經理：一鍵將主視覺重適配至 6 大社群平台尺寸並檢視安全區</span>
+                </div>
+                <button onclick="copyCode('prompt-1')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 設計師完成了一款 1200x630 的官網活動橫幅，需在 10 分鐘內產出 IG 正方形貼文、IG 限時動態、YouTube 縮圖、TikTok 影片封面等全部規格。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-1">請調用 `canva-resize-for-social-media` 技能，處理我當前的活動主視覺：
+1. 目標設計 URL / ID：`https://www.canva.com/design/DAG.../view`。
+2. 請根據標準社群規格表，為我批次建立以下平台的自適應版本副本：
+   - Instagram Post (1080 x 1080 px, 1:1)
+   - Instagram Story / Reels (1080 x 1920 px, 9:16)
+   - YouTube Thumbnail (1280 x 720 px, 16:9)
+   - Facebook Cover (820 x 312 px)
+   - LinkedIn Sponsored Content (1200 x 627 px)
+3. 嚴格遵守「安全邊界 (Safe Area)」原則：在 9:16 的直式限動中，請提醒標題文字避開頂部 250px 帳號列與底部 350px 留言按鈕區。
+4. 完成後列出這 5 個新設計的編輯連結 (Edit URLs) 與預覽縮圖。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動呼叫 <code class="text-teal-300">resize-design</code> 建立 5 個獨立規格專案，並列出包含 Safe Area 避讓說明的專屬編輯連結。</p>
+              </div>
+            </div>
+
+            <!-- 範例 2: 電商營運與活動企劃 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 02</span>
+                  <span class="text-sm font-bold text-slate-200">電商營運企劃：透過 CSV 表格批次套印 50 款特惠商品促銷海報</span>
+                </div>
+                <button onclick="copyCode('prompt-2')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 雙 11 大促即將到來，需根據商品管理試算表自動將 50 款特價商品的品名、原價、大促折扣價與商品去背圖套印至官方促銷範本中。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-2">請使用 `canva-bulk-create` 技能為我執行批次海報生成作業：
+1. 品牌範本搜尋：請檢索我 Canva 團隊中的「2026 雙十一主打促銷海報」Brand Template。
+2. 檢查範本結構：讀取該範本的欄位 Schema（確認包含 `product_name`、`original_price`、`sale_price`、`hero_image`）。
+3. 資料來源：讀取我本機資料夾中的檔案 `data/campaign/double11_products.csv`。
+4. 欄位自動對齊：
+   - CSV `商品名稱` -> `product_name`
+   - CSV `原價` -> `original_price`
+   - CSV `特價` -> `sale_price`
+   - CSV `圖片素材ID` -> `hero_image`
+5. 執行生成：請一次產生 50 份專屬商品海報，命名為「雙十一特惠_[商品名稱]」，並將成果儲存至 Canva 資料夾「2026大促促銷物料」中。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動解析 CSV 與範本資料集，透過 <code class="text-teal-300">autofill-design</code> 批次產出 50 份海報並分類歸檔至指定資料夾。</p>
+              </div>
+            </div>
+
+            <!-- 範例 3: 企業品牌識別總監 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 03</span>
+                  <span class="text-sm font-bold text-slate-200">品牌總監：品牌手冊自動稽核 (Brand Check)，抓出脫靶色票與違規字型</span>
+                </div>
+                <button onclick="copyCode('prompt-3')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 外部行銷代操團隊提交了下季度社群懶人包，需審查其是否嚴格遵守公司 Brand Kit 的標準色碼與專屬字型。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-3">請啟用 `canva-brand-check` 技能，對外部繳交的簡報設計進行嚴格品牌合規稽核：
+1. 目標設計 ID：`DAFx8...`。
+2. 品牌工具包：比對我團隊中的「Enterprise Core Brand Kit 2026」。
+3. 執行檢驗維度：
+   - 【色彩色碼】逐頁比對背景、標題文字、圖標色彩是否落在品牌 5 色盤中。若發現非規範色碼（如 `#FF3B30`），請標記該頁碼並推薦最相近的品牌標準色（如 `#E11D48`）。
+   - 【品牌字型】標題應為「Noto Sans TC Bold」，內文應為「Inter Regular」，若出現微軟正黑體或 Arial 請予以警告。
+   - 【Logo 完整性】檢查封面與封底 Logo 是否維持正確長寬比，有無被文字邊界壓迫。
+4. 輸出格式：輸出標準 Markdown 品牌審查表，分類為「合格 (On brand)」、「違規 (Off brand)」與「待確認」。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 透過唯讀交易檢索色彩與字體屬性，精準列出第 3 頁色碼違規與第 5 頁字型不符之具體修正建議報告。</p>
+              </div>
+            </div>
+
+            <!-- 範例 4: 數位產品設計師 (UI/UX) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 04</span>
+                  <span class="text-sm font-bold text-slate-200">UI/UX 設計師：AI 智慧去背、多圖層分離 (Separate Layers) 與素材重構</span>
+                </div>
+                <button onclick="copyCode('prompt-4')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 取得了一張包含產品主機、背景光影與裝飾漂浮物的靜態宣傳圖，需將主機分離去背並獨立分層，以便在 Canva 中進行視差動態排版。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-4">請使用 `canva_canva` 原生 MCP 工具處理專案素材：
+1. 將本機圖片 `assets/raw/gadget_showcase.jpg` 上傳至 Canva 專案資產庫。
+2. 針對該資產調用 `separate-image-layers` 工具，啟動 AI 影像圖層分離任務。
+3. 輪詢檢查任務狀態直至完成，取得分離出的各圖層資產 ID（主體商品、背景漸層、前景微粒）。
+4. 建立一份新的 1920x1080 畫布，依序將「背景」置底、「主體」置於中央並放大 15%、「前景微粒」置頂，並為畫布添加一段現代簡潔的產品標題文字。
+5. 回傳最終畫布的預覽連結。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動執行資產上傳、非同步圖層分離與新畫布排版，將原本平面的 JPG 拆解為立體多層次的編輯檔案。</p>
+              </div>
+            </div>
+
+            <!-- 範例 5: 學校教師與培訓講師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 05</span>
+                  <span class="text-sm font-bold text-slate-200">學校教師：學生完訓結業證書 / 獎狀批次套印與自動匯出 PDF</span>
+                </div>
+                <button onclick="copyCode('prompt-5')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 程式設計工作坊結業，需為 36 位學員產生個人化結業證書，每張需帶有學員姓名、完成專案題目與唯一證書字號。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-5">請使用 `canva-bulk-create` 與 `export-design` 工具：
+1. 讀取我本機的名單檔案 `class_2026_spring_students.csv`（包含姓名、專案名稱、證書編號）。
+2. 使用我的證書範本「2026 AI Agent Workshop Certificate」（ID：`DAG771...`）。
+3. 自動將 CSV 欄位對齊到範本的 `{{Student_Name}}`、`{{Project_Title}}` 與 `{{Cert_ID}}`。
+4. 批次建立完成後，調用 `export-design` 工具，將所有證書合併匯出為一份高畫質「列印專用 PDF (PDF Print, 300 DPI)」。
+5. 將匯出的 PDF 下載並存至本地資料夾 `output/certificates/2026_spring_all.pdf`。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>36 位學生證書在數秒內完成個人化套印，並直接產出即刻可送印刷廠輸出的 300 DPI 向量 PDF 檔案。</p>
+              </div>
+            </div>
+
+            <!-- 範例 6: 跨國行銷翻譯與在地化專員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 06</span>
+                  <span class="text-sm font-bold text-slate-200">行銷在地化：多國語系文案一鍵替換與文字溢位自動排版</span>
+                </div>
+                <button onclick="copyCode('prompt-6')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 英文版 App 發表宣傳圖需發行繁體中文、日文與韓文三種語系版本，各語系文字長度不同需微調字級避免跑版。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-6">請使用 `canva-edit-design` 技能，為英文版海報 `DAG_en_app_launch` 建立 3 語系衍生版本：
+1. 複製原始設計為 3 份副本，分別命名為 `AppLaunch_zh-TW`、`AppLaunch_ja`、`AppLaunch_ko`。
+2. 讀取語系字典 `locales/launch_campaign.json`，精確替換標題與副標文字：
+   - 繁中版標題：「顛覆想像的 AI 智慧助理」，副標：「今日起全面開放下載」。
+   - 日文版標題：「想像を超えるAIアシスタント」，副標：「本日よりダウンロード開始」。
+   - 韓文版標題：「상상을 뛰어넘는 AI 어시스턴트」，副標：「오늘부터 다운로드 가능」。
+3. 檢查文字容器邊界：若日文版文字長度超出邊界，請自動將字級從 48pt 等比縮小至 40pt 並保持水平居中。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動複製副本並依據語系字典寫入文字，同時透過編輯交易機制動態微調文字大小，防止破版。</p>
+              </div>
+            </div>
+
+            <!-- 範例 7: 自由接案設計師與工作室負責人 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 07</span>
+                  <span class="text-sm font-bold text-slate-200">接案設計師：自動讀取客戶審閱評論 (Comments) 並一鍵實裝修改</span>
+                </div>
+                <button onclick="copyCode('prompt-7')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 業主在 Canva 專案中留下了 6 則審閱留言（要求調整按鈕文字、改換指定圖片、加大標題行距），手動切換修改十分費時。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-7">請調用 `canva-implement-feedback` 技能，協助我處理專案回饋：
+1. 目標設計 ID：`DAG_client_pitch_v2`。
+2. 遍歷設計中所有的留言線程 (`list-comments`)，分類並摘要業主的要求：
+   - 具體明確的修改（如「把立即購買改為免費試用」、「第四頁背景換成淡灰色」）。
+   - 需要確認或主觀審美意見（如「這裡感覺有點空」）。
+3. 自動執行所有明確指令的修改，直接更新設計元件屬性。
+4. 在每個已完成修改的留言線程下，使用 `reply-to-comment` 自動回覆：「已為您更新完成，請檢視！」。
+5. 將需要我親自決策的主觀項目列成待辦清單回報給我。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動梳理 Comments 意圖，執行安全編輯交易更新畫布，並在留言串中精準回覆，大幅提升接案溝通效率。</p>
+              </div>
+            </div>
+
+            <!-- 範例 8: 商業開發 (BD) 與業務主管 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 08</span>
+                  <span class="text-sm font-bold text-slate-200">業務主管：客製化企業提案封面與合作意向書視覺自動生成</span>
+                </div>
+                <button onclick="copyCode('prompt-8')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 準備拜訪重點大客戶，需在 5 分鐘內產出一份帶有客戶官方企業識別色、客戶公司 Logo 與專屬提案標題的高質感簡報封面。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-8">請使用 `canva_canva` 協助我為潛在客戶製作客製化提案簡報：
+1. 目標客戶：台積電 (TSMC)。
+2. 從我的 Brand Templates 中挑選「Tech Enterprise Partnership Deck」範本。
+3. 自動將客戶 Logo 圖片（從本機 `assets/clients/tsmc_logo.png` 上傳）置換至簡報首頁合作夥伴欄位。
+4. 替換文字內容：
+   - 主標題：「2026 AI Agent 智慧維運系統導入提案」
+   - 副標題：「為台積電打造次世代半導體產線智慧排程方案」
+   - 提案日期與提案人資訊
+5. 將首頁主視覺的點綴色票調整為客戶標準的科技藍色調，並生成可分享的檢視短網址。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>上傳客戶 Logo、自動套用提案範本並調整配色，生成具備強大專業說服力的專屬商業提案簡報。</p>
+              </div>
+            </div>
+
+            <!-- 範例 9: 大型活動與展會主辦人 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 09</span>
+                  <span class="text-sm font-bold text-slate-200">活動策展人：研討會貴賓識別證 (VIP Badges) 與議程桌牌批次排版</span>
+                </div>
+                <button onclick="copyCode('prompt-9')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 籌備一場 200 人的 AI 開發者論壇，需為所有演講嘉賓與贊助商批次製作 10x14cm 的掛牌名牌，包含大頭照、中文名、英文名、公司職稱與專屬 QR Code。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-9">請使用 `canva-bulk-create` 技能：
+1. 讀取嘉賓名單 `events/ai_summit_2026/speakers.csv`。
+2. 使用掛牌範本「AI Summit 2026 Badge Template (10x14cm)」：
+   - 欄位映射：`{{Name_ZH}}`、`{{Name_EN}}`、`{{Company_Title}}`。
+   - 大頭貼欄位：將 CSV 中對應的頭像網址自動上傳至 Canva 資產庫並綁定至 `avatar_slot`。
+   - 身分別色塊：若 `Role == 'Keynote Speaker'`，將身分標籤色塊自動設定為金色（`#F59E0B`），其餘設為科技藍（`#0EA5E9`）。
+3. 批次產出所有嘉賓名牌，並匯出為具備出血線 (Bleed) 的送印 PDF。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動批次將 200 筆資料與大頭照填入名牌範本，並附帶身分色彩邏輯，產出可直接送印之印刷檔。</p>
+              </div>
+            </div>
+
+            <!-- 範例 10: DevOps / 前端自動化工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-teal-500/20 text-teal-300 border border-teal-500/30">範例 10</span>
+                  <span class="text-sm font-bold text-slate-200">DevOps 工程師：Canva CLI (`canva api`) 串接 GitHub Actions 自動發布宣傳圖</span>
+                </div>
+                <button onclick="copyCode('prompt-10')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-teal-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 每當開源專案發布新的 Git Release Tag，CI/CD 自動將版本號、更新亮點與作者頭像寫入 Canva 宣傳範本，匯出 PNG 並自動貼上推特與 Discord。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-10">請使用 `canva-cli` 技能，為我編寫一份自動化腳本與 GitHub Actions Workflow：
+1. 需求：在軟體版本發布時（如 `v2.4.0`），自動調用 `canva api` 命令列：
+   - 讀取 Release Notes Markdown，萃取前 3 大亮點。
+   - 使用 `canva api autofill-design` 將版本號與亮點填入發行範本 `DAF_release_card`。
+   - 調用 `canva api export-design --format png --quality 100` 匯出。
+   - 處理非同步匯出工作，使用指數退避重試輪詢至狀態為 `success`。
+   - 下載生成的宣傳圖至 `dist/release_announcement.png`。
+2. 請輸出完整的 Node.js / Bash 整合腳本與安全存放 Canva Token 的 GitHub Secrets 配置指引。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>產出乾淨、具備非同步 Job 輪詢容錯機制的 CI/CD 腳本，實現版本發布與視覺行銷宣傳圖的 100% 自動化連動。</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 6: 視覺設計與防呆守則 -->
+        <section id="best-practices" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-teal-400"></i>
+            <h2>6. 視覺設計與防呆四大守則</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-teal-300">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+                <span>守則一：社群縮放務必保留安全邊界 (Safe Area)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                在 9:16（IG Reels, TikTok, YouTube Shorts）直式內容中，頂部 250px 通常會被平台頂部狀態欄遮擋，底部 350px 則會被作者頭像、文案與互動按鈕覆蓋。關鍵標題與核心主體必須保持在垂直居中的 1080x1320px 安全區域內。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-purple-300">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span>守則二：唯讀交易機制 (Read-only Transaction)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                在執行品牌規範檢查（Brand Check）時，Antigravity 嚴格採用「啟動交易 -> 檢驗元素 -> 取消交易 (Cancel Transaction)」的防禦流程，絕不意外觸發自動儲存或污染使用者的原始設計。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-blue-300">
+                <i data-lucide="type" class="w-4 h-4"></i>
+                <span>守則三：多語系文字長度預留防破版</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                英文字串翻譯為德語時通常字元增加 30%，翻譯為中文或日文時字元縮短但字高增加。批次套印或多語系替換時，應預先設定「等比縮小文字以符合文字框 (Shrink text on overflow)」。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-amber-300">
+                <i data-lucide="hourglass" class="w-4 h-4"></i>
+                <span>守則四：非同步工作 (Async Job) 指數退避輪詢</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                去背、圖層分離與高解析 PDF 匯出均為伺服器端耗時任務，回傳狀態為 <code class="text-amber-200">in_progress</code>。自動化程式不得進行高頻無間隙輪詢，應遵循指數退避原則，避免觸發 API 頻率限制。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 7: 安裝與 Canva Connect 授權 -->
+        <section id="setup" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-teal-400"></i>
+            <h2>7. 安裝與 Canva Connect 授權設定</h2>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            Canva 外掛整合支援標準 OAuth 2.0 授權登入與 Canva CLI 本機指令工具。
+          </p>
+
+          <div class="space-y-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs">1</span>
+                安裝 Canva Marketplace 外掛套件
+              </div>
+              <p class="text-xs text-slate-400">在 Antigravity 對話框中輸入安裝指令：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-teal-300 font-mono">/plugin install antigravity-plugins-partners/plugin/canva</pre>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs">2</span>
+                OAuth 2.0 連線與權限授權
+              </div>
+              <p class="text-xs text-slate-400">首次調用任一 Canva 工具時，Antigravity 會引導開啟授權卡片，點選授權後在瀏覽器中登入 Canva 帳號並允許存取設計、品牌工具包與資產庫。</p>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center text-xs">3</span>
+                安裝 Canva CLI 工具（適用於本機自動化與 CI/CD）
+              </div>
+              <p class="text-xs text-slate-400">如需透過終端機執行自動化管線，可在系統中全域安裝 Canva 官方 CLI：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-slate-200 font-mono">npm install -g @canva/cli@latest
+canva login</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 8: 常見問題與除錯指南 -->
+        <section id="faq" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="help-circle" class="w-5 h-5 text-teal-400"></i>
+            <h2>8. 常見問題與除錯指南 (FAQ)</h2>
+          </div>
+          <div class="space-y-3 text-xs">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q1: 執行時出現「Missing scopes: [brandkit:read]」或權限不足錯誤？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                這是因為 Canva 最近新增了進階範圍權限。請在 Antigravity 外掛管理員中，將 Canva 連線先「中斷連線 (Disconnect)」並「重新連線 (Reconnect)」，在彈出的權限勾選頁中確認勾選「存取品牌工具包 (Brand Kits)」與「設計讀寫」即可解決。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q2: 批次大量套印 (Bulk Create) 時，如何處理圖片欄位？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                Canva 的範本圖片欄位需要有效的 Canva 資產 ID（`asset_id`）。如果您的 CSV 中是本機檔案路徑或公開圖片 URL，Antigravity 會先透過 <code class="text-teal-300">upload-asset-from-url</code> 工具將圖片非同步上傳至 Canva 資產庫取得 ID，再自動填入範本對應位置。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q3: 為什麼 Brand Check 有時無法直接讀取色碼 Hex 數值？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                部分 Canva API 端點僅暴露縮圖與元件位置。此時技能會自動切換為「高精度視覺縮圖交叉比對 (Visual Thumbnail Check)」，並主動詢問使用者貼上品牌專屬色票 Hex，達到雙重驗證而不憑空瞎猜。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q4: 匯出高解析度列印 PDF 時工作卡住或等太久？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                頁數超過 50 頁或含有多張 4K 點陣圖的設計匯出可能需要 30-60 秒。Antigravity 內建工作 ID 追蹤，若未即時完成會返回 Job ID，您隨時可以要求「檢查剛剛的匯出進度」接續取得下載連結。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告與系列導航 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-teal-500/20 text-teal-400 flex items-center justify-center">
+            <i data-lucide="palette" class="w-4 h-4"></i>
+          </div>
+          <span class="text-slate-300 font-semibold">Antigravity Tools Hub · 創意設計與視覺自動化系列</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">首頁總覽</a>
+          <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
+          <a href="google-sheets.html" class="hover:text-white transition-colors">Sheets (10 CSVs)</a>
+          <a href="gmail-calendar.html" class="hover:text-white transition-colors">Gmail & Calendar</a>
+          <a href="google-slides.html" class="hover:text-white transition-colors">Slides</a>
+          <a href="google-notebooklm.html" class="hover:text-white transition-colors">NotebookLM</a>
+          <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
+          <a href="google-cloud-gemini.html" class="hover:text-white transition-colors">Cloud & Gemini</a>
+          <a href="canva.html" class="text-teal-400 font-semibold">Canva AI</a>
+          <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>本專案非 Canva 官方產品，商標權屬 Canva Pty Ltd 所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕腳本與 Lucide 初始化 -->
+  <script>
+    lucide.createIcons();
+
+    function copyCode(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = event.currentTarget;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-bold">已複製！</span>`;
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          lucide.createIcons();
+        }, 2000);
+      }).catch(err => {
+        console.error('複製失敗:', err);
+      });
+    }
+  </script>
+</body>
+</html>

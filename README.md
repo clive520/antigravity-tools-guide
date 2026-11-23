@@ -8,9 +8,9 @@
 
 ## 📖 專案簡介
 
-本專案收錄並整理 Antigravity 2.0 擴充套件市場（Marketplace）中官方與合作夥伴提供的關鍵工具使用指南，旨在幫助開發者、教育工作者、數據分析師與各領域專業人士充分發揮 AI Agent 的自動化、雲端協作與工程實戰能力。
+本專案收錄並整理 Antigravity 2.0 擴充套件市場（Marketplace）中官方與合作夥伴提供的關鍵工具使用指南，旨在幫助開發者、教育工作者、設計師、數據分析師與各領域專業人士充分發揮 AI Agent 的自動化、雲端協作與視覺生產力。
 
-目前已全面完成收錄 **Google 家族（Google Family）全系列核心服務**，共計 8 大專題頁面與 80 組以上跨角色實戰 Prompt。
+目前已全面完成收錄 **Google 家族（Google Family）全系列核心服務** 與 **Canva AI 視覺設計旗艦生態**，共計 9 大專題頁面與 90 組以上跨角色實戰 Prompt。
 
 ---
 
@@ -60,13 +60,18 @@
 - **核心能力**：Gemini 2.0 Flash / 1.5 Pro 百萬 Token 多模態上下文 API、Cloud Run 容器無伺服器藍綠部署、BigQuery TB 級資料庫 Dry-Run 優化查詢與 FinOps 成本資安防線。
 - **10 大跨角色實戰範例**：涵蓋全端 AI 工程師、雲端 SRE 維運工程師、企業數據分析師、FinOps 審計師、資安架構師、資料管線工程師等。
 
+### 10. Canva AI 視覺設計與行銷自動化 (`canva.html`) · 設計生態旗艦
+- **官方生態整合**：`canva_canva` 原生 MCP 伺服器、7 大專屬 Skills 與 Canva CLI (`canva api`)。
+- **核心能力**：CSV/JSON 表格批次套印大量海報 (Bulk Create)、社群全通路尺寸重構 (Smart Resize)、AI 前景去背與多圖層分離 (Separate Layers)、品牌規範自動核查 (Brand Checker) 與協同審閱評論自動實裝修改。
+- **10 大跨角色實戰範例**：涵蓋社群行銷經理、電商營運企劃、品牌識別總監、UI/UX 設計師、學校培訓教師、多語在地化專員、自由接案設計師、活動策展人、DevOps 自動化工程師等。
+
 ---
 
 ## 📁 檔案結構
 
 ```tree
 antigravity-tools-guide/
-├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 8 大專題)
+├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 9 大專題)
 ├── chrome-devtools.html         # Chrome DevTools MCP 詳細教學指南
 ├── google-drive-docs.html       # Google Drive & Docs 完整使用指南
 ├── google-sheets.html           # Google Sheets 試算表與數據分析指南
@@ -75,6 +80,7 @@ antigravity-tools-guide/
 ├── google-notebooklm.html       # Google NotebookLM 深度研究與播客生成指南
 ├── firebase.html                # Firebase 全端後端與 Security Rules 指南
 ├── google-cloud-gemini.html     # Google Cloud & Gemini Developer 旗艦指南
+├── canva.html                   # Canva AI 視覺設計與行銷自動化指南
 ├── data/
 │   └── sheets/                  # 10 組情境擬真 UTF-8 BOM 練習用 CSV 資料檔
 ├── .nojekyll                    # 確保 GitHub Pages 靜態檔案正常運作
