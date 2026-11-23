@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmail & Google Calendar 擴充功能完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fef2f2',
+              100: '#fee2e2',
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c',
+              900: '#7f1d1d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[600px] h-[400px] bg-gradient-to-tr from-rose-600/15 to-amber-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[500px] h-[500px] bg-blue-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-full h-full text-rose-500">
+              <path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Gmail & Calendar 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">3. 核心 MCP 工具 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#auth-setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">5. 安裝與權限安全教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">6. 常見問題與除錯 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-rose-950/40 to-slate-900 border border-rose-900/30 text-xs">
+            <div class="flex items-center gap-2 text-rose-400 font-bold mb-1">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Google 家族第三棒</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              個人 AI 代理秘書的終極核心！自動過濾未讀要事、起草得體信件、比對跨時區空檔並自動發出 Google Meet 邀約。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow min-w-0 space-y-12">
+
+        <!-- 標頭英雄區 -->
+        <div id="overview" class="doc-section">
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-950 text-rose-400 border border-rose-800">
+              <span class="w-2 h-2 rounded-full bg-rose-400"></span> Google 官方原生擴充套件
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-slate-400 border border-slate-800">
+              Workspace Ecosystem
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-amber-300 border border-slate-800">
+              雙外掛合壁：gmail + gcalendar
+            </span>
+          </div>
+
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center p-3 shadow-xl shrink-0">
+              <div class="relative w-full h-full flex items-center justify-center">
+                <!-- Gmail 郵件圖示 -->
+                <svg viewBox="0 0 24 24" class="w-7 h-7 text-rose-500 absolute -top-1 -left-1">
+                  <path fill="currentColor" d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                </svg>
+                <!-- Calendar 日曆圖示 -->
+                <svg viewBox="0 0 24 24" class="w-6 h-6 text-blue-400 absolute -bottom-1 -right-1">
+                  <path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/>
+                </svg>
+              </div>
+            </div>
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Gmail & Google Calendar</h1>
+              <p class="text-slate-400 text-sm mt-1">開發者：<span class="text-slate-200 font-medium">Google Workspace Official</span></p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-sm text-slate-300 leading-relaxed font-mono">
+            "Search, read, draft, and send emails in Gmail; check availability, schedule events, and RSVP automatically in Google Calendar."
+          </div>
+          <p class="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+            在現代高強度工作環境下，信件過載與會議撞期是最大的時間殺手。**Gmail & Google Calendar 雙外掛**讓 Antigravity 的 AI 真正化身為您的「個人執行秘書」：自動在晨間摘要未讀關鍵信件、為客戶量身起草得體回函、秒查日曆空檔、防撞期排程，並自動生成 Google Meet 視訊會議邀請。
+          </p>
+        </div>
+
+        <!-- 區塊 2：這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="layers" class="w-6 h-6 text-rose-400"></i>
+              <span>2. 這個功能能做什麼？（核心秘書能力架構）</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-rose-950 flex items-center justify-center text-rose-400 mb-3 border border-rose-800/60">
+                <i data-lucide="mail-search" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">未讀郵件深度摘要與優先級標記</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                自動在數百封收件匣中過濾出重要寄件人（如主管、重點客戶、學校校長），條列出需要今天回覆的「行動清單」，過濾廣告垃圾信。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-amber-950 flex items-center justify-center text-amber-400 mb-3 border border-amber-800/60">
+                <i data-lucide="pen-tool" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">智慧起草回信與草稿匣暫存</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                依據您指定的語調（商務正式、親切得體或簡潔明瞭）自動起草專業回信，預設存入 Gmail 草稿匣供您確認，絕不擅自發送。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-blue-950 flex items-center justify-center text-blue-400 mb-3 border border-blue-800/60">
+                <i data-lucide="calendar-check" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">智慧空檔查詢與跨時區防撞期排程</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                自動比對雙方或多人行事曆中的 Free/Busy 狀態，自動計算跨時區（如台北與舊金山）的合理會面時段，避開用餐與休假時間。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-emerald-950 flex items-center justify-center text-emerald-400 mb-3 border border-emerald-800/60">
+                <i data-lucide="video" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">自動建立會議與附加 Google Meet</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                一鍵在日曆中建立包含會議主題、議程說明、提醒通知與 Google Meet 視訊連結的日程活動，並將邀請函發給所有參與者。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-purple-950 flex items-center justify-center text-purple-400 mb-3 border border-purple-800/60">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">每日晨間日程早報與行程提醒</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                每天上班前向 AI 問一句：「今天有什麼行程？」，AI 自動彙整今天的所有會議時間、地點或視訊連結，並附帶事前準備事項。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-teal-950 flex items-center justify-center text-teal-400 mb-3 border border-teal-800/60">
+                <i data-lucide="receipt" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">信件附件機票/帳單自動登錄日曆</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                自動解析高鐵/航空公司訂位確認信、信用卡結帳繳費日，將航班起飛時間或信用卡繳費期限自動登錄至行事曆並設定鬧鈴通知。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 3：核心 MCP 工具 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="wrench" class="w-6 h-6 text-rose-400"></i>
+              <span>3. 核心 MCP 工具 API 對照表</span>
+            </h2>
+            <p class="text-slate-400 text-xs mt-1">Gmail & Calendar 官方擴充套件向 Antigravity 註冊的底層微型工具：</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 bg-slate-900/50">
+                  <th class="py-2.5 px-3 font-semibold">所屬外掛</th>
+                  <th class="py-2.5 px-3 font-semibold">底層 MCP 工具名稱</th>
+                  <th class="py-2.5 px-3 font-semibold">功能作用與說明</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr>
+                  <td class="py-2.5 px-3 text-rose-400 font-sans font-medium">Gmail</td>
+                  <td class="py-2.5 px-3 text-slate-200">gmail_search</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">搜尋郵件，支援寄件者 `from:`、主旨 `subject:`、標籤 `label:unread` 等語法</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-rose-400 font-sans font-medium">Gmail</td>
+                  <td class="py-2.5 px-3 text-slate-200">gmail_read</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">讀取指定信件 messageId 的完整標頭、發信時間、內文與附件名稱</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-rose-400 font-sans font-medium">Gmail</td>
+                  <td class="py-2.5 px-3 text-slate-200">gmail_draft</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">建立新信件草稿或回覆特定對話串草稿（存入草稿匣，安全無風險）</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-rose-400 font-sans font-medium">Gmail</td>
+                  <td class="py-2.5 px-3 text-slate-200">gmail_send</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">經使用者明確同意後，直接將信件正式送出給收件人</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-blue-400 font-sans font-medium">Google Calendar</td>
+                  <td class="py-2.5 px-3 text-slate-200">gcalendar_check_availability</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">查詢指定日期區間的行事曆閒忙狀態（Free/Busy），自動找尋空檔</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-blue-400 font-sans font-medium">Google Calendar</td>
+                  <td class="py-2.5 px-3 text-slate-200">gcalendar_list_events</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">列出指定日或本週的行事曆事件、起訖時間、地點與出席名單</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-blue-400 font-sans font-medium">Google Calendar</td>
+                  <td class="py-2.5 px-3 text-slate-200">gcalendar_create_event</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">新增行程事件，支援自動附加 Google Meet 視訊會議與提醒通知</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-blue-400 font-sans font-medium">Google Calendar</td>
+                  <td class="py-2.5 px-3 text-slate-200">gcalendar_rsvp</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">自動回覆其他會議主辦人的邀請狀態（接受 / 婉拒 / 不確定）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 區塊 4：10 大跨角色實戰應用範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-6 h-6 text-rose-400"></i>
+                <span>4. 我該如何使用？（10 大跨角色實戰 Prompt Playbook）</span>
+              </h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-950 text-rose-400 border border-rose-800">
+                個人 AI 秘書即時上工
+              </span>
+            </div>
+            <p class="text-slate-400 text-xs mt-1">從高階主管晨間早報、跨國業務找時段、老師約家長到工程師審 PR 會議，直接複製提示詞體驗秘書級服務：</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5">
+
+            <!-- 範例 1：高階主管特助 / 秘書 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-rose-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-rose-950 text-rose-400 text-xs font-semibold border border-rose-800">
+                    範例 01 · 總裁特助 / 執行秘書
+                  </span>
+                  <h4 class="text-white font-bold text-sm">晨間未讀要事篩選、重要信件彙總與當日動線早報</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gmail_search, gcalendar_list_events
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>每天早上信箱被上百封系統通知灌爆，需在 8:30 晨會前 5 分鐘為主管快速摘要今天必須回信的要事與全天會議動線。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-rose-300 leading-relaxed mb-2">
+                &gt; 「早安！請幫我做兩件事：1. 查詢我今天 Google Calendar 的所有行程，依時間軸列出會議主題、與會人員及 Google Meet 連結；2. 搜尋我 Gmail 過去 24 小時內的未讀郵件，過濾掉所有系統廣告與自動通知，摘要出三封來自董事會與重點客戶的信件重點，並列出我今天必須決策的行動清單。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>省去每天早上翻找信箱半小時的焦慮，30 秒掌握全天工作節奏。</span>
+              </div>
+            </div>
+
+            <!-- 範例 2：跨國商務開發 / 業務總監 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-blue-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-blue-950 text-blue-400 text-xs font-semibold border border-blue-800">
+                    範例 02 · 跨國商務開發 (BD) / 業務總監
+                  </span>
+                  <h4 class="text-white font-bold text-sm">跨美西/台北時區會議空檔自動媒合與發送 Google Meet 邀約</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gcalendar_check_availability, gmail_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>客戶位於舊金山（美西時間 PST，慢台北 16 小時），需要在不撞期且符合雙方正常上班時段的前提下提供 3 個可選會議時間。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-blue-300 leading-relaxed mb-2">
+                &gt; 「查詢我下週二到下週四的日曆空檔，考慮舊金山時區（美西時間早上 9:00~11:00，對應台北時間隔天凌晨 01:00，或舊金山下午 16:00~18:00，對應台北早上 08:00~10:00），找出 3 個雙方皆適合的 45 分鐘會議空檔。並在 Gmail 起草一封給客戶 Alex (alex@siliconval.com) 的商務英文信件，詢問對方哪一個時段方便，附上自動預約 Google Meet 的說明。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>告別來回 5 封信件對時差的繁瑣溝通，專業形象滿分。</span>
+              </div>
+            </div>
+
+            <!-- 範例 3：專案經理 / Scrum Master -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                    範例 03 · 專案經理 / 產品經理 (PM)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">跨部門專案里程碑 Review 會議排程與事前議程說明信發送</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gcalendar_create_event, gmail_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>產品即將進入 Beta 測試，需召集研發組長、設計負責人與行銷主管進行 1 小時關鍵里程碑審查會議。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                &gt; 「幫我在下週三下午 14:00~15:00 建立一個日曆活動：『2026 Q1 新版 App 里程碑 Review 會議』。加入 Google Meet 視訊，邀請參與者：tech_lead@company.com, design_lead@company.com, marketing_head@company.com。會議描述列出三大討論議程：1. 架構穩定度壓力測試；2. 視覺 UI 走查；3. 上線行銷排程。並在 Gmail 為這三位主管起草一封行前暖身提醒信。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>會議建立、視訊連結生成與行前信件起草一氣呵成。</span>
+              </div>
+            </div>
+
+            <!-- 範例 4：學校教師與班級導師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-emerald-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-emerald-950 text-emerald-400 text-xs font-semibold border border-emerald-800">
+                    範例 04 · 學校教師 / 班級導師
+                  </span>
+                  <h4 class="text-white font-bold text-sm">個別家長親師座談預約、時段排程與溫暖家書起草</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gcalendar_check_availability, gmail_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>段考後需與兩位需要學習關懷的學生家長進行線上親師懇談，需避開上課堂數並起草親切得體的通知信。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-emerald-300 leading-relaxed mb-2">
+                &gt; 「檢查我這週四與週五下午沒有課堂的日曆時段，挑出兩個 30 分鐘的空檔。幫我寫一封溫暖親切的信件草稿給學生小宇的媽媽（家長信箱：parent_yu@gmail.com），先肯定孩子最近在美勞課的積極表現，並委婉說明希望利用線上 Google Meet 與家長交流孩子在數學學習上的調整策略，詢問家長週四下午 15:30 是否方便。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>建立良好的親師溝通橋樑，語氣得體不生硬，並精確避開上課時段。</span>
+              </div>
+            </div>
+
+            <!-- 範例 5：人資招募與人才專員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-purple-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-purple-950 text-purple-400 text-xs font-semibold border border-purple-800">
+                    範例 05 · 人資招募 (HR) / Talent Acquisition
+                  </span>
+                  <h4 class="text-white font-bold text-sm">技術候選人面試排程、多面試官空檔交集與面試通知信</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gcalendar_check_availability, gcalendar_create_event, gmail_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要安排前端資深工程師候選人的二面，需同時協調技術主管與架構師兩位忙碌主管的共同空檔。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-purple-300 leading-relaxed mb-2">
+                &gt; 「查詢技術主管 (tech_lead@corp.com) 與架構師 (arch@corp.com) 下週一到週三共同空檔，安排一場 60 分鐘的『前端資深工程師技術面試：林冠宇』。在行事曆建立事件並產生 Google Meet，接著在 Gmail 為候選人 (candidate_lin@gmail.com) 起草面試邀請函，包含面試時間、面試官職稱、線上會議連結與需要準備的作品集說明。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>多方時間媒合自動化，候選人體驗極佳。</span>
+              </div>
+            </div>
+
+            <!-- 範例 6：技術支援與客服主管 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-rose-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-rose-950 text-rose-400 text-xs font-semibold border border-rose-800">
+                    範例 06 · 客服主管 / 技術支援 (CS)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">客訴郵件緊急程度自動分類、高風險案件回信與轉派</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gmail_search, gmail_read, gmail_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>客戶寄信回報「線上支付扣款失敗但訂單未成立」，若不及時安撫處理容易引發消保投訴。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-rose-300 leading-relaxed mb-2">
+                &gt; 「搜尋今天收件匣內包含『扣款』、『失敗』或『退款』關鍵字的未讀信件，讀取最新一封來自客戶的投訴內容。請以誠懇且專業的態度，在 Gmail 起草一封安撫致歉信草稿，告知我們已將該交易單號轉交財務組緊急核對，保證會在 2 小時內主動電話聯繫，絕不影響客戶權益。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>公關危機第一時間降溫，避免客戶因等待引發焦慮投訴。</span>
+              </div>
+            </div>
+
+            <!-- 範例 7：自由接案者與專家顧問 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-teal-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-teal-950 text-teal-400 text-xs font-semibold border border-teal-800">
+                    範例 07 · 自由工作者 / 顧問專家
+                  </span>
+                  <h4 class="text-white font-bold text-sm">諮詢時段確認、行事曆防呆鎖定與行前準備清單發送</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gcalendar_create_event, gmail_draft
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>客戶剛匯入一小時 1對1 AI 顧問諮詢費用，需將時段鎖定在日曆上，並寄送行前調研表單。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-teal-300 leading-relaxed mb-2">
+                &gt; 「在明天下午 15:00~16:00 為客戶建立日曆活動：『AI 工作流落地諮詢：王總經理』，開啟 Google Meet 並設定會議前 15 分鐘彈出提醒。接著在 Gmail 起草回信給客戶 (ceo_wang@enterprise.tw)，確認已收到諮詢款項，附上視訊連結與一份包含 3 個問題的行前現況調研清單，以便會議當天直搗痛點。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>展現頂級專業顧問流程，提升諮詢滿意度與續約率。</span>
+              </div>
+            </div>
+
+            <!-- 範例 8：活動主辦人與社群經理 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-indigo-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-indigo-950 text-indigo-400 text-xs font-semibold border border-indigo-800">
+                    範例 08 · 活動策展人 / 社群主辦
+                  </span>
+                  <h4 class="text-white font-bold text-sm">年會主題演講者 (Speaker) 邀請、時程確認與彩排提醒</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gmail_draft, gcalendar_create_event
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>籌辦年度科技研討會，需正式邀請業界權威擔任 Keynote 講者，並預先將彩排與演講日程排入行事曆。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-indigo-300 leading-relaxed mb-2">
+                &gt; 「為我起草一封正式的邀請信給李教授 (professor_lee@univ.edu.tw)，邀請他於 12 月 18 日上午擔任『2026 AI Agent高峰論壇』的 Keynote 演講嘉賓，分享時長 40 分鐘，信中提及主辦方將提供演講鐘點費與專車接送。同時在我的行事曆上先將該時段保留為『[預留] 李教授Keynote演講』避免撞期。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>策展時程精確掌控，邀請函格式隆重得體。</span>
+              </div>
+            </div>
+
+            <!-- 範例 9：學術研究生與實驗室助理 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-cyan-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-cyan-950 text-cyan-400 text-xs font-semibold border border-cyan-800">
+                    範例 09 · 研究生 / 實驗室助理
+                  </span>
+                  <h4 class="text-white font-bold text-sm">國際頂會審稿錄取結果追蹤、每週 Lab Meeting 自動排定</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gmail_search, gmail_read, gcalendar_create_event
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>在等候國際頂會（如 CVPR/NeurIPS）的論文接收通知信，並需依據通知排定與指導教授討論 Camera-Ready 的時間。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-cyan-300 leading-relaxed mb-2">
+                &gt; 「搜尋我 Gmail 裡來自『OpenReview』或主旨包含『Decision / Notification』的郵件，讀取內容確認我們的論文是否有被錄取。若收到錄取通知，自動在我下週一上午挑一個 1 小時空檔建立『與指導教授討論論文修改與註冊費用』的行事曆事件，並草擬一封報喜與討論時段的信件給指導教授。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>即時捕捉學術重大通知，下一步行動即時無縫接軌。</span>
+              </div>
+            </div>
+
+            <!-- 範例 10：個人生活效率追求者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-slate-600 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                    範例 10 · 個人生活管理 / 效率達人
+                  </span>
+                  <h4 class="text-white font-bold text-sm">電子帳單繳費期限防呆入曆與高鐵/機票訂位行程自動化</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gmail_search, gmail_read, gcalendar_create_event
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>每個月收到水電瓦斯、電信費與信用卡電子帳單，常因為忙碌忘記繳款產生滯納金；或訂了高鐵票忘記發車時間。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-200 leading-relaxed mb-2">
+                &gt; 「搜尋我最近一週內來自銀行與高鐵的信件：1. 讀取信用卡電子帳單，抓出『本期應繳金額』與『最後繳費期限』，在行事曆該截止日前兩天建立提醒事件『繳交信用卡費』；2. 讀取台灣高鐵訂票確認信，將乘車日期、車次編號與發車時間自動登錄到日曆，並設定發車前 1 小時通知。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>生活瑣事自動化，再也不必擔心繳費逾期被罰款或錯過高鐵列車。</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5：安裝與權限安全教學 -->
+        <section id="auth-setup" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="shield-alert" class="w-6 h-6 text-rose-400"></i>
+              <span>5. 如何在 Antigravity 中啟用與安全防護機制？</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-rose-400 font-bold text-sm mb-1">1. 安全第一：預設草稿模式</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Antigravity 預設採用「建立草稿（Draft）」策略。AI 撰寫完成的信件只會暫存在您的 Gmail 草稿匣，必須經由您人工二次過目確認或明確下達「送出」，絕不擅自誤發。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-rose-400 font-bold text-sm mb-1">2. 雙重 OAuth 2.0 授權</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                在左側邊欄搜尋安裝 <code class="text-slate-200">Gmail</code> 與 <code class="text-slate-200">Google Calendar</code>，授權連線走 Google 官方最高標準加密協議，Token 僅儲存於本地安全目錄。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-rose-400 font-bold text-sm mb-1">3. 人性化日曆保護</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                建立任何日曆活動前，AI 會自動檢查是否與既有「已接受」事件發生衝突。若有衝突會主動回報並詢問是否覆蓋或更換空檔。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6：常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-6 h-6 text-rose-400"></i>
+              <span>6. 常見問題與除錯 (FAQ)</span>
+            </h2>
+          </div>
+
+          <div class="space-y-3">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q1：AI 會不小心把私人信件或機密內容發送給其他人嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                不會。擴充套件的設計原則是「草稿優先（Draft First）」。除非您在對話中特別發出具體指令（例如：「確認這封信內容無誤，請立刻送出給對方」），否則 AI 只會呼叫 <code class="text-rose-300 font-mono">gmail_draft</code> 將信件存入草稿，由您隨時可登入 Gmail 進行最終檢查。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q2：它可以一次搜尋或讀取特定寄件者的歷史往來信件嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                可以！<code class="text-rose-300 font-mono">gmail_search</code> 完全相容 Google 的進階搜尋運算子，例如 <code class="text-slate-300 font-mono">from:boss@corp.com after:2026/11/01 has:attachment</code>，AI 會精確抓出符合條件的所有信件與附件。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q3：它可以和 Google Docs 或 Google Sheets 連動嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                這是 Google 家族最強大的綜效！例如：「讀取昨天會議記錄的 Google Docs，提取其中的待辦行動清單，將截稿日寫入 Google Calendar，並寄發一封任務指派草稿給團隊成員」，一個提示詞即可串聯三個工具！
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="font-semibold text-slate-300 hover:text-white transition-colors">Antigravity Tools Hub</a>
+        <span>• Gmail & Google Calendar 官方指南</span>
+      </div>
+      <div>
+        <span>本專案支援 GitHub Pages 即時瀏覽</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
