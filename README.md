@@ -10,15 +10,15 @@
 
 本專案收錄並整理 Antigravity 2.0 擴充套件市場（Marketplace）中官方與合作夥伴提供的關鍵工具使用指南，旨在幫助開發者、教育工作者、設計師、數據分析師與各領域專業人士充分發揮 AI Agent 的自動化、雲端協作與視覺生產力。
 
-目前已全面完成收錄 **Google 家族（Google Family）全系列核心服務** 與 **Canva AI 視覺設計旗艦生態**，共計 9 大專題頁面與 90 組以上跨角色實戰 Prompt。
+目前已全面完成收錄 **Chrome DevTools**、**Google 家族（Google Family）全系列核心服務**、**Canva AI 視覺設計旗艦生態**，以及**開發者自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）**，共計 14 大專題頁面與 140 組以上跨角色實戰 Prompt。
 
 ---
 
 ## 🌟 收錄專題與指南矩陣
 
 ### 1. 核心首頁與導航 (`index.html`)
-- **模組化高擴充性字卡網格（Card Grid）**：支援即時關鍵字模糊搜尋、多類別標籤過濾（全部、Google 家族、除錯與效能、瀏覽器與自動化、創意設計與簡報）。
-- **完整導覽連結**：一鍵直達各工具專屬手冊，並具備優雅的暗黑毛玻璃（Dark Tech Glassmorphism）現代科技美學。
+- **模組化高擴充性字卡網格（Card Grid）**：支援即時關鍵字模糊搜尋、多類別標籤過濾（全部、辦公協作與知識庫、後端與除錯、自動化與 CLI、創意設計與視覺）。
+- **完整導覽連結**：一鍵直達 14 大工具專屬手冊，並具備優雅的暗黑毛玻璃（Dark Tech Glassmorphism）現代科技美學。
 
 ### 2. Chrome DevTools MCP (`chrome-devtools.html`)
 - **官方維護版本**：由 Chrome DevTools 官方團隊維護的 MCP 擴充套件完整解析（v1.10.1）。
@@ -65,13 +65,38 @@
 - **核心能力**：CSV/JSON 表格批次套印大量海報 (Bulk Create)、社群全通路尺寸重構 (Smart Resize)、AI 前景去背與多圖層分離 (Separate Layers)、品牌規範自動核查 (Brand Checker) 與協同審閱評論自動實裝修改。
 - **10 大跨角色實戰範例**：涵蓋社群行銷經理、電商營運企劃、品牌識別總監、UI/UX 設計師、學校培訓教師、多語在地化專員、自由接案設計師、活動策展人、DevOps 自動化工程師等。
 
+### 11. GitHub CLI (`github-cli.html`) · 自動化第一棒
+- **開發者版本控制神器**：`gh` 官方 CLI 工具。
+- **核心能力**：規格化自動發起 Pull Request、指派分類 Issue、即時監看 GitHub Actions CI/CD 工作流日誌、跨分支發行版打包（GitHub Release）與 GraphQL API 深度查詢。
+- **10 大跨角色實戰範例**：涵蓋開源維護者、DevOps 工程師、後端核心團隊、前端主管、Release Manager、安全合規員等。
+
+### 12. Figma (`figma.html`) · 創意設計第二棒
+- **設計與前端工程橋樑**：`figma` 官方外掛與 Code Connect。
+- **核心能力**：直接解析 Figma 圖層節點樹 (Node Tree)、擷取色彩字級與間距 Design Tokens、生成 React/Tailwind 元件代碼、批次匯出乾淨向量 SVG 圖標與設計規範稽核。
+- **10 大跨角色實戰範例**：涵蓋 UI/UX 設計主管、前端系統架構師、設計工程師 (Design Engineer)、無障礙驗證專員、全端工程師等。
+
+### 13. Notion (`notion.html`) · 協作知識庫第三棒
+- **模組化知識庫與看板中樞**：Notion API & 官方生態 MCP。
+- **核心能力**：結構化 Database 屬性過濾與關聯查詢、跨專案 Sprint 看板連動、富文本區塊 (Blocks) 智慧排版、會議逐字稿轉結構化行動清單。
+- **10 大跨角色實戰範例**：涵蓋敏捷 Scrum Master、技術文件架構師、營運長特助、產品負責人 (PO)、人資入職負責人等。
+
+### 14. n8n 工作流自動化 (`n8n.html`) · 自動化串接第四棒
+- **開源自託管工作流引擎**：`n8n-skills` MCP。
+- **核心能力**：多節點自動化工作流 JSON 分析與生成、Webhook 雙向即時觸發器、跨系統節點排錯與失敗補償機制、無代碼串接 CRM、Slack/Discord 與資料庫。
+- **10 大跨角色實戰範例**：涵蓋自動化架構師、電商營運主管、社群小編自動發文、客服維運工程師、財務報表自動化專家等。
+
+### 15. Supabase (`supabase.html`) · 雲端後端第五棒
+- **開源 Firebase 首選替代**：`supabase` 官方外掛與 Postgres MCP。
+- **核心能力**：PostgreSQL 表結構 DDL 與高階索引自動生成、精密 Row Level Security (RLS) 權限防禦政策、TypeScript 類型定義自動產生與 Edge Functions 邊緣運算邏輯。
+- **10 大跨角色實戰範例**：涵蓋後端資料庫架構師、SaaS 創辦人、資安長、全端 TypeScript 開發者、Mobile 後端工程師等。
+
 ---
 
 ## 📁 檔案結構
 
 ```tree
 antigravity-tools-guide/
-├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 9 大專題)
+├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 14 大旗艦專題)
 ├── chrome-devtools.html         # Chrome DevTools MCP 詳細教學指南
 ├── google-drive-docs.html       # Google Drive & Docs 完整使用指南
 ├── google-sheets.html           # Google Sheets 試算表與數據分析指南
@@ -81,6 +106,11 @@ antigravity-tools-guide/
 ├── firebase.html                # Firebase 全端後端與 Security Rules 指南
 ├── google-cloud-gemini.html     # Google Cloud & Gemini Developer 旗艦指南
 ├── canva.html                   # Canva AI 視覺設計與行銷自動化指南
+├── github-cli.html              # GitHub CLI 開發者版本控制與 CI/CD 指南
+├── figma.html                   # Figma 設計系統與 Design-to-Code 指南
+├── notion.html                  # Notion 模組化資料庫與團隊知識庫指南
+├── n8n.html                     # n8n 開源工作流編排與 Webhook 自動化指南
+├── supabase.html                # Supabase PostgreSQL、RLS 與 Edge Functions 指南
 ├── data/
 │   └── sheets/                  # 10 組情境擬真 UTF-8 BOM 練習用 CSV 資料檔
 ├── .nojekyll                    # 確保 GitHub Pages 靜態檔案正常運作

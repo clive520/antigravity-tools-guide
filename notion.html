@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notion 擴充功能與知識庫自動化完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              stone: '#78716c',
+              50: '#fafaf9',
+              100: '#f5f5f4',
+              500: '#78716c',
+              600: '#57534e',
+              700: '#44403c',
+              900: '#1c1917',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-stone-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-stone-600/15 via-slate-600/15 to-zinc-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-slate-800/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-slate-200" fill="currentColor">
+              <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.98-.7-2.054-.607L3.106 2.434c-.466.047-.56.28-.373.466zm.84 3.033v14.187c0 .84.42 1.12 1.354 1.073l14.56-.84c.84-.047.933-.607.933-1.167V6.588c0-.56-.233-.84-.793-.793l-15.307.886c-.56.047-.747.28-.747.56zm13.628.84c.093.42 0 .84-.42.887l-.887.186v10.92c-.56.326-1.12.513-1.633.513-.84 0-1.073-.28-1.727-1.073l-5.18-8.12v7.653l1.493.327c.093.42 0 .84-.42.887l-3.827.233c-.093-.42 0-.84.42-.887l1.12-.233V8.875L7.973 8.78c-.093-.42 0-.84.42-.887l3.874-.233 5.46 8.353V8.502l-1.353-.186c-.094-.42 0-.84.42-.887z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Notion 知識庫自動化指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-stone-300 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態架構</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-stone-300 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-stone-300 hover:bg-slate-900/80 transition-colors">3. 核心工具架構與 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-stone-300 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#block-architecture" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-stone-300 hover:bg-slate-900/80 transition-colors">5. Database 與 Block 架構守則</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-stone-300 hover:bg-slate-900/80 transition-colors">6. 安裝與 Notion API 授權設定</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-stone-300 hover:bg-slate-900/80 transition-colors">7. 常見問題與除錯指南</a>
+            </nav>
+          </div>
+
+          <!-- 快速狀態卡片 -->
+          <div class="glass-card rounded-2xl p-4 border border-slate-700/60 bg-gradient-to-br from-slate-900/60 to-stone-950/40">
+            <div class="flex items-center gap-2 mb-2 text-stone-300 text-xs font-semibold">
+              <i data-lucide="book-open" class="w-4 h-4"></i>
+              <span>Notion 官方合作夥伴外掛</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              整合 <code class="text-stone-200">plugin/notion</code>，提供 Notion Database 結構化多維表格讀寫、會議紀錄自動歸檔與 Second Brain 數位大腦自動化整理能力。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區塊 -->
+      <main class="flex-1 min-w-0 space-y-12">
+
+        <!-- 頂部 Hero Header -->
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-stone-900/80 text-stone-300 border border-stone-700/60">Notion Official Partner</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">Database & Block 自動化</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">Second Brain 數位知識庫</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-stone-800 to-slate-900 flex items-center justify-center p-2 shadow-lg border border-slate-700">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-white" fill="currentColor">
+                <path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.98-.7-2.054-.607L3.106 2.434c-.466.047-.56.28-.373.466zm.84 3.033v14.187c0 .84.42 1.12 1.354 1.073l14.56-.84c.84-.047.933-.607.933-1.167V6.588c0-.56-.233-.84-.793-.793l-15.307.886c-.56.047-.747.28-.747.56zm13.628.84c.093.42 0 .84-.42.887l-.887.186v10.92c-.56.326-1.12.513-1.633.513-.84 0-1.073-.28-1.727-1.073l-5.18-8.12v7.653l1.493.327c.093.42 0 .84-.42.887l-3.827.233c-.093-.42 0-.84.42-.887l1.12-.233V8.875L7.973 8.78c-.093-.42 0-.84.42-.887l3.874-.233 5.46 8.353V8.502l-1.353-.186c-.094-.42 0-.84.42-.887z"/>
+              </svg>
+            </div>
+            Notion 企業知識庫與資料庫中樞
+          </h1>
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+            透過自然語言操控全球最普及的筆記與協作平台 Notion。Antigravity AI Agent 能直接檢索全工作區文檔、在多維資料庫 (Database) 中依據特定狀態過濾新增資料列、自動生成格式完美的 Callout 與折疊清單，打造無縫連結的個人數位大腦與企業 SOP 知識庫。
+          </p>
+        </div>
+
+        <!-- 區塊 1: 功能概述與生態架構 -->
+        <section id="overview" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="layers" class="w-5 h-5 text-stone-400"></i>
+            <h2>1. 功能概述與生態架構</h2>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Notion 以其獨特的「頁面即資料庫、區塊即樂高 (Block-based)」架構聞名。Antigravity 透過官方 Notion MCP 伺服器，將使用者的語義意圖無損對齊至 Notion 的物件模型：
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-stone-500/20 text-stone-300 flex items-center justify-center mb-3">
+                <i data-lucide="database" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">多維資料庫結構化操作</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                支援多條件 Filter 與 Sort 查詢，精確更新 Status、Tags、Select、Date 與 Relation 關聯欄位。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-slate-500/20 text-slate-300 flex items-center justify-center mb-3">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">豐富區塊排版 (Rich Blocks)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動產生醒目的 Callout 提示框、折疊選單 (Toggle)、代碼塊 (Code Block) 與任務勾選清單 (To-do List)。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-zinc-500/20 text-zinc-300 flex items-center justify-center mb-3">
+                <i data-lucide="search" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">全工作區即時語義檢索</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                透過關鍵字快速穿透數百個頁面與資料庫，快速擷取歷史會議紀錄、專案規格或技術文件做為上下文。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-stone-400"></i>
+            <h2>2. 這個功能能做什麼？</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-stone-300 text-sm">
+                <i data-lucide="kanban" class="w-4 h-4"></i>
+                <span>專案 Sprint 看板自動推進與燃盡更新</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                在晨會或驗收後，直接指示 AI 查詢所有「In Progress」的任務卡片，根據 PR 合併狀態批次更新為「Done」，並自動計算本週任務完成度。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-slate-300 text-sm">
+                <i data-lucide="mic" class="w-4 h-4"></i>
+                <span>會議錄音逐字稿秒轉結構化 Action Items</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                輸入雜亂的會議逐字稿，AI 自動梳理核心決策、待辦事項 (Checklist) 與負責人，直接附加建立至「Team Meetings」專屬頁面中。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-zinc-300 text-sm">
+                <i data-lucide="book-marked" class="w-4 h-4"></i>
+                <span>企業 Wiki 與客服 SOP 知識庫智慧維護</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                每當產品發布新功能或政策變更，AI 自動檢索相關 SOP 頁面並進行增補修改，確保客服與業務人員查閱的資訊始終是最新的版本。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-emerald-300 text-sm">
+                <i data-lucide="brain" class="w-4 h-4"></i>
+                <span>Second Brain (PARA 框架) 靈感自動歸類</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                隨手丟入零碎的網路好文連結或靈感筆記，AI 遵循 PARA（Projects, Areas, Resources, Archives）框架自動判斷所屬分類並寫入對應資料庫。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 3: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-stone-400"></i>
+            <h2>3. 核心工具架構與 MCP API</h2>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider">
+                  <tr>
+                    <th class="py-3 px-4">MCP 工具名稱</th>
+                    <th class="py-3 px-4">核心參數</th>
+                    <th class="py-3 px-4">回傳型態</th>
+                    <th class="py-3 px-4">功能說明與最佳實務</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-mono">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-stone-300">notion_search</td>
+                    <td class="py-3 px-4 text-slate-400">query, filter, page_size</td>
+                    <td class="py-3 px-4 text-slate-300">Search Results</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">全域檢索頁面與資料庫標題，快速取得 page_id 或 database_id</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-stone-300">notion_query_database</td>
+                    <td class="py-3 px-4 text-slate-400">database_id, filter, sorts</td>
+                    <td class="py-3 px-4 text-slate-300">Page Rows Array</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">多維資料庫查詢，支援複雜巢狀 AND/OR 條件與多欄位排序</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-slate-300">notion_create_page</td>
+                    <td class="py-3 px-4 text-slate-400">parent, properties, children</td>
+                    <td class="py-3 px-4 text-slate-300">New Page Object</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">在指定父頁面建立新筆記，或在指定資料庫中新增一筆結構化列紀錄</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-slate-300">notion_append_block_children</td>
+                    <td class="py-3 px-4 text-slate-400">block_id, children</td>
+                    <td class="py-3 px-4 text-slate-300">Blocks Array</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">在頁面末尾追加排版區塊（標題、內文、Callout、代碼塊、清單等）</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-zinc-300">notion_update_page_properties</td>
+                    <td class="py-3 px-4 text-slate-400">page_id, properties</td>
+                    <td class="py-3 px-4 text-slate-300">Updated Page</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">精準修改資料庫卡片的特定屬性（如將 Status 改為 Done、更換負責人）</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 4: 10 大跨角色實戰範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100">
+              <i data-lucide="sparkles" class="w-5 h-5 text-stone-400"></i>
+              <h2>4. 10 大跨角色實戰範例 (Real-World Prompts)</h2>
+            </div>
+            <span class="text-xs text-slate-400">點擊右上角按鈕即可複製完整指令</span>
+          </div>
+
+          <!-- 範例列表 (1-10) -->
+          <div class="space-y-6">
+
+            <!-- 範例 1: 專案經理 (Project Manager) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 01</span>
+                  <span class="text-sm font-bold text-slate-200">專案經理：自動彙整跨專案進度，更新 Sprint Roadmap 資料庫狀態</span>
+                </div>
+                <button onclick="copyCode('prompt-1')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 週五下班前需盤點目前正在進行的「Q2 Sprint 4」所有任務卡片，將已在 GitHub 合併的項目推進為「Done」，並統計待完成數。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-1">請使用 `notion` 外掛協助我整理專案看板：
+1. 查詢資料庫「Engineering Sprint Tracker」：
+   - 篩選條件：`Sprint == '2026-Q2-S4'` 且 `Status != 'Done'`。
+2. 檢查各任務對應的 GitHub PR 狀態（比對 PR 連結屬性）。
+3. 針對 PR 已合併 (Merged) 的任務卡片：
+   - 調用 `notion_update_page_properties` 將 `Status` 改為 `Done`。
+   - 將 `Completion_Date` 填入今日日期。
+4. 在「Sprint Summary 2026-Q2-S4」頁面底部追加一段 Callout 區塊，標明總任務數、已完成數與當前進度百分比（如：85% 完成）。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動遍歷資料庫過濾卡片，批次更新已完成項目並在總結頁面寫入包含視覺進度條的排版區塊。</p>
+              </div>
+            </div>
+
+            <!-- 範例 2: 團隊秘書與行政總務 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 02</span>
+                  <span class="text-sm font-bold text-slate-200">行政總務：會議錄音逐字稿提煉為結構化 Notion 紀錄與 Action Items</span>
+                </div>
+                <button onclick="copyCode('prompt-2')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 剛開完 1 小時的跨部門產品策略會議，需將雜亂的語音逐字稿整理為條理分明的會議紀錄並自動建立在「Team Meetings」中。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-2">請使用 `notion_create_page` 在我的資料庫「Company Meeting Notes」中新增一筆會議紀錄：
+1. 依據我提供的會議逐字稿 `meeting_notes_raw.txt` 進行精煉：
+   - 頁面標題：「2026-05-20 產品策略與新功能優先級會議」
+   - 屬性包含：`Date: 2026-05-20`、`Attendees: ['Alex', 'David', 'Sarah', 'Leo']`、`Department: Product`。
+2. 頁面內文 Block 排版：
+   - 一級標題：📌 核心決策 (Key Decisions)
+   - 灰色 Callout：會議最高共識結論
+   - 二級標題：✅ 待辦行動清單 (Action Items)，每條使用 `to_do` 區塊，標明負責人與截止日（Due Date）。
+   - 折疊區塊 (Toggle)：詳細討論脈絡（可展開閱讀）。
+3. 輸出建立完成後的 Notion 頁面 URL。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動提煉會議精華，使用標準 Toggle 與 To-do 區塊寫入 Notion，排版專業清晰。</p>
+              </div>
+            </div>
+
+            <!-- 範例 3: 人資招募經理 (Talent Acquisition / HR) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 03</span>
+                  <span class="text-sm font-bold text-slate-200">人資招募：面試履歷自動建檔至 Notion 招募漏斗 (Recruiting Pipeline)</span>
+                </div>
+                <button onclick="copyCode('prompt-3')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 收到 5 位應聘資深後端工程師的 PDF 履歷，需將其學經歷、核心技能、期望薪資與面試官評語自動登記至招募看板。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-3">請解析我提供的履歷資料，並批次登記到 Notion 資料庫「2026 Talent Acquisition Pipeline」：
+1. 讀取本機檔案 `resumes/candidate_chen.json`。
+2. 建立新頁面記錄：
+   - 標題：候選人姓名「陳冠宇 (Gary Chen)」
+   - `Role`: "Senior Backend Engineer"
+   - `Stage`: "Technical Interview"
+   - `Years_of_Experience`: 6
+   - `Skills`: Multi-select 標籤包含 `Go`, `Kubernetes`, `PostgreSQL`, `GCP`
+3. 頁面內文追加「經歷精華摘要」與「面試官提問建議大綱」。
+4. 完成後回報已建立之卡片清單。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>候選人資訊自動結構化填入 Multi-select 與 Select 欄位，面試官可直接在 Notion 看板拖曳候選人卡片。</p>
+              </div>
+            </div>
+
+            <!-- 範例 4: 產品經理 (Product Manager / PO) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 04</span>
+                  <span class="text-sm font-bold text-slate-200">產品經理：訪談筆記自動轉為標準 PRD 規格書並關聯 Backlog</span>
+                </div>
+                <button onclick="copyCode('prompt-4')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 完成了 10 位使用者的深度訪談後，需撰寫全新「社群分享機制」的 PRD 需求文件並歸檔至 Notion 產品知識庫。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-4">請在 Notion 知識庫「Product Specs (PRD)」資料庫中建立一份全新需求文檔：
+1. 標題：「PRD: AI 成果一鍵多平台社群導流機制」
+2. 設定屬性：`Status: Reviewing`、`Priority: P1`、`Target_Release: v2.6.0`。
+3. 採用矽谷標準 PRD 範本結構編寫內文區塊：
+   - 🎯 業務目標與背景 (Problem Statement & Goals)
+   - 👤 使用者人物誌 (User Persona & User Stories)
+   - ⚙️ 功能詳細規格與限制 (Functional Requirements)
+   - 📊 成功指標衡量 (North Star Metrics / KPIs)
+   - ❓ 尚未釐清之開放問題 (Open Questions)
+4. 輸出該頁面之 Notion 直達連結。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 產生結構嚴謹、條理分明的標準 PRD 頁面，隨時可供研發團隊與設計師查閱評審。</p>
+              </div>
+            </div>
+
+            <!-- 範例 5: 客服主管與 Support Lead -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 05</span>
+                  <span class="text-sm font-bold text-slate-200">客服主管：整理使用者常見故障通報，一鍵更新客服 SOP Wiki</span>
+                </div>
+                <button onclick="copyCode('prompt-5')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 本週有多位用戶詢問「如何變更訂閱信用卡與載具歸戶」，需將標準應答話術與後台處理流程更新至客服內部 Wiki。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-5">請使用 `notion_search` 與 `notion_append_block_children` 更新客服手冊：
+1. 搜尋標題為「Customer Support Wiki / 帳務與發票」的頁面。
+2. 在該頁面末尾新增一個二級標題：`💳 信用卡更換與電子發票載具歸戶指引`。
+3. 追加以下內容區塊：
+   - 藍色 Callout：客服人員第一時間安撫話術範本。
+   - 數字編號清單：前台用戶自我操作 3 步驟截圖說明位置。
+   - 灰色 Toggle：後台 Stripe / 綠界手動補發發票之 SOP 操作說明。
+4. 完成後回報更新頁面的 Block 總數與確認確認狀態。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動鎖定 Wiki 頁面並追加標準話術，確保全體客服人員擁有一致且高標準的處置依據。</p>
+              </div>
+            </div>
+
+            <!-- 範例 6: 軟體架構師 (Software Architect) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 06</span>
+                  <span class="text-sm font-bold text-slate-200">架構師：技術決策紀錄 (ADR) 自動排版寫入架構文檔，包含代碼與架構圖</span>
+                </div>
+                <button onclick="copyCode('prompt-6')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 團隊決定由 REST API 全面遷移至 gRPC 與 GraphQL 混合架構，需將該重大的 Architecture Decision Record (ADR-018) 正式存檔於 Notion。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-6">請在 Notion「Engineering ADR Database」中建立全新架構決策紀錄：
+1. 標題：「ADR-018: 微服務通訊採用 gRPC 取代內部 HTTP RESTful 之評估與決策」
+2. 設定屬性：`Status: Accepted`、`Deciders: ['Architect Team', 'Backend Leads']`、`Date: 2026-05-22`。
+3. 頁面內文結構：
+   - 脈絡與問題陳述 (Context & Problem Statement)
+   - 考慮過的替代方案 (Considered Options: REST vs gRPC vs Thrift)
+   - 決策理由與正面效益 (Pros & Cons)
+   - 代碼示範塊 (`code` block, language: protobuf) 展示 `.proto` 定義格式。
+4. 輸出建立完成後的 ADR 卡片連結。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動化將架構決策轉化為規範的 ADR 格式，永久沉澱團隊工程知識資產。</p>
+              </div>
+            </div>
+
+            <!-- 範例 7: 內容行銷主編 (Content Marketing Lead) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 07</span>
+                  <span class="text-sm font-bold text-slate-200">行銷主編：社群排程日曆 (Editorial Calendar) 自動產出文章大綱與標籤</span>
+                </div>
+                <button onclick="copyCode('prompt-7')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 規劃下個月的官方技術部落格文章，需在「Editorial Calendar」資料庫中批次排程 4 篇主題文章並預先寫入大綱。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-7">請在 Notion 資料庫「Editorial Content Calendar」中為我排程 4 篇下月份的技術文章：
+1. 主題分別為：
+   - 「2026 年前端工程師必備的 5 款 AI Agent 開發外掛」
+   - 「深度解析 Model Context Protocol (MCP) 如何顛覆企業自動化」
+   - 「從零搭建百萬 Token 多模態 Gemini 2.0 應用實戰」
+   - 「FinOps 雲端成本實戰：如何在 BigQuery 中省下 60% 查詢帳單」
+2. 為每篇文章自動配置屬性：`Publish_Date`（每週三）、`Author`、`Channel: Blog`、`Status: Draft`。
+3. 在每篇文章卡片內，自動生成 4 點核心大綱、目標讀者輪廓與推薦的 SEO 關鍵字集合。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動批次建立 4 篇排期卡片，包含自動計算每週發布日期與豐富大綱，行銷日曆一目了然。</p>
+              </div>
+            </div>
+
+            <!-- 範例 8: 研究員與學術研究生 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 08</span>
+                  <span class="text-sm font-bold text-slate-200">學術研究員：文獻研讀核心結論、實驗數據與 BibTeX 自動歸檔</span>
+                </div>
+                <button onclick="copyCode('prompt-8')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 剛讀完一篇頂會論文，需將研究問題、方法論創新點、實驗 Benchmark 數據與 BibTeX 引用資訊自動建檔至個人論文庫。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-8">請讀取論文摘要檔案 `papers/agentic_workflow_2026.txt`，並存入 Notion「Academic Literature Vault」：
+1. 標題：論文全名「Autonomous Multi-Agent Collaboration via Dynamic Context Protocols」
+2. 設定屬性：`Conference: NeurIPS 2026`、`Year: 2026`、`Tags: ['Multi-Agent', 'MCP', 'LLM']`、`Reading_Status: Completed`。
+3. 頁面內文排版：
+   - 🎯 研究核心假說與要解決的瓶頸
+   - 🧪 核心演算法架構 (附 Mermaid 架構圖語法區塊)
+   - 📈 實驗結果 (與 Baseline 相比提升 24.5%)
+   - 📜 BibTeX 引用代碼塊，方便日後 LaTeX 論文寫作直接複製。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動建立具備結構化文獻標籤的 Notion 卡片，大幅提升文獻回顧與論文引用的檢索速度。</p>
+              </div>
+            </div>
+
+            <!-- 範例 9: 財務與採購專員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 09</span>
+                  <span class="text-sm font-bold text-slate-200">財務專員：設備採購與發票報銷審核，自動登記至預算追蹤資料庫</span>
+                </div>
+                <button onclick="copyCode('prompt-9')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 收到工程部門提交的 3 筆雲端 GPU 伺服器租賃收據與硬碟採購發票，需自動核算金額並登錄至 Notion 預算管理庫。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-9">請解析發票紀錄 `invoices/batch_may_2026.json`，並登記到 Notion「Department Budget & Expenses」：
+1. 逐筆建立費用紀錄：
+   - 費用項目名稱（例如：「AWS H100 叢集月租費用」）
+   - `Amount`: 數字型別金額（例如：4500 USD）
+   - `Category`: "Cloud Infrastructure"
+   - `Department`: "R&D"
+   - `Receipt_Attached`: 核銷發票號碼
+2. 查詢該部門當月累計支出，並在「Budget Alert」頁面回報是否超過本月預算上限（上限為 15,000 USD）。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 迅速完成發票對齊與數字屬性寫入，自動觸發部門支出預警報告。</p>
+              </div>
+            </div>
+
+            <!-- 範例 10: 自由工作者與個人數位生產力 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-stone-500/20 text-stone-300 border border-stone-500/30">範例 10</span>
+                  <span class="text-sm font-bold text-slate-200">個人創作者：Second Brain (PARA 框架) 靈感碎片自動分流與歸檔</span>
+                </div>
+                <button onclick="copyCode('prompt-10')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-stone-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 手機隨手記下了 10 條零碎的語音備忘、客戶對話關鍵字與書籍佳句，需自動分析並歸入個人的 Notion PARA 數位大腦系統。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-10">請讀取我的隨手筆記清單 `inbox_quick_notes.txt`，並根據 PARA 原則自動分類至我的 Notion 工作區：
+1. 檢視我的 4 大資料庫：Projects (短期專案)、Areas (長期責任領域)、Resources (興趣參考庫)、Archives (已封存)。
+2. 自動研判每條筆記的性質：
+   - 具備截止日的任務 ➜ 寫入 Projects 資料庫。
+   - 長期健康/理財習慣 ➜ 寫入 Areas 資料庫。
+   - 純技術工具或書單靈感 ➜ 寫入 Resources 資料庫。
+3. 為每筆卡片自動提煉 3 個代表性關鍵標籤，並標註建立日期。
+4. 輸出歸納結果清單，清空臨時收件匣 (Inbox Zero)。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動執行語義分類，將雜亂的靈感碎片一秒歸位至對應的 Notion 知識庫，實現完美的 Inbox Zero。</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5: Database 與 Block 架構守則 -->
+        <section id="block-architecture" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-stone-400"></i>
+            <h2>5. Notion 自動化四大架構守則</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-stone-300">
+                <i data-lucide="key" class="w-4 h-4"></i>
+                <span>守則一：Database ID 精準鎖定</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                Notion 的 Database ID 通常是一串 32 位的英數字（可在資料庫右上角「Copy link」中獲得）。操作前務必確認該資料庫已被分享 (Share) 給您的 Integration 機器人。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-slate-300">
+                <i data-lucide="list" class="w-4 h-4"></i>
+                <span>守則二：屬性型別嚴格校驗</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                更新資料庫屬性時，型別必須 100% 吻合（例如 Multi-select 需傳入陣列、Date 需傳入 ISO 8601 格式 `YYYY-MM-DD`、Title 必須為 RichText 陣列），避免 API 拋出 400 Bad Request。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-zinc-300">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+                <span>守則三：Block 階層深度限制</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                Notion API 對於一次性寫入的 Block 數量（建議單次不超過 100 個 blocks）與巢狀深度有嚴格限制。大型文章應採用批次追加分段寫入。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-emerald-300">
+                <i data-lucide="archive" class="w-4 h-4"></i>
+                <span>守則四：以封存 (Archive) 代替硬刪除</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                在自動化清理過期卡片時，強烈建議將頁面屬性設為 `archived: true` 移入垃圾桶，而非直接物理抹除，保障團隊歷史資料隨時可救援回滾。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6: 安裝與 Notion API 授權設定 -->
+        <section id="setup" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-stone-400"></i>
+            <h2>6. 安裝與 Notion API 授權設定</h2>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            透過 Notion 官方 Internal Integration 取得安全憑證並綁定頁面存取權限。
+          </p>
+
+          <div class="space-y-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-stone-500/20 text-stone-300 flex items-center justify-center text-xs">1</span>
+                安裝 Notion Marketplace 外掛套件
+              </div>
+              <p class="text-xs text-slate-400">在 Antigravity 對話框中輸入安裝指令：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-stone-300 font-mono">/plugin install antigravity-plugins-partners/plugin/notion</pre>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-stone-500/20 text-stone-300 flex items-center justify-center text-xs">2</span>
+                建立 Notion Internal Integration 與取得 Token
+              </div>
+              <p class="text-xs text-slate-400">前往 <a href="https://www.notion.so/my-integrations" target="_blank" class="text-stone-300 underline">notion.so/my-integrations</a> 點選「New integration」，命名後取得「Internal Integration Secret」（格式如 `secret_...`），並設定環境變數：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-slate-200 font-mono">export NOTION_API_KEY="secret_..."</pre>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-stone-500/20 text-stone-300 flex items-center justify-center text-xs">3</span>
+                重要：將目標頁面/資料庫連線分享 (Connect) 給整合機器人
+              </div>
+              <p class="text-xs text-slate-400">在 Notion 中開啟您欲讓 AI 存取的目標頁面，點擊右上角「...」➜ 選擇「Connect to」➜ 點選您剛才建立的 Integration 名稱，授權讀寫權限。</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 7: 常見問題與除錯指南 -->
+        <section id="faq" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="help-circle" class="w-5 h-5 text-stone-400"></i>
+            <h2>7. 常見問題與除錯指南 (FAQ)</h2>
+          </div>
+          <div class="space-y-3 text-xs">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q1: 執行時報錯「Could not find database with ID: ...」？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                這是最常見的權限問題！Notion 的安全性設計要求「每個頁面或資料庫必須顯式被分享給該 Integration」。請至該資料庫右上角「...」選單，在「Connect to」中確認已經連結您的機器人。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q2: 如何從 Notion 網址取得真正的 Database ID？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                複製資料庫連結時，網址格式通常為 `notion.so/workspace/1234567890abcdef1234567890abcdef?v=...`。在問號 `?` 之前的 32 個英數字串就是真正的 Database ID。直接把完整網址貼給 Antigravity，AI 也會自動提取。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q3: 新增 Multi-select 標籤時出現錯誤？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                Notion 支援在寫入時自動建立未曾出現的新標籤，但 Integration 必須擁有寫入該資料庫 Schema 的權限。若資料庫被設為「Locked (鎖定)」，則無法新增未預先定義的新標籤。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告與系列導航 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-stone-500/20 text-stone-300 flex items-center justify-center">
+            <i data-lucide="book-open" class="w-4 h-4"></i>
+          </div>
+          <span class="text-slate-300 font-semibold">Antigravity Tools Hub · 團隊知識庫與專案管理系列</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">首頁總覽</a>
+          <a href="github-cli.html" class="hover:text-white transition-colors">GitHub CLI</a>
+          <a href="figma.html" class="hover:text-white transition-colors">Figma</a>
+          <a href="notion.html" class="text-stone-300 font-semibold">Notion</a>
+          <a href="canva.html" class="hover:text-white transition-colors">Canva AI</a>
+          <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
+          <a href="google-sheets.html" class="hover:text-white transition-colors">Sheets</a>
+          <a href="gmail-calendar.html" class="hover:text-white transition-colors">Gmail & Calendar</a>
+          <a href="google-slides.html" class="hover:text-white transition-colors">Slides</a>
+          <a href="google-notebooklm.html" class="hover:text-white transition-colors">NotebookLM</a>
+          <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
+          <a href="google-cloud-gemini.html" class="hover:text-white transition-colors">Cloud & Gemini</a>
+          <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>本專案非 Notion 官方產品，商標權屬 Notion Labs, Inc. 所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕腳本與 Lucide 初始化 -->
+  <script>
+    lucide.createIcons();
+
+    function copyCode(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = event.currentTarget;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-bold">已複製！</span>`;
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          lucide.createIcons();
+        }, 2000);
+      }).catch(err => {
+        console.error('複製失敗:', err);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>n8n 擴充功能與開源自動化工作流完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              coral: '#ea4b71',
+              orange: '#ff6d5a',
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              500: '#ea4b71',
+              600: '#e11d48',
+              700: '#be123c',
+              900: '#881337',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-rose-600/15 via-orange-600/15 to-amber-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-red-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-gradient-to-tr from-rose-500 to-orange-500 flex items-center justify-center p-0.5">
+            <i data-lucide="git-merge" class="w-4 h-4 text-white"></i>
+          </div>
+          <span class="font-bold text-sm text-slate-200">n8n 自動化工作流指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態架構</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">3. 核心工具架構與 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#best-practices" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">5. 節點編排與錯誤處理守則</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">6. 安裝與 n8n 實例連線設定</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">7. 常見問題與除錯指南</a>
+            </nav>
+          </div>
+
+          <!-- 快速狀態卡片 -->
+          <div class="glass-card rounded-2xl p-4 border border-rose-900/40 bg-gradient-to-br from-rose-950/40 to-slate-900/60">
+            <div class="flex items-center gap-2 mb-2 text-rose-400 text-xs font-semibold">
+              <i data-lucide="workflow" class="w-4 h-4"></i>
+              <span>開源低代碼自動化霸主</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              整合 <code class="text-rose-300">n8n-skills</code> 與 MCP 伺服器，直接用自然語言建構、除錯與觸發串接 400+ 雲端應用的自動化管線。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區塊 -->
+      <main class="flex-1 min-w-0 space-y-12">
+
+        <!-- 頂部 Hero Header -->
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-rose-900/60 text-rose-300 border border-rose-700/50">n8n Official Partner</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-orange-900/50 text-orange-300 border border-orange-700/40">400+ 整合節點</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">Self-Hosted & Cloud</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-rose-500 to-orange-500 flex items-center justify-center p-2 shadow-lg shadow-rose-500/20">
+              <i data-lucide="git-merge" class="w-6 h-6 text-white"></i>
+            </div>
+            n8n 開源自動化工作流與 Agent 編排
+          </h1>
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+            透過自然語言指揮全球最強大的開源自動化中樞 n8n。Antigravity AI Agent 能直接為您的工作流搭建 Webhook 觸發器、組裝資料清洗節點、排錯 JavaScript 表達式，並串接 Slack、Telegram、Shopify、Stripe、PostgreSQL 等超過 400 種雲端服務，建構高自主性 Multi-Agent 系統。
+          </p>
+        </div>
+
+        <!-- 區塊 1: 功能概述與生態架構 -->
+        <section id="overview" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="layers" class="w-5 h-5 text-rose-400"></i>
+            <h2>1. 功能概述與生態架構</h2>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            企業常面臨不同 SaaS 應用各自為政的資料孤島難題。n8n 提供了具備高度可自託管 (Self-Hosted) 的視覺化工作流引擎。Antigravity 的 n8n 擴充套件讓使用者不必在畫布上手動拉線，直接用對話即可完成整個管線的設計與監控：
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center mb-3">
+                <i data-lucide="cpu" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">節點結構自動生成</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動生成合法的 n8n 工作流 JSON 拓撲圖，包含 Webhook, Code, IF, Switch, Loop 等控制流節點。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center mb-3">
+                <i data-lucide="play-circle" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">即時測試與單步調試</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                直接呼叫 `n8n_execute_workflow` 傳送測試 Payload，提取各節點輸出資料，迅速修正語法錯誤。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
+                <i data-lucide="bot" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">AI Agent 原生整合</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                支援 n8n 進階的 AI Agent 節點、向量資料庫 (Pinecone/Qdrant) 連線與長短期記憶模組配置。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-rose-400"></i>
+            <h2>2. 這個功能能做什麼？</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-rose-300 text-sm">
+                <i data-lucide="webhook" class="w-4 h-4"></i>
+                <span>跨平台 Webhook 事件連動與即時告警</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                接收 Stripe 支付成功、GitHub CI 崩潰、Shopify 訂單建立等事件，毫秒級自動轉發通知至 Slack, Telegram, Discord 或 Teams。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-orange-300 text-sm">
+                <i data-lucide="database" class="w-4 h-4"></i>
+                <span>排程 ETL 資料同步與雙向清洗</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                設定 Cron 定時排程，每天凌晨自動抓取第三方 API 資料、過濾去重、清洗日期格式，並批量寫入 PostgreSQL 或 Google Sheets。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-amber-300 text-sm">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span>失敗執行紀錄 (Execution Logs) 自動排錯</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                當工作流發生錯誤中斷時，AI 自動讀取 `n8n_get_executions` 萃取 Stacktrace 崩潰原因，指出是哪一個節點的 JSON 欄位遺失。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-emerald-300 text-sm">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+                <span>憑證安全隔離 (Credentials Management)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                嚴格遵循資安規範，所有 API 金鑰與 OAuth 連線均儲存於 n8n 內部的安全憑證庫中，工作流代碼中絕不暴露敏感私鑰。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 3: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-rose-400"></i>
+            <h2>3. 核心工具架構與 MCP API</h2>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider">
+                  <tr>
+                    <th class="py-3 px-4">MCP 工具名稱</th>
+                    <th class="py-3 px-4">核心參數</th>
+                    <th class="py-3 px-4">回傳型態</th>
+                    <th class="py-3 px-4">功能說明與最佳實務</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-mono">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-rose-400">n8n_list_workflows</td>
+                    <td class="py-3 px-4 text-slate-400">active, tags, limit</td>
+                    <td class="py-3 px-4 text-slate-300">Workflow List</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">檢索 n8n 實例中的所有工作流清單及其啟用狀態</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-rose-400">n8n_get_workflow</td>
+                    <td class="py-3 px-4 text-slate-400">id</td>
+                    <td class="py-3 px-4 text-slate-300">Workflow JSON</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">取得特定工作流的完整節點與連線拓撲結構，供 AI 審查與修改</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-orange-400">n8n_create_workflow</td>
+                    <td class="py-3 px-4 text-slate-400">name, nodes, connections</td>
+                    <td class="py-3 px-4 text-slate-300">New Workflow</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">建立全新自動化管線，AI 會自動計算節點於視覺畫布上的合適座標</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-orange-400">n8n_activate_workflow</td>
+                    <td class="py-3 px-4 text-slate-400">id, active: boolean</td>
+                    <td class="py-3 px-4 text-slate-300">Success Object</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">一鍵啟用或暫停工作流（開始接收生產環境的 Webhook 流量）</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-amber-400">n8n_get_executions</td>
+                    <td class="py-3 px-4 text-slate-400">workflow_id, status: 'error'</td>
+                    <td class="py-3 px-4 text-slate-300">Executions Array</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">提取失敗執行的詳細堆疊日誌，精準定位故障節點名稱</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 4: 10 大跨角色實戰範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100">
+              <i data-lucide="sparkles" class="w-5 h-5 text-rose-400"></i>
+              <h2>4. 10 大跨角色實戰範例 (Real-World Prompts)</h2>
+            </div>
+            <span class="text-xs text-slate-400">點擊右上角按鈕即可複製完整指令</span>
+          </div>
+
+          <!-- 範例列表 (1-10) -->
+          <div class="space-y-6">
+
+            <!-- 範例 1: 自動化架構師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 01</span>
+                  <span class="text-sm font-bold text-slate-200">自動化架構師：Stripe 支付 Webhook 接收、開通會員並同步 Discord 邀請</span>
+                </div>
+                <button onclick="copyCode('prompt-1')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 用戶在官網購買 VIP 訂閱後，需在 3 秒內完成：寫入資料庫開通用戶權限、寄送 HTML 歡迎信並透過 Discord Bot 自動發送專屬私密伺服器邀請碼。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-1">請使用 `n8n` 擴充功能，為我搭建一條生產級支付自動化工作流：
+1. 工作流名稱：「Stripe Payment to VIP Onboarding」。
+2. 節點拓撲結構：
+   - 節點 1：`Webhook` 觸發器（監聽 `POST /stripe-charge-success`，開啟簽名驗證）。
+   - 節點 2：`IF` 節點（檢查 `event.type == 'checkout.session.completed'`）。
+   - 節點 3：`Postgres` 節點（執行 SQL `UPDATE users SET tier = 'vip' WHERE email = $1`）。
+   - 節點 4：`SendGrid / Gmail` 節點（發送帶有使用者名稱的品牌歡迎信）。
+   - 節點 5：`Discord` 節點（呼叫 Webhook 在管理員頻道通報：「🎉 新增 VIP 用戶：{email}」）。
+3. 錯誤處理：設定 `Error Trigger` 節點，若資料庫寫入失敗，發送 Slack 緊急告警。
+4. 輸出建立後的工作流 JSON 並直接在我的 n8n 實例中建立該管線。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動建立具備 6 個節點的完整工作流並配置各節點間的資料映射，一鍵部署上線。</p>
+              </div>
+            </div>
+
+            <!-- 範例 2: DevOps 維運工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 02</span>
+                  <span class="text-sm font-bold text-slate-200">DevOps 工程師：GitHub CI 失敗自動觸發 Telegram 告警與日誌摘要</span>
+                </div>
+                <button onclick="copyCode('prompt-2')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 當主幹 main 分支的 GitHub Actions CI 流水線崩潰時，維運團隊需在 Telegram 頻道第一時間收到通知，包含提交者名稱與失敗 Job 連結。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-2">請在 n8n 中建立「GitHub Actions CI Failure Alert」管線：
+1. 觸發條件：`GitHub Trigger` 節點（事件：`workflow_run`，狀態：`completed`）。
+2. 過濾條件：使用 `Filter` 節點判斷 `{{$json.workflow_run.conclusion}} == 'failure'`。
+3. 格式化訊息：使用 `Code` 節點（JavaScript）組裝 Markdown：
+   - 🚨 **CI/CD 流水線失敗！**
+   - 專案倉庫：`{{$json.repository.full_name}}`
+   - 觸發分支：`{{$json.workflow_run.head_branch}}`
+   - 提交作者：`{{$json.workflow_run.head_commit.author.name}}`
+   - 查看失敗 Log：[點擊前往 Actions 頁面]({{$json.workflow_run.html_url}})
+4. 發送行動：串接 `Telegram` 節點發送至維運小組群組，開啟靜音推播以外的高優先級提示。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 完成 GitHub Trigger 與 Telegram Bot 串接，大幅縮短線上故障排查的反應時間。</p>
+              </div>
+            </div>
+
+            <!-- 範例 3: 電商營運長 (E-commerce Operations) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 03</span>
+                  <span class="text-sm font-bold text-slate-200">電商營運：Shopify 新訂單同步寫入 Google Sheets 並觸發庫存警戒</span>
+                </div>
+                <button onclick="copyCode('prompt-3')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 每當 Shopify 門市有新訂單成立，需將訂單項目展開並逐行寫入 Google Sheets 營運總表，當剩餘庫存低於 10 件時發信通知倉管。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-3">請在 n8n 建立「Shopify Order Ingest & Stock Alert」工作流：
+1. 觸發器：`Shopify Trigger`（事件：`Order Created`）。
+2. 陣列展開：使用 `Item Lists` 節點展開訂單中的多項購買商品（Line Items）。
+3. 寫入試算表：呼叫 `Google Sheets` 節點，追加行至「2026 全年訂單流向」，欄位包含：訂單號、訂購人、SKU、品名、數量、單價、總額。
+4. 庫存判定：串接 `Shopify` API 查詢該 SKU 剩餘庫存，若 `< 10`，自動觸發 `Gmail` 發信給 `warehouse@example.com` 提醒及時補貨。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動配置 Item Lists 展開與條件判斷，實現電商訂單自動化入帳與缺貨預警。</p>
+              </div>
+            </div>
+
+            <!-- 範例 4: 數位行銷經理 (Marketing Automation Lead) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 04</span>
+                  <span class="text-sm font-bold text-slate-200">行銷自動化：表單名單 (Leads) 自動清洗評分並同步至 HubSpot CRM</span>
+                </div>
+                <button onclick="copyCode('prompt-4')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 官網預約 Demo 表單收到的名單經常含有無效信箱或個人 Gmail，需自動透過 Clearbit 豐富公司規模資料，並將高價值客戶自動建入 HubSpot。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-4">請在 n8n 中為我建立「Inbound Lead Enrichment & CRM Sync」管線：
+1. 觸發器：`Webhook`（接收官網 Typeform / Webflow 表單資料）。
+2. 資料正規化：使用 `Code` 節點修剪姓名空格、將 Email 轉為全小寫、將電話格式轉為國際碼 `+886...`。
+3. 商業信箱判斷：若 Email 網域非 gmail/yahoo/hotmail，標記為 `is_business: true`。
+4. CRM 建立：呼叫 `HubSpot` 節點建立或更新 Contact，若為商業信箱則自動指派給當值業務人員 (Sales Rep)。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 建立完整名單清洗與條件分流邏輯，大幅提升潛在客戶轉化效率。</p>
+              </div>
+            </div>
+
+            <!-- 範例 5: 企業資安營運專員 (SecOps) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 05</span>
+                  <span class="text-sm font-bold text-slate-200">資安營運：異常登入 Webhook 呼叫 VirusTotal 查詢惡意 IP</span>
+                </div>
+                <button onclick="copyCode('prompt-5')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 系統偵測到暴力破解或異常登入嘗試時，自動將來源 IP 送交威脅情資 API 查詢，若確認為惡意節點立即通知資安工程師。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-5">請在 n8n 中搭建「Automated Threat Intelligence Checker」：
+1. 觸發器：`Webhook`（接收 Auth0 / Firebase Auth 異常登入日誌）。
+2. 提取參數：`client_ip` 與 `user_agent`。
+3. 威脅查詢：呼叫 `HTTP Request` 節點向 VirusTotal API 查詢該 IP 的惡意評分。
+4. 門檻告警：若 `malicious_score >= 3`，自動呼叫 `Slack` 節點在 `#security-soc` 發出高嚴重度警報，包含地理位置、ISP 與封鎖建議。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動化編排安全威脅情資過濾流程，建立企業資安防禦的第一道無人防線。</p>
+              </div>
+            </div>
+
+            <!-- 範例 6: 客服技術主管 (Support Engineering) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 06</span>
+                  <span class="text-sm font-bold text-slate-200">客服技術：新進工單自動透過 AI 語意分類並派案給專門小組</span>
+                </div>
+                <button onclick="copyCode('prompt-6')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 每天收到數百張客戶諮詢工單，人工分案耗時且容易遺漏，需透過 LLM 分析使用者語氣與問題類別自動指派。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-6">請在 n8n 中建立「AI-Powered Ticket Triage & Routing」：
+1. 觸發器：`Zendesk / Intercom Trigger`（新工單建立）。
+2. AI 語意分析：串接 `OpenAI / Anthropic / Gemini` 節點，要求輸出 JSON：
+   - `category`: `[Billing, Bug, Feature Request, How-To]`
+   - `urgency`: `[High, Medium, Low]`
+   - `summary`: 20 字簡述
+3. 路由分流：使用 `Switch` 節點根據 `category` 自動更新工單指派給「帳務組」或「工程技術組」。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動完成 LLM 提示詞與分流 Switch 節點架構，實現秒級智慧工單分派。</p>
+              </div>
+            </div>
+
+            <!-- 範例 7: 資料工程師 (Data Pipeline Specialist) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 07</span>
+                  <span class="text-sm font-bold text-slate-200">資料工程師：排程定時 (Cron) 爬取匯率 API 並批量寫入 PostgreSQL</span>
+                </div>
+                <button onclick="copyCode('prompt-7')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 跨國電商平台需每天上午 9 點自動抓取即時外匯牌價，計算基準幣值並寫入資料庫供即時結算使用。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-7">請在 n8n 中建立「Daily Forex Rate Ingestion Pipeline」：
+1. 觸發器：`Schedule (Cron)` 節點（設定為每天上午 09:00 觸發）。
+2. 資料抓取：呼叫 `HTTP Request` 節點取得央行 / 公開外匯 API。
+3. 資料清洗：使用 `Code` 節點計算 USD, JPY, EUR, CNY 對 TWD 的交叉匯率，格式化為固定小數點 4 位。
+4. 資料庫寫入：使用 `Postgres` 節點執行 `INSERT INTO exchange_rates ... ON CONFLICT DO UPDATE`。
+5. 監控通知：若 HTTP 請求超時，自動重試 3 次，失敗後發送警報。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>定時排程穩定運行，自動容錯重試並安全寫入關聯資料庫。</p>
+              </div>
+            </div>
+
+            <!-- 範例 8: 社群媒體總監 (Social Media Manager) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 08</span>
+                  <span class="text-sm font-bold text-slate-200">社群總監：YouTube 新片發布自動同步 Twitter/X、Threads 與 LinkedIn</span>
+                </div>
+                <button onclick="copyCode('prompt-8')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 每當 YouTube 官方頻道發布新教學影片時，一鍵自動同步撰寫社群貼文並分發至多個主要社群平台。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-8">請在 n8n 中建立「Cross-Platform Social Auto-Publish」：
+1. 觸發器：`YouTube Trigger`（頻道新影片發布）。
+2. 文案自適應改寫：呼叫 LLM 節點，根據影片標題與描述分別生成：
+   - Twitter 格式（280 字以內，包含熱門 Hashtags）。
+   - LinkedIn 格式（專業商業洞察語氣）。
+3. 同步分發：並行呼叫 `Twitter` 節點與 `LinkedIn` 節點發布貼文與影片縮圖。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>一源多用 (Create Once, Publish Everywhere)，大幅解放社群經營團隊的手動發文時間。</p>
+              </div>
+            </div>
+
+            <!-- 範例 9: 財務會計專員 (Finance & Invoicing) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 09</span>
+                  <span class="text-sm font-bold text-slate-200">財務會計：每月 1 號定時開立電子發票並自動郵寄 PDF 收據</span>
+                </div>
+                <button onclick="copyCode('prompt-9')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 每月月初需針對 B2B 企業年約客戶自動開立當月發票，生成 PDF 附件並透過官方財務郵箱正式寄出。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-9">請在 n8n 中建立「Monthly B2B Invoice Dispatcher」：
+1. 觸發器：`Schedule (Cron)` 節點（每月 1 號 08:00）。
+2. 查詢待開立客戶：從資料庫撈取當月生效的 B2B 合約客戶名單。
+3. 發票 API 呼叫：透過 `HTTP Request` 節點調用電子發票服務 API 開立發票並取得 PDF 連結。
+4. 電子郵件寄送：使用 `Gmail` 節點將發票 PDF 作為附件發送給客戶財務窗口，並在 CC 加入內部財務留底信箱。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>自動化批次開票與寄信，零人為疏漏，大幅提升公司財務月結效率。</p>
+              </div>
+            </div>
+
+            <!-- 範例 10: AI Multi-Agent 編排工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">範例 10</span>
+                  <span class="text-sm font-bold text-slate-200">Agentic AI 工程師：編排具備短期記憶與外部工具調用的 Autonomous Agent</span>
+                </div>
+                <button onclick="copyCode('prompt-10')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-rose-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 在 n8n 中搭建一個全功能的 AI 業務特助 Agent，支援向量知識庫檢索、呼叫 Google Calendar 查詢空檔並自動回應用戶諮詢。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-10">請在 n8n 中建立先進的「Autonomous Sales Assistant Agent」：
+1. 觸發器：`Chat Trigger`（網站即時客服小組件）。
+2. 核心大腦：`AI Agent` 節點（模型：Gemini 1.5 Pro / GPT-4o）。
+3. 掛載工具集 (Tools)：
+   - 工具 1：`Vector Store Tool`（串接 Qdrant 向量庫查詢產品 FAQ）。
+   - 工具 2：`Google Calendar Tool`（動態檢查業務人員行事曆空檔）。
+   - 工具 3：`Calculator`（計算大量授權折扣試算）。
+4. 記憶體掛載：使用 `Window Buffer Memory` 保留最近 10 輪對話上下文。
+5. 輸出建立完整管線的 n8n 拓撲結構並測試一次多輪問答。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動串接 n8n 原生 AI 代理人節點，打造具備工具自主調用與記憶能力的強大智慧助手。</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5: 節點編排與錯誤處理守則 -->
+        <section id="best-practices" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400"></i>
+            <h2>5. n8n 自動化四大工程守則</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-rose-300">
+                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                <span>守則一：必備 Error Trigger 異常補償</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                生產環境中的關鍵工作流（特別是金流與資料寫入），必須在設定中指定「Error Workflow」。當管線中任一節點爆發未預期異常時，自動補發告警並記錄故障數據。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-orange-300">
+                <i data-lucide="shield" class="w-4 h-4"></i>
+                <span>守則二：Webhook 簽名強檢驗</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                公開暴露的 Webhook 端點切勿以純明文接收。應在進入核心業務邏輯前，比對 HMAC-SHA256 簽章（如 Stripe-Signature, GitHub-Signature），防範偽造請求。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-amber-300">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                <span>守則三：指數退避重試 (Exponential Backoff)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                呼叫外部第三方 API 的 HTTP Request 節點，應開啟「Retry On Fail」並設定合理的等待間隔，避免因短暫網路微斷造成整筆工作流中斷。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-emerald-300">
+                <i data-lucide="key" class="w-4 h-4"></i>
+                <span>守則四：機密憑證與代碼完全解耦</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                嚴禁在 Code 節點或表達式中寫入硬編碼的 API Token。應一律引用 n8n Credentials 機制，確保匯出工作流 JSON 時不發生機密洩漏。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6: 安裝與 n8n 實例連線設定 -->
+        <section id="setup" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-rose-400"></i>
+            <h2>6. 安裝與 n8n 實例連線設定</h2>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            Antigravity 可同時連線至自託管的 n8n（Docker / 雲端 VM）或官方 n8n Cloud 託管服務。
+          </p>
+
+          <div class="space-y-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xs">1</span>
+                安裝 n8n Marketplace 外掛套件
+              </div>
+              <p class="text-xs text-slate-400">在 Antigravity 對話框中輸入安裝指令：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-rose-300 font-mono">/plugin install antigravity-plugins-partners/plugin/n8n-skills</pre>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xs">2</span>
+                配置 n8n API Key 與實例 URL
+              </div>
+              <p class="text-xs text-slate-400">在 n8n 介面點選 Settings ➜ n8n API 產生一組 API Key，並設定環境變數：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-slate-200 font-mono">export N8N_HOST="https://n8n.yourdomain.com"
+export N8N_API_KEY="n8n_api_..."</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 7: 常見問題與除錯指南 -->
+        <section id="faq" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="help-circle" class="w-5 h-5 text-rose-400"></i>
+            <h2>7. 常見問題與除錯指南 (FAQ)</h2>
+          </div>
+          <div class="space-y-3 text-xs">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q1: 為什麼 Webhook 節點無法收到外部發送的請求？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                有兩種常見原因：1. 工作流尚未「啟用 (Active)」，在測試時必須使用 Test URL 並手動點擊「Listen for test event」；2. 自託管 n8n 未設定 `WEBHOOK_URL` 環境變數，導致 Webhook 回傳內部 localhost IP。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q2: 陣列資料傳遞時，為什麼後續節點只執行了第一筆？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                n8n 遵循 Item-based 執行模型。如果您的資料包裝在單一物件中的陣列欄位內，必須先通過「Item Lists」節點的「Split Out Items」動作將其打散成多個獨立 items，後續節點才會自動進行迴圈遍歷執行。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q3: 如何備份或導出由 Antigravity 建立的工作流？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                隨時可對 Antigravity 說「幫我導出 Workflow ID 為 12 的完整 JSON 代碼」，AI 會調用 `n8n_get_workflow` 並將其格式化儲存為本地 `.json` 檔案，方便納入 Git 版本控制。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告與系列導航 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+            <i data-lucide="workflow" class="w-4 h-4"></i>
+          </div>
+          <span class="text-slate-300 font-semibold">Antigravity Tools Hub · 自動化工作流編排系列</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">首頁總覽</a>
+          <a href="github-cli.html" class="hover:text-white transition-colors">GitHub CLI</a>
+          <a href="figma.html" class="hover:text-white transition-colors">Figma</a>
+          <a href="notion.html" class="hover:text-white transition-colors">Notion</a>
+          <a href="n8n.html" class="text-rose-400 font-semibold">n8n 自動化</a>
+          <a href="canva.html" class="hover:text-white transition-colors">Canva AI</a>
+          <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
+          <a href="google-sheets.html" class="hover:text-white transition-colors">Sheets</a>
+          <a href="gmail-calendar.html" class="hover:text-white transition-colors">Gmail & Calendar</a>
+          <a href="google-slides.html" class="hover:text-white transition-colors">Slides</a>
+          <a href="google-notebooklm.html" class="hover:text-white transition-colors">NotebookLM</a>
+          <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
+          <a href="google-cloud-gemini.html" class="hover:text-white transition-colors">Cloud & Gemini</a>
+          <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>本專案非 n8n 官方產品，商標權屬 n8n GmbH 所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕腳本與 Lucide 初始化 -->
+  <script>
+    lucide.createIcons();
+
+    function copyCode(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = event.currentTarget;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-bold">已複製！</span>`;
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          lucide.createIcons();
+        }, 2000);
+      }).catch(err => {
+        console.error('複製失敗:', err);
+      });
+    }
+  </script>
+</body>
+</html>

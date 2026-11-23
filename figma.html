@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Figma 擴充功能與 Design-to-Code 完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              purple: '#a259ff',
+              red: '#f24e1e',
+              green: '#0acf83',
+              blue: '#1abcfe',
+              50: '#faf5ff',
+              100: '#f3e8ff',
+              500: '#a259ff',
+              600: '#9333ea',
+              700: '#7e22ce',
+              900: '#581c87',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+    .figma-gradient-text {
+      background: linear-gradient(135deg, #f24e1e 0%, #a259ff 50%, #1abcfe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-purple-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-purple-600/15 via-pink-600/15 to-blue-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-indigo-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none">
+              <path d="M5.5 19a3.5 3.5 0 0 0 3.5 3.5h0a3.5 3.5 0 0 0 3.5-3.5v-3.5H9a3.5 3.5 0 0 0-3.5 3.5z" fill="#0ACF83"/>
+              <path d="M5.5 12a3.5 3.5 0 0 1 3.5-3.5H12.5v7H9a3.5 3.5 0 0 1-3.5-3.5z" fill="#A259FF"/>
+              <path d="M5.5 5A3.5 3.5 0 0 1 9 1.5h3.5v7H9A3.5 3.5 0 0 1 5.5 5z" fill="#F24E1E"/>
+              <path d="M12.5 1.5H16A3.5 3.5 0 0 1 19.5 5v0A3.5 3.5 0 0 1 16 8.5h-3.5V1.5z" fill="#FF7262"/>
+              <path d="M19.5 12a3.5 3.5 0 0 1-3.5 3.5h0a3.5 3.5 0 0 1-3.5-3.5v0a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5z" fill="#1ABCFE"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Figma Design-to-Code 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態架構</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">3. 核心 MCP 工具架構與 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#code-connect" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">5. Code Connect 與 Tokens 守則</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">6. 安裝與 Figma 存取憑證設定</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">7. 常見問題與除錯指南</a>
+            </nav>
+          </div>
+
+          <!-- 快速狀態卡片 -->
+          <div class="glass-card rounded-2xl p-4 border border-purple-900/40 bg-gradient-to-br from-purple-950/40 to-slate-900/60">
+            <div class="flex items-center gap-2 mb-2 text-purple-400 text-xs font-semibold">
+              <i data-lucide="layers" class="w-4 h-4"></i>
+              <span>Figma 官方合作夥伴外掛</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              整合 <code class="text-purple-300">plugin/figma</code> MCP 伺服器，將 Figma 設計稿毫秒轉為生產級 React / Tailwind 代碼，打通設計與研發之間的鴻溝。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區塊 -->
+      <main class="flex-1 min-w-0 space-y-12">
+
+        <!-- 頂部 Hero Header -->
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-purple-900/60 text-purple-300 border border-purple-700/50">Figma Official Partner</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-pink-900/50 text-pink-300 border border-pink-700/40">Design-to-Code</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">Code Connect & Dev Mode</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 via-pink-600 to-blue-500 flex items-center justify-center p-2 shadow-lg shadow-purple-500/20">
+              <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none">
+                <path d="M5.5 19a3.5 3.5 0 0 0 3.5 3.5h0a3.5 3.5 0 0 0 3.5-3.5v-3.5H9a3.5 3.5 0 0 0-3.5 3.5z" fill="#0ACF83"/>
+                <path d="M5.5 12a3.5 3.5 0 0 1 3.5-3.5H12.5v7H9a3.5 3.5 0 0 1-3.5-3.5z" fill="#A259FF"/>
+                <path d="M5.5 5A3.5 3.5 0 0 1 9 1.5h3.5v7H9A3.5 3.5 0 0 1 5.5 5z" fill="#F24E1E"/>
+                <path d="M12.5 1.5H16A3.5 3.5 0 0 1 19.5 5v0A3.5 3.5 0 0 1 16 8.5h-3.5V1.5z" fill="#FF7262"/>
+                <path d="M19.5 12a3.5 3.5 0 0 1-3.5 3.5h0a3.5 3.5 0 0 1-3.5-3.5v0a3.5 3.5 0 0 1 3.5-3.5h0a3.5 3.5 0 0 1 3.5 3.5z" fill="#1ABCFE"/>
+              </svg>
+            </div>
+            Figma AI 設計轉代碼與設計系統
+          </h1>
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+            透過自然語言直接連通全球第一的協同設計平台 Figma。Antigravity AI Agent 能精確解析畫布上的 Frame 樹狀結構、Auto Layout 約束與樣式 Token，一鍵產生符合專案現有元件庫的 React、Vue 或 Tailwind CSS 生產級程式碼，徹底實現「設計即代碼 (Design-to-Code)」。
+          </p>
+        </div>
+
+        <!-- 區塊 1: 功能概述與生態架構 -->
+        <section id="overview" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="layers" class="w-5 h-5 text-purple-400"></i>
+            <h2>1. 功能概述與生態架構</h2>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            在傳統開發流程中，工程師需對照 Figma Dev Mode 逐一手工測量 Padding、手動複製色碼與 CSS 屬性。Antigravity 的 Figma 擴充功能將整個設計檢驗與代碼生成流水線自動化：
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center mb-3">
+                <i data-lucide="code" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">原生 Design-to-Code</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動將 Auto-Layout 映射為 Flexbox/Grid，將字型與色彩樣式映射為 Tailwind CSS 或 CSS Variables，產出乾淨無冗贅的結構。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 flex items-center justify-center mb-3">
+                <i data-lucide="link-2" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">Code Connect 雙向映射</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                不只生成通用 HTML，更能識別 Figma 中的按鈕、下拉清單變體 (Variants)，直接對應引用您專案中既有的現成 UI 元件。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center mb-3">
+                <i data-lucide="message-square" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">畫布批註與雙向協作</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                AI 能直接讀取設計師與 PM 留下的 Comments 批註，甚至在畫布指定座標自動建立標註回報：「該按鈕已在 PR #42 實裝完畢」。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-400"></i>
+            <h2>2. 這個功能能做什麼？</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-purple-300 text-sm">
+                <i data-lucide="layout" class="w-4 h-4"></i>
+                <span>畫布節點深度解析 (Node Tree Inspection)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                只需給予一個 Figma 節點 URL（如 `?node-id=123:456`），AI 自動提取該 Frame 的內距 (Padding)、間距 (Gap)、圓角 (Border-Radius)、投影 (Box-Shadow) 與響應式約束。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-pink-300 text-sm">
+                <i data-lucide="palette" class="w-4 h-4"></i>
+                <span>Design Tokens 與 Variables 自動同步</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                自動萃取設計師定義在 Figma 中的色票集合與尺寸 Token，生成可直接在專案中引用的 `tailwind.config.js` 或 CSS 根變數。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-blue-300 text-sm">
+                <i data-lucide="image" class="w-4 h-4"></i>
+                <span>SVG 圖示與點陣圖素材自動切圖匯出</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                無需手動逐一點擊圖示匯出。AI 自動遍歷指定圖標頁面 (Icons Page)，批次將所有向量圖標匯出為精簡優化的 SVG 檔案並存入專案資料夾。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-emerald-300 text-sm">
+                <i data-lucide="check-square" class="w-4 h-4"></i>
+                <span>Design QA 像素級驗收對比</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                比對前端實際渲染的 DOM 結構與 Figma 設計稿，標記出文字大小落差、未對齊的間距或未匹配的色彩 Hex，協助設計團隊快速完成驗收。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 3: 核心 MCP 工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-purple-400"></i>
+            <h2>3. 核心 MCP 工具架構與 API</h2>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider">
+                  <tr>
+                    <th class="py-3 px-4">MCP 工具名稱</th>
+                    <th class="py-3 px-4">核心參數</th>
+                    <th class="py-3 px-4">回傳型態</th>
+                    <th class="py-3 px-4">功能說明與最佳實務</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-mono">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-purple-400">figma_get_file</td>
+                    <td class="py-3 px-4 text-slate-400">file_key, depth</td>
+                    <td class="py-3 px-4 text-slate-300">Document Tree</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">讀取檔案整體層次結構，建議指定 depth=2 以免大檔案傳輸超時</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-purple-400">figma_get_node</td>
+                    <td class="py-3 px-4 text-slate-400">file_key, node_id</td>
+                    <td class="py-3 px-4 text-slate-300">Node Properties</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">取得特定 Frame 或 Component 的幾何座標、Auto Layout 與填充屬性</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-pink-400">figma_export_images</td>
+                    <td class="py-3 px-4 text-slate-400">file_key, node_ids, format, scale</td>
+                    <td class="py-3 px-4 text-slate-300">Image URL Map</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">將多個節點批次渲染匯出為 SVG、PNG、JPG 或 PDF 下載網址</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-blue-400">figma_get_comments</td>
+                    <td class="py-3 px-4 text-slate-400">file_key</td>
+                    <td class="py-3 px-4 text-slate-300">Comments Array</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">檢索檔案中的所有批註、回覆串與位置座標，供 AI 萃取需求變更</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-emerald-400">figma_post_comment</td>
+                    <td class="py-3 px-4 text-slate-400">file_key, message, client_meta</td>
+                    <td class="py-3 px-4 text-slate-300">Comment Object</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">在畫布指定座標點建立新留言，通知設計師實裝進度或提問確認</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 4: 10 大跨角色實戰範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100">
+              <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
+              <h2>4. 10 大跨角色實戰範例 (Real-World Prompts)</h2>
+            </div>
+            <span class="text-xs text-slate-400">點擊右上角按鈕即可複製完整指令</span>
+          </div>
+
+          <!-- 範例列表 (1-10) -->
+          <div class="space-y-6">
+
+            <!-- 範例 1: 資深前端開發者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 01</span>
+                  <span class="text-sm font-bold text-slate-200">前端工程師：讀取 Figma Frame 直接生成 React 19 + Tailwind CSS 元件</span>
+                </div>
+                <button onclick="copyCode('prompt-1')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 設計師剛剛完成會員訂閱定價卡片（Pricing Tier Card）設計，需精準轉為現代語意化 React 元件，不得使用任意魔法數字 (Magic Numbers)。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-1">請使用 `figma` 外掛，讀取我的設計稿：
+1. 目標節點 URL：`https://www.figma.com/design/AbCdEf12345/App-V2?node-id=402-1885`
+2. 解析該節點的所有屬性（Auto Layout, Fills, CornerRadius, Typography, Gap）：
+3. 請為我生成生產級 React 19 + TypeScript + Tailwind CSS 元件：
+   - 檔名：`components/pricing/PricingCard.tsx`
+   - 自動提取 Props 介面（`planName`, `price`, `billingCycle`, `features: string[]`, `isPopular: boolean`, `onSelect: () => void`）
+   - 將 Auto-Layout 正確映射為 `flex flex-col` 與 `gap-4`，嚴格遵守原設計的 Padding。
+   - 若有按鈕變體，請呼叫專案既有的 `<Button variant="primary" />`。
+4. 輸出完整的元件代碼並附帶 Storybook 範例檔案。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動調用 <code class="text-purple-300">figma_get_node</code> 提取完整佈局參數，生成高保真、響應式且符合團隊規範的 React TypeScript 元件。</p>
+              </div>
+            </div>
+
+            <!-- 範例 2: 設計系統維護者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 02</span>
+                  <span class="text-sm font-bold text-slate-200">設計系統維護者：Code Connect 雙向映射與元件變體 (Variants) 綁定</span>
+                </div>
+                <button onclick="copyCode('prompt-2')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 需在團隊中導入 Figma Code Connect，將 Figma 中的 Button Component 及其 6 種 Variants（Primary, Secondary, Danger, Sizes S/M/L）與本地代碼庫建立雙向連結。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-2">請使用 `figma` 外掛，協助我為專案撰寫 Code Connect 映射設定檔：
+1. 目標元件組：`https://www.figma.com/design/AbCdEf12345/Design-System?node-id=10:200`（Button Component Set）。
+2. 分析 Figma 中定義的所有 Property（如 `variant`, `size`, `hasIcon`, `disabled`）。
+3. 讀取我本地的組件定義 `src/components/ui/button.tsx`。
+4. 生成對應的 `button.figma.tsx` Code Connect 檔案：
+   - 使用 `figma.connect()` 語法將 Figma 變體精確對齊至本地組件 Props。
+5. 輸出上傳至 Figma Dev Mode 的 CLI 驗證指令。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>產生符合官方規範的 Code Connect 檔案，工程師在 Figma Dev Mode 點擊按鈕時即可直接看見實際的程式碼片段。</p>
+              </div>
+            </div>
+
+            <!-- 範例 3: 行動端工程師 (iOS / Android / Flutter) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 03</span>
+                  <span class="text-sm font-bold text-slate-200">行動端工程師：批次匯出所有圖示 (Icons) 為精簡 SVG 與 Flutter 代碼</span>
+                </div>
+                <button onclick="copyCode('prompt-3')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> App 準備發布，需要將 Figma「Icon Set」畫布中的 48 個向量圖標一次性匯出，並自動轉換為 Flutter SVG 元件檔案。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-3">請協助我使用 `figma_export_images` 處理行動端圖示資產：
+1. 目標畫布：Figma 檔案 `AbCdEf12345` 的「Icons / System」頁面。
+2. 掃描該頁面下的所有向量節點，提取名稱並過濾重複項。
+3. 批次將所有節點以 SVG 格式匯出（Scale=1，包含向量路徑）。
+4. 自動下載並儲存至本地 `assets/icons/[icon_name].svg`。
+5. 生成一支 `lib/constants/app_icons.dart` 索引字典檔案，讓 Flutter 專案可透過 `AppIcons.arrowRight` 直覺調用。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動批次匯出 48 個圖示並建立對應程式碼常數表，大幅節省手動切圖與命名的繁雜人工成本。</p>
+              </div>
+            </div>
+
+            <!-- 範例 4: 產品經理 (Product Manager / PO) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 04</span>
+                  <span class="text-sm font-bold text-slate-200">產品經理：讀取畫布所有留言批註 (Comments)，自動產出需求變更審查表</span>
+                </div>
+                <button onclick="copyCode('prompt-4')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 週五跨部門評審後，主管、業務與法務在 Figma 上留下了 20 多則留言，需自動整理成結構化的代辦清單追蹤修訂。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-4">請使用 `figma_get_comments` 讀取設計稿 `AbCdEf12345` 的所有留言反饋：
+1. 檢索未解決 (unresolved) 的留言串。
+2. 針對每則留言進行語意理解與分類：
+   - 需求變更（Feature Change）
+   - 文案調整（Copywriting）
+   - 視覺或色彩反饋（Visual/UI）
+   - 法務或隱私合規提示（Compliance）
+3. 產出一份《Figma 評審變更追蹤 Markdown 表格》：
+   - 欄位包含：留言者、留言時間、所屬頁面 Frame、具體要求、指派負責角色（工程師 / 設計師 / PM）。
+4. 輸出至本地檔案 `docs/review_feedback_2026.md`。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動遍歷畫布留言串，將零散的設計標註匯整為具備追蹤責任人的精準專案管理待辦事項。</p>
+              </div>
+            </div>
+
+            <!-- 範例 5: 無障礙顧問 (Accessibility Specialist) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 05</span>
+                  <span class="text-sm font-bold text-slate-200">無障礙專家：自動稽核 WCAG 對比度與觸控熱區 (Tap Targets)</span>
+                </div>
+                <button onclick="copyCode('prompt-5')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 官網即將上線，需審查 Figma 設計稿是否符合國際 WCAG 2.1 AA 標準，特別是淺色背景下的文字對比度與按鈕點擊面積。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-5">請使用 `figma` 外掛對指定畫布執行無障礙 (a11y) 稽核：
+1. 目標節點：`https://www.figma.com/design/AbCdEf12345/App-V2?node-id=205:540`（Checkout Flow）。
+2. 色彩對比度檢查：
+   - 比對文字顏色與其直接背景色之對比度數值。
+   - 標出對比度低於 4.5:1 的正常內文，或低於 3:1 的大標題。
+3. 觸控熱區尺寸檢查：
+   - 檢查所有可點擊按鈕與連結的寬高是否小於 44x44 pt（iOS）或 48x48 dp（Android）。
+4. 輸出稽核清單，並針對不合規項目給出最近的合格色彩色碼推薦。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動運算幾何與色彩相對亮度，抓出 3 處灰色次要文字對比不足與 1 個過小圖標按鈕，避免上線後產生合規風險。</p>
+              </div>
+            </div>
+
+            <!-- 範例 6: 前端效能專家 (Web Performance) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 06</span>
+                  <span class="text-sm font-bold text-slate-200">效能專家：稽核超大未壓縮圖片與複雜向量，輸出資產最佳化策略</span>
+                </div>
+                <button onclick="copyCode('prompt-6')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 行銷團隊在首頁 Hero 區塊置入了數張 4K 未壓縮點陣圖與含有上千個錨點的複雜插畫，導致網頁載入 LCP 指標嚴重超標。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-6">請使用 `figma` 外掛對指定頁面進行前端資產載入效能稽核：
+1. 目標節點：首頁 Landing Page Frame（ID：`1:100`）。
+2. 掃描所有影像填充（IMAGE fills）與向量複雜度：
+   - 標記原始解析度遠大於顯示尺寸（如 3840x2160 用在 400x300 區域）的過重圖片。
+   - 標記向量路徑節點數超過 500 的複雜幾何插圖。
+3. 產出優化方案：
+   - 建議應轉為現代 WebP / AVIF 格式的點陣圖資產。
+   - 建議應進行 SVGO 瘦身精簡的向量插畫。
+4. 預估最佳化後的頁面體積節省比例。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動體檢畫布重量，產出精準的前端資產優化清單，預估可降低 70% 初始傳輸大小。</p>
+              </div>
+            </div>
+
+            <!-- 範例 7: QA 驗收工程師 (Design QA) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 07</span>
+                  <span class="text-sm font-bold text-slate-200">Design QA：已上線網頁與 Figma 標註間的像素級 (Pixel-Perfect) 偏差驗收</span>
+                </div>
+                <button onclick="copyCode('prompt-7')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 前端工程師宣稱已實裝完成設定頁面，需快速比對 Staging 站台與 Figma 原稿的間距、字體粗細與對齊情況。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-7">請結合 Chrome DevTools 與 Figma 外掛為我執行 Design QA 驗收：
+1. 讀取 Figma 規格：`https://www.figma.com/design/AbCdEf12345/App?node-id=510:800`（Settings Modal）。
+2. 提取設計規範參數：Modal 寬度、標題 Font-Size、表單 Input 高度、Padding-Left/Right。
+3. 透過 Chrome DevTools 檢查本地 Staging 頁面 `http://localhost:3000/settings` 的 DOM 計算樣式 (Computed Styles)。
+4. 輸出差異比對報告：
+   - 標出所有數值不吻合的項目（如：Figma 定義 gap: 16px，實作誤寫為 gap: 12px）。
+   - 給予前端修正代碼建議。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動串接兩大工具，進行數位像素對比，秒級抓出 3 處邊距與行高落差，省去人工比對圖層的時間。</p>
+              </div>
+            </div>
+
+            <!-- 範例 8: 全端行銷工程師 (Growth Engineer) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 08</span>
+                  <span class="text-sm font-bold text-slate-200">行銷工程師：Landing Page 設計稿秒轉響應式 HTML 與 SEO Meta 標籤</span>
+                </div>
+                <button onclick="copyCode('prompt-8')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 行銷團隊設計好了一款黑五限時活動頁面，需在 1 小時內轉為獨立可直接上線的單頁靜態 HTML 檔，包含語意化 SEO 標籤。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-8">請讀取 Figma 黑五活動畫布節點 `AbCdEf12345?node-id=99:12`：
+1. 分析整個 Landing Page 的區塊結構（Hero, Features, Pricing, Testimonials, FAQ, Footer）。
+2. 產生單一獨立可運行的 `index.html` 檔案：
+   - 採用 Tailwind CSS CDN 與現代無框架語法。
+   - 自動將標題設為語意化 `<h1>`、`<h2>` 結構。
+   - 補齊 OpenGraph 標籤（`og:title`、`og:description`、`og:image`）。
+   - 確保手機版 (390px) 與桌機版 (1440px) 響應式切換順暢。
+3. 輸出到專案路徑 `campaigns/blackfriday/index.html`。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動化由頂至底解析整頁排版，產出語意清晰、響應式完整的現代 HTML 單頁，隨時可上線運行。</p>
+              </div>
+            </div>
+
+            <!-- 範例 9: 開發團隊主管 (Engineering Manager) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 09</span>
+                  <span class="text-sm font-bold text-slate-200">工程主管：跨團隊 Design Token 同步管線，匯出 CSS Variables / JSON Tokens</span>
+                </div>
+                <button onclick="copyCode('prompt-9')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 建立了「設計與代碼單一事實來源 (Single Source of Truth)」，每當設計師在 Figma 更新色彩 Variables，需自動同步回前端樣式代碼。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-9">請使用 `figma` 外掛為我抽取設計系統的變數集合 (Variables & Tokens)：
+1. 目標檔案：`AbCdEf12345`。
+2. 提取所有的 Color Variables, Spacing Tokens, Typography Styles。
+3. 轉換為標準 W3C Design Tokens JSON 格式（`tokens.json`）。
+4. 自動編譯為前端專案使用的檔案：
+   - `styles/theme.css`（標準 CSS Custom Properties `:root { --color-primary: ... }`）
+   - `tailwind.config.js` 的 `theme.extend.colors` 設定物件。
+5. 輸出變更摘要，說明本次設計系統新增或更新了哪些 Token。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動維護 Design Tokens 自動化轉換管線，徹底消除設計師手動通知工程師改色碼的溝通落差。</p>
+              </div>
+            </div>
+
+            <!-- 範例 10: 跨國在地化與文案編輯 (Content & Localization Lead) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 10</span>
+                  <span class="text-sm font-bold text-slate-200">文案專員：批次提取全站 UI 文案字典、多國語系檢核與文字溢位模擬</span>
+                </div>
+                <button onclick="copyCode('prompt-10')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 準備發行德文與日文版 App，需從 Figma 畫布中自動抽出所有按鈕文字、對話框提示與標題，輸出為 i18n 翻譯鍵值 JSON。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-10">請使用 `figma` 外掛對「Onboarding Flow」畫布執行文案盤點：
+1. 檢索目標畫布中所有的 Text Nodes（文字圖層）。
+2. 提取文字內容、所屬 Frame 與文字樣式。
+3. 輸出標準 i18n 鍵值對 JSON 字典（`locales/en.json`）：
+   - 自動根據層級命名鍵（如 `onboarding.welcome.title`: "歡迎使用 Antigravity"）。
+4. 德語長度模擬預警：
+   - 估算翻譯為德語時長度增加 30% 之情形，標出寬度固定且無 Auto-Layout 包裹的高風險文字框。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動萃取全站文案產生 i18n 翻譯檔，並主動提示可能文字溢位破版的 UI 元件。</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5: Code Connect 與 Tokens 守則 -->
+        <section id="code-connect" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-purple-400"></i>
+            <h2>5. Design-to-Code 四大工程守則</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-purple-300">
+                <i data-lucide="box" class="w-4 h-4"></i>
+                <span>守則一：尊重 Auto Layout，拒絕絕對定位 (Absolute)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                高質感的代碼轉換必須依據 Figma Auto Layout 轉化為 Flex/Grid 流式佈局，絕不使用硬編碼的 `absolute top-[123px] left-[45px]`，以確保跨螢幕尺寸自適應。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-pink-300">
+                <i data-lucide="link" class="w-4 h-4"></i>
+                <span>守則二：優先複用已有元件 (Component Reuse)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                AI 生成代碼時，會先掃描專案既有的 UI Library（如 Button, Input, Modal, Badge），避免產生數十個樣式重複的孤兒小標籤。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-blue-300">
+                <i data-lucide="type" class="w-4 h-4"></i>
+                <span>守則三：字型與色彩必須 Token 化</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                嚴禁在代碼中隨意留下無註解的十六進位色碼（如 `#7C3AED`）。應一律對齊至專案 Tailwind 語意顏色（如 `bg-brand-600`）或 CSS 變數。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-emerald-300">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+                <span>守則四：Depth 限制防爆記憶體</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                大型 Figma 專案動輒包含數萬個節點。調用 `figma_get_file` 時務必傳遞合理的 `depth` 參數，或直接指定具體的 `node-id` 進行局部精確獲取。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6: 安裝與 Figma 存取憑證設定 -->
+        <section id="setup" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-purple-400"></i>
+            <h2>6. 安裝與 Figma 存取憑證設定</h2>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            Figma 外掛支援 Personal Access Token (PAT) 或標準 OAuth 2.0 整合。
+          </p>
+
+          <div class="space-y-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">1</span>
+                安裝 Figma Marketplace 外掛套件
+              </div>
+              <p class="text-xs text-slate-400">在 Antigravity 對話框中輸入安裝指令：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-purple-300 font-mono">/plugin install antigravity-plugins-partners/plugin/figma</pre>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">2</span>
+                取得 Figma 個人存取權杖 (Personal Access Token)
+              </div>
+              <p class="text-xs text-slate-400">前往 Figma 帳號設定 ➜ Settings ➜ Security ➜ Personal access tokens 建立一組新 Token，並設定環境變數：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-slate-200 font-mono">export FIGMA_ACCESS_TOKEN="figd_..."</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 7: 常見問題與除錯指南 -->
+        <section id="faq" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="help-circle" class="w-5 h-5 text-purple-400"></i>
+            <h2>7. 常見問題與除錯指南 (FAQ)</h2>
+          </div>
+          <div class="space-y-3 text-xs">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q1: 為什麼提取設計時只拿到空白 Frame 或 403 Forbidden？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                請確認您產生的 Figma Token 具備該檔案所屬團隊或組織的「檢視 (Can View)」或「編輯」權限。若是私有企業團隊檔案，需確認 Token 具備 File Read 權限範圍。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q2: 如何快速找到特定元件的 node-id？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                在 Figma 桌面版或網頁版中，點選任何一個 Frame 或圖層，瀏覽器網址列最後就會出現 `?node-id=123-456`（或者冒號 `123:456`），直接將整串 URL 貼給 Antigravity 即可！
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q3: 遇到設計師沒有使用 Auto Layout 的畫布該怎麼處理？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                Antigravity 內建視覺幾何推理引擎，即使設計師使用的是自由拖曳圖層，AI 會根據各圖層的座標與相對空間間隔，智慧推論出最合理的 Flexbox 與 Grid 排版結構，避免生成脆弱的絕對定位代碼。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告與系列導航 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
+            <i data-lucide="palette" class="w-4 h-4"></i>
+          </div>
+          <span class="text-slate-300 font-semibold">Antigravity Tools Hub · 產品設計與前端工程系列</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">首頁總覽</a>
+          <a href="github-cli.html" class="hover:text-white transition-colors">GitHub CLI</a>
+          <a href="figma.html" class="text-purple-400 font-semibold">Figma</a>
+          <a href="canva.html" class="hover:text-white transition-colors">Canva AI</a>
+          <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
+          <a href="google-sheets.html" class="hover:text-white transition-colors">Sheets</a>
+          <a href="gmail-calendar.html" class="hover:text-white transition-colors">Gmail & Calendar</a>
+          <a href="google-slides.html" class="hover:text-white transition-colors">Slides</a>
+          <a href="google-notebooklm.html" class="hover:text-white transition-colors">NotebookLM</a>
+          <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
+          <a href="google-cloud-gemini.html" class="hover:text-white transition-colors">Cloud & Gemini</a>
+          <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>本專案非 Figma 官方產品，商標權屬 Figma, Inc. 所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕腳本與 Lucide 初始化 -->
+  <script>
+    lucide.createIcons();
+
+    function copyCode(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = event.currentTarget;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-bold">已複製！</span>`;
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          lucide.createIcons();
+        }, 2000);
+      }).catch(err => {
+        console.error('複製失敗:', err);
+      });
+    }
+  </script>
+</body>
+</html>

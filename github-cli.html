@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub CLI (gh) 擴充功能與自動化完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              purple: '#8b5cf6',
+              indigo: '#6366f1',
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              900: '#4c1d95',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-purple-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-purple-600/15 via-indigo-600/15 to-blue-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-violet-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <i data-lucide="github" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <span class="font-bold text-sm text-slate-200">GitHub CLI (gh) 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#cli-commands" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">3. 核心命令結構與指令表</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#best-practices" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">5. 安全審查與 CI/CD 防呆守則</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">6. 安裝與認證設定 (gh auth)</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">7. 常見問題與除錯指南</a>
+            </nav>
+          </div>
+
+          <!-- 快速狀態卡片 -->
+          <div class="glass-card rounded-2xl p-4 border border-purple-900/40 bg-gradient-to-br from-purple-950/40 to-slate-900/60">
+            <div class="flex items-center gap-2 mb-2 text-purple-400 text-xs font-semibold">
+              <i data-lucide="terminal" class="w-4 h-4"></i>
+              <span>開發者必備命令列基建</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              透過 <code class="text-purple-300">gh</code> CLI，Antigravity AI Agent 能直接在終端機中建立 Pull Request、提取失敗 CI 日誌、管理 Issue 與發布版本，徹底告別網頁切換。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區塊 -->
+      <main class="flex-1 min-w-0 space-y-12">
+
+        <!-- 頂部 Hero Header -->
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-purple-900/60 text-purple-300 border border-purple-700/50">GitHub Official CLI</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-900/50 text-indigo-300 border border-indigo-700/40">CI/CD & Actions 自動化</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">PR & Issue 管線協作</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center p-2 shadow-lg shadow-purple-500/20">
+              <i data-lucide="github" class="w-6 h-6 text-white"></i>
+            </div>
+            GitHub CLI (`gh`)
+          </h1>
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+            GitHub 官方專為終端機打造的命令列工具。Antigravity AI Agent 能直接在終端機中分析程式碼差異（Diff）、自動生成符合 Conventional Commits 的 Pull Request、即時串流 GitHub Actions 失敗堆疊日誌並精準除錯，實現軟體工程的端到端自動化。
+          </p>
+        </div>
+
+        <!-- 區塊 1: 功能概述與生態架構 -->
+        <section id="overview" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="layers" class="w-5 h-5 text-purple-400"></i>
+            <h2>1. 功能概述與生態定位</h2>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            現代軟體工程中，開發者常在 IDE、Terminal 與 GitHub Web 介面之間頻繁來回跳轉（看 PR、查 Issue、追蹤 Actions 狀態）。<code class="text-purple-300">gh</code> CLI 將 GitHub 完整的協作生態濃縮於命令列介面中，AI Agent 能直接呼叫並進行高維度工程操作：
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center mb-3">
+                <i data-lucide="git-pull-request" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">PR 生命週期管理</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動從當前分支生成 PR、草稿模式防呆 (Draft)、自動注入 Issue 關聯（`Closes #12`）、提取 Diff 自動產生專業審查意見。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3">
+                <i data-lucide="play-circle" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">GitHub Actions CI 監看</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                即時抓取流水線執行狀態，使用 <code class="text-indigo-300">--log-failed</code> 僅印出崩潰步驟的錯誤堆疊，由 AI 自動研判修復方案。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-violet-500/20 text-violet-400 flex items-center justify-center mb-3">
+                <i data-lucide="tag" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">Release 與 Changelog</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動掃描兩個版本間的所有 PR 與 Commit，生成結構化的更新紀錄，並一鍵建立 GitHub Release 與上傳編譯產物。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-purple-400"></i>
+            <h2>2. 這個功能能做什麼？</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-purple-300 text-sm">
+                <i data-lucide="file-diff" class="w-4 h-4"></i>
+                <span>自動生成專業級 PR 說明與檢查清單</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                寫完代碼後，無需自己打字整理 PR 內文。AI 透過 `gh pr diff` 自動比對本次變更，自動產生包含「變更動機」、「影響範圍」、「測試驗證截圖欄位」的嚴謹 PR Description。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-indigo-300 text-sm">
+                <i data-lucide="alert-octagon" class="w-4 h-4"></i>
+                <span>CI/CD 失敗自動除錯與一鍵重跑</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                當 Actions 亮紅燈時，AI 自動呼叫 `gh run view --log-failed` 抓取關鍵失敗段落（如 Unit Test 斷言錯誤、ESLint 語法檢查失敗），直接給出修正代碼並重新推送。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-violet-300 text-sm">
+                <i data-lucide="kanban" class="w-4 h-4"></i>
+                <span>Issue 批量分流與工作分支自動開闢</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                透過 `gh issue develop` 一鍵將需求 Issue 轉換為對應名稱的 Git 工作分支，並自動在 Pull Request 建立關聯，達成任務狀態自動同步關閉。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-emerald-300 text-sm">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span>分支保護規則與資安稽核盤點</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                透過 `gh api` 檢核 Repository 的 Branch Protection Rules（是否要求 Code Review、是否強制線性歷史、是否啟用 Dependabot 與 Secret Scanning）。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 3: 核心命令結構與指令表 -->
+        <section id="cli-commands" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="terminal" class="w-5 h-5 text-purple-400"></i>
+            <h2>3. 核心命令結構與指令參考表</h2>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider">
+                  <tr>
+                    <th class="py-3 px-4">指令分組</th>
+                    <th class="py-3 px-4">CLI 命令語法</th>
+                    <th class="py-3 px-4">常用旗標 (Flags)</th>
+                    <th class="py-3 px-4">功能說明與最佳實務</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-mono">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-purple-400 font-sans font-medium">Pull Requests</td>
+                    <td class="py-3 px-4 text-slate-200">gh pr create</td>
+                    <td class="py-3 px-4 text-slate-400">--title, --body, --draft, --reviewer</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">將當前分支發布為 PR，建議先以 `--draft` 建立防呆草稿避免觸發非必要 CI</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-purple-400 font-sans font-medium">Pull Requests</td>
+                    <td class="py-3 px-4 text-slate-200">gh pr diff</td>
+                    <td class="py-3 px-4 text-slate-400">[number], --color=never</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">印出特定 PR 的代碼變更 Diff，供 AI 逐行分析安全性與代碼品質</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-purple-400 font-sans font-medium">Pull Requests</td>
+                    <td class="py-3 px-4 text-slate-200">gh pr merge</td>
+                    <td class="py-3 px-4 text-slate-400">--squash, --auto, --delete-branch</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">合併 PR，支援 `--squash` 保持 Git 歷史乾淨，以及自動刪除已合併之遠端分支</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-indigo-400 font-sans font-medium">GitHub Actions</td>
+                    <td class="py-3 px-4 text-slate-200">gh run view</td>
+                    <td class="py-3 px-4 text-slate-400">[run-id], --log-failed</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">核心排錯指令：只抓取 CI 失敗步驟的日誌，避免幾萬行無效文字干擾 AI 研判</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-indigo-400 font-sans font-medium">GitHub Actions</td>
+                    <td class="py-3 px-4 text-slate-200">gh run rerun</td>
+                    <td class="py-3 px-4 text-slate-400">[run-id], --failed</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">一鍵重跑失敗的 CI 任務，省去在網頁手動點擊 Re-run 的繁瑣動作</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-violet-400 font-sans font-medium">Issues</td>
+                    <td class="py-3 px-4 text-slate-200">gh issue develop</td>
+                    <td class="py-3 px-4 text-slate-400">[issue-number], --checkout</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">直接依據 Issue 開立關聯 Git 分支並切換，全自動化工作流連結</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-emerald-400 font-sans font-medium">Releases</td>
+                    <td class="py-3 px-4 text-slate-200">gh release create</td>
+                    <td class="py-3 px-4 text-slate-400">[tag], --generate-notes, [assets...]</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">自動根據標籤與合併記錄生成 Release Notes 並打包上傳壓縮檔產物</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-cyan-400 font-sans font-medium">GraphQL & REST</td>
+                    <td class="py-3 px-4 text-slate-200">gh api</td>
+                    <td class="py-3 px-4 text-slate-400">/repos/:owner/:repo/..., -X POST</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">底層萬能 API 存取通道，自動附加登入 Token，存取任何 GitHub API 端點</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 4: 10 大跨角色實戰範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100">
+              <i data-lucide="sparkles" class="w-5 h-5 text-purple-400"></i>
+              <h2>4. 10 大跨角色實戰範例 (Real-World Prompts)</h2>
+            </div>
+            <span class="text-xs text-slate-400">點擊右上角按鈕即可複製完整指令</span>
+          </div>
+
+          <!-- 範例列表 (1-10) -->
+          <div class="space-y-6">
+
+            <!-- 範例 1: 資深前端工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 01</span>
+                  <span class="text-sm font-bold text-slate-200">前端工程師：抽取 Git Diff 自動撰寫語意化 PR Description 與檢查清單</span>
+                </div>
+                <button onclick="copyCode('prompt-1')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 在新分支 `feat/cart-checkout-redesign` 上完成了 8 個 commits，準備發 PR 請求團隊 Review，需自動分析代碼差異並產出清晰結構的 PR 說明。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-1">請使用 `gh` CLI 協助我建立正式的 Pull Request：
+1. 執行 `git diff main...HEAD` 分析我當前分支與 main 之間的所有改動。
+2. 遵循「Conventional PR」格式，撰寫一份高質感的 PR 標題與內文：
+   - PR 標題格式：`feat(checkout): redesign payment flow & add Apple Pay support`
+   - 包含【變更摘要】（Bullet points 列出核心模組改動）
+   - 包含【關聯 Issue】（標註 `Closes #142`）
+   - 包含【自測驗證 Checklist】（例如：桌機版測試、手機版 Responsive 測試、零錯誤 Console 輸出）
+   - 包含【重大改動 (Breaking Changes)】警示區塊
+3. 使用 `gh pr create --draft` 先建立為草稿狀態，並指派 `@tech-lead` 為審查者 (Reviewer)。
+4. 輸出建立後的 PR 網址與預覽摘要。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動解析代碼差異，呼叫 <code class="text-purple-300">gh pr create</code> 發送草稿 PR，生成排版整潔、圖文並茂的審查內文並綁定相關人員。</p>
+              </div>
+            </div>
+
+            <!-- 範例 2: DevOps / SRE 維運工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 02</span>
+                  <span class="text-sm font-bold text-slate-200">DevOps 維運：CI/CD 失敗日誌即時抓取 (`--log-failed`)、智慧診斷與修復</span>
+                </div>
+                <button onclick="copyCode('prompt-2')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 推送代碼後 GitHub Actions CI 流水線亮紅燈，需快速定位是哪個測試失敗或依賴版本衝突，避免在 Web 網頁翻找數千行 log。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-2">請使用 `gh` 命令列排查當前 PR 的 GitHub Actions 失敗原因：
+1. 執行 `gh pr checks` 檢視所有 CI 測試的狀態，找出亮紅燈 (Failed) 的 Job 名稱與 Run ID。
+2. 執行 `gh run view [RUN_ID] --log-failed` 提取具體失敗的日誌區段。
+3. 閱讀錯誤堆疊並進行智慧診斷：
+   - 判斷是環境變數缺失、資料庫連接逾時、還是特定單元測試斷言 (Assertion Error) 不符。
+4. 給出精確的本機修復建議：
+   - 若為代碼問題，指出需要修改的檔案路徑與行號。
+   - 若為短暫網路抖動，協助我執行 `gh run rerun [RUN_ID] --failed` 重新運行。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動鎖定錯誤步驟（例如 Jest 測試中的 `expected 200 received 401`），省去手動開啟瀏覽器下載 log 的時間，秒級給出修復建議。</p>
+              </div>
+            </div>
+
+            <!-- 範例 3: 開源專案維護者 (Maintainer) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 03</span>
+                  <span class="text-sm font-bold text-slate-200">開源維護者：跨 Fork 倉庫自動核對 PR Diff、安全審查與 Squash Merge</span>
+                </div>
+                <button onclick="copyCode('prompt-3')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 社群外部貢獻者送來了一個 PR #88，需在本機快速檢視代碼、執行靜態分析、防範惡意注入，確認無誤後安全合併。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-3">請協助我審查開源社群提交的 Pull Request #88：
+1. 執行 `gh pr checkout 88` 將該外部 Fork 分支檢出至本機暫存環境。
+2. 進行安全性與代碼規範審查：
+   - 檢查是否有修改 GitHub Actions workflow 檔案（嚴防惡意 Secret 洩漏）。
+   - 檢查 package.json 是否新增了可疑未受信任的依賴套件。
+   - 執行本機 linter 與單元測試。
+3. 若測試全數通過，請協助我撰寫一份感謝貢獻者的審查留言：
+   - 執行 `gh pr review 88 --approve --body "感謝您的貢獻！代碼邏輯清晰，測試完整，已核准合併。"`
+4. 執行 `gh pr merge 88 --squash --delete-branch` 完成合併並清理分支。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動安全切換分支、執行資安防呆掃描、自動完成審查簽核並以 Squash 乾淨歷史合入主線。</p>
+              </div>
+            </div>
+
+            <!-- 範例 4: 發行經理 (Release Manager) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 04</span>
+                  <span class="text-sm font-bold text-slate-200">發行經理：依據 Milestone 自動生成 CHANGELOG、發布 Release 與上傳資產</span>
+                </div>
+                <button onclick="copyCode('prompt-4')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 準備發布 `v2.5.0` 正式版，需自動彙整自 `v2.4.0` 以來合併的 25 個 PR，依據 Features、Bug Fixes、Breaking Changes 產出 Release Notes。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-4">請使用 `gh release` 相關工具為專案建立新版本發行：
+1. 標籤名稱：`v2.5.0`。
+2. 掃描自上一個標籤 `v2.4.0` 以來所有合併進 main 的 PR：
+   - 呼叫 `gh api repos/:owner/:repo/releases/generate-notes` 生成基礎清單。
+   - 結構化重新編排為：🚀 新增功能 (Features)、🐛 錯誤修復 (Bug Fixes)、⚡ 效能改進 (Performance) 與 👥 本次貢獻者清單。
+3. 上傳編譯產物：包含本機產出的安裝檔 `dist/app-v2.5.0-x64.zip` 與校驗碼 `dist/SHA256SUMS.txt`。
+4. 執行命令建立正式 Release：
+   - `gh release create v2.5.0 dist/* --title "v2.5.0 - 次世代效能全面升級" --notes-file release_notes.md`</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動解析 PR 語意分類，生成專業 CHANGELOG 並上傳 Release Assets，省去手動撰寫發行說明的龐大時間。</p>
+              </div>
+            </div>
+
+            <!-- 範例 5: 產品經理與技術主管 (Tech Lead) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 05</span>
+                  <span class="text-sm font-bold text-slate-200">Tech Lead：Issue 批量分流、標籤管理、Milestone 指派與燃盡健康度</span>
+                </div>
+                <button onclick="copyCode('prompt-5')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 週一早會需快速整理過去一週累積的 30 個未分類 Issue，為其貼上 `bug`、`enhancement`、優先級標籤並分發給團隊成員。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-5">請使用 `gh issue` 指令協助我整理專案待辦清單：
+1. 查詢所有狀態為 open 且未貼標籤 (no:label) 的 Issues：
+   - `gh issue list --state open --search "no:label"`
+2. 分析每個 Issue 的標題與內文，給出建議的分類標籤（如 `priority:high`、`type:bug`、`domain:backend`）。
+3. 自動將屬於「2026 Q2 Sprint 3」目標的 Issue 綁定至該 Milestone。
+4. 產出一份 Markdown 匯總表格，列出 Issue ID、標題、回報者、建議負責人 (Assignee) 與預估嚴重度。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動將散亂的 Issue 轉換為清晰的任務看板分類，並透過 `gh issue edit` 批次貼上正確標籤與負責人。</p>
+              </div>
+            </div>
+
+            <!-- 範例 6: QA 自動化測試工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 06</span>
+                  <span class="text-sm font-bold text-slate-200">QA 工程師：自動注入 Playwright E2E 測試摘要至 PR Review 評論</span>
+                </div>
+                <button onclick="copyCode('prompt-6')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 在本機執行完 150 個 Playwright 端到端驗證案例後，需將測試通過率、效能評分與失敗案例截圖直接評論至 PR #104 上。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-6">請使用 `gh pr comment` 協助我將自動化測試結果回報至 PR #104：
+1. 讀取本機測試報告檔案 `test-results/summary.json`。
+2. 提取關鍵指標：總用例數、通過數 (Pass)、失敗數 (Fail)、執行總耗時與首屏渲染時間。
+3. 撰寫一份排版精美的 QA 驗證報告：
+   - 包含狀態標章（如 `✅ 148 Passed`、`❌ 2 Failed`）。
+   - 對於失敗的 2 個案例，列出具體 URL、測試步驟與錯誤斷言。
+4. 呼叫 `gh pr comment 104 --body-file report.md` 送出留言，提醒工程師注意迴歸缺陷。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>自動將測試資料轉為 GitHub Markdown 報表並精確留言於 PR，打造流暢的 CI 反饋迴圈。</p>
+              </div>
+            </div>
+
+            <!-- 範例 7: 資安與合規稽核員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 07</span>
+                  <span class="text-sm font-bold text-slate-200">資安稽核員：Dependabot 漏洞警報盤點與 Branch Protection 規則合規查核</span>
+                </div>
+                <button onclick="copyCode('prompt-7')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 準備進行 SOC 2 資安合規稽核，需清查 Repository 是否存在 Critical 等級漏洞，且 main 分支是否強制啟用 PR 審查與簽署 Commit。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-7">請使用 `gh api` 協助我審計當前 Repository 的資安基準：
+1. 查詢 Dependabot 漏洞清單：
+   - `gh api repos/:owner/:repo/dependabot/alerts --jq '.[] | {number, severity: .security_advisory.severity, package: .security_vulnerability.package.name}'`
+   - 篩選出 Severity 為 `critical` 或 `high` 的安全風險。
+2. 查詢 main 分支保護規則 (Branch Protection)：
+   - `gh api repos/:owner/:repo/branches/main/protection`
+   - 檢查是否開啟 `required_approving_review_count >= 1`。
+   - 檢查是否開啟 `require_signed_commits`。
+   - 檢查是否禁止強制推送 (`enforce_admins`, `allow_force_pushes`)。
+3. 產出一份資安合規查核報告，標註合格與待整改項目。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動調用 GitHub REST API 進行全方位安全體檢，輸出符合企業資安規範之稽核查核表。</p>
+              </div>
+            </div>
+
+            <!-- 範例 8: 全端後端工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 08</span>
+                  <span class="text-sm font-bold text-slate-200">後端工程師：Issue 關聯分支開闢 (`gh issue develop`) 與跨 PR 自動關閉</span>
+                </div>
+                <button onclick="copyCode('prompt-8')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 收到 Bug Issue #67（使用者登入 Token 偶發過期），需開立乾淨分支處理，並確保發布 PR 時能正確在合併後自動關閉該 Issue。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-8">請使用 `gh` 指令開始處理 Issue #67：
+1. 執行 `gh issue view 67` 讀取 Issue 描述與重現步驟。
+2. 呼叫 `gh issue develop 67 --checkout --name fix/jwt-token-expiration`：
+   - 在 GitHub 雲端建立分支連結，並自動於本地 checkout 該分支。
+3. 修復完成後，協助我推送代碼並建立 PR：
+   - PR 內文第一行寫入 `Fixes #67`。
+   - 附上修復前後的 Token 逾時邏輯比較說明。
+4. 驗證 PR 建立成功並顯示關聯狀態。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>一氣呵成建立 Issue-to-Branch-to-PR 連鎖，合併後自動關閉 Issue，保持工作流程嚴謹一致。</p>
+              </div>
+            </div>
+
+            <!-- 範例 9: 多人跨團隊協作開發者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 09</span>
+                  <span class="text-sm font-bold text-slate-200">協作開發者：上游倉庫快速同步 (`gh repo sync`)、長老分支衝突檢測</span>
+                </div>
+                <button onclick="copyCode('prompt-9')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 自己的個人 Fork 倉庫落後主幹 3 週，需要快速跟上 Upstream main 分支並檢查自己正在開發的分支是否有潛在 Merge Conflict。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-9">請協助我使用 `gh repo sync` 更新本地與遠端 Fork 倉庫：
+1. 執行 `gh repo sync --source upstream/main` 同步最新主幹提交至我的 main 分支。
+2. 切換回我當前的功能分支 `feat/payment-v2`。
+3. 模擬 rebase 操作檢測是否有程式碼衝突：
+   - 預先列出 upstream/main 修改到的檔案清單與我目前分支修改檔案的重疊部分。
+4. 若無重大衝突，執行 `git rebase main` 並透過 `git status` 確認乾淨狀態。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動化同步上游分支並預判衝突點，省去複雜的手動 remote 與 rebase 指令步驟。</p>
+              </div>
+            </div>
+
+            <!-- 範例 10: 平台工程架構師 (Platform Engineer) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">範例 10</span>
+                  <span class="text-sm font-bold text-slate-200">平台架構師：GraphQL API 抓取團隊 PR 合併週期時間 (Lead Time) 與 DORA 指標</span>
+                </div>
+                <button onclick="copyCode('prompt-10')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 季末需評估全工程團隊的研發效能與 DORA 指標，需透過 GitHub GraphQL API 抓取近 30 天所有 PR 從「建立」到「審查通過」再到「最終合併」的精確時長統計。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-10">請使用 `gh api graphql` 查詢最近 30 天的工程團隊研發指標：
+1. 撰寫 GraphQL 查詢：
+   - 檢索 `merged` 狀態的前 50 個 Pull Requests。
+   - 取得欄位：`number`、`title`、`createdAt`、`mergedAt`、`additions`、`deletions`。
+2. 進行數據運算：
+   - 計算每個 PR 的生命週期時間 (Lead Time = mergedAt - createdAt)。
+   - 計算平均 PR 大小 (Total Lines Changed)。
+   - 計算中位數 (Median) 合併時長。
+3. 輸出為格式工整的《工程團隊研發效能週報》，並以 DORA 標準評定團隊目前處於 High / Medium / Low 成熟度等級。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>AI 自動調用 GraphQL API 取得結構化數據並計算統計量，產出具備管理層參考價值的 DORA 效能分析報表。</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5: 安全審查與 CI/CD 防呆守則 -->
+        <section id="best-practices" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-purple-400"></i>
+            <h2>5. 安全審查與 CI/CD 四大防呆守則</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-purple-300">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+                <span>守則一：預設以 Draft PR 模式建立</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                在程式碼尚未通過本地全套測試前，建議始終加上 <code class="text-purple-200">--draft</code> 旗標。這能避免過早觸發昂貴的 CI/CD 雲端矩陣測試資源，亦不會過早發送通知打擾 Reviewer。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-indigo-300">
+                <i data-lucide="key" class="w-4 h-4"></i>
+                <span>守則二：嚴禁在命令列明文暴露 Token</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                絕不將 GitHub Personal Access Token (PAT) 寫在 Prompt 或命令行引數中（會被 shell 歷史紀錄捕捉）。一律透過 <code class="text-indigo-200">gh auth login</code> 互動授權或標準環境變數 <code class="text-indigo-200">GITHUB_TOKEN</code> 傳遞。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-violet-300">
+                <i data-lucide="git-merge" class="w-4 h-4"></i>
+                <span>守則三：合併前強制 Checks 通過驗證</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                執行 <code class="text-violet-200">gh pr merge</code> 前，必須確保 `gh pr checks` 全部回傳 PASS。若專案設有 Required Status Checks，即使有 Admin 權限亦不建議使用 `--admin` 強制略過。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-amber-300">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                <span>守則四：合併後自動清理遠端分支</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                合併時一律加上 <code class="text-amber-200">--delete-branch</code> 旗標，避免已合併的功能分支在 Repository 中累積數百條造成遠端分支臃腫與命名衝突。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6: 安裝與認證設定 (gh auth) -->
+        <section id="setup" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-purple-400"></i>
+            <h2>6. 安裝與認證設定 (gh auth login)</h2>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            GitHub CLI 支援 Windows、macOS 與 Linux 各大作業系統，並提供瀏覽器一次性驗證碼快速授權。
+          </p>
+
+          <div class="space-y-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">1</span>
+                安裝 GitHub CLI
+              </div>
+              <p class="text-xs text-slate-400">依據您的作業系統執行安裝命令：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-purple-300 font-mono"># Windows (winget / scoop / choco)
+winget install --id GitHub.cli
+
+# macOS (Homebrew)
+brew install gh
+
+# Linux (Debian / Ubuntu)
+sudo apt install gh</pre>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs">2</span>
+                執行帳號登入授權
+              </div>
+              <p class="text-xs text-slate-400">在終端機中執行以下互動指令，選擇「GitHub.com」並透過瀏覽器完成單次安全授權碼驗證：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-slate-200 font-mono">gh auth login
+
+# 檢查登入狀態與可用 Scopes
+gh auth status</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 7: 常見問題與除錯指南 -->
+        <section id="faq" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="help-circle" class="w-5 h-5 text-purple-400"></i>
+            <h2>7. 常見問題與除錯指南 (FAQ)</h2>
+          </div>
+          <div class="space-y-3 text-xs">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q1: 執行 gh pr create 時提示「no commits between main and branch」？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                這通常是因為您尚未在當前分支建立 Commit，或者忘記將分支推送到遠端（未設定 upstream）。請先執行 `git commit`，再執行 `git push -u origin [branch-name]`，之後再執行 `gh pr create` 即可。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q2: gh api 遇到 API rate limit exceeded (403 頻率超限)？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                已認證的 GitHub CLI 擁有每小時 5,000 次 API 呼叫配額。可透過 `gh api rate_limit` 查詢目前剩餘配額與重設時間。若在 CI/CD 中頻繁呼叫，可考慮使用 GitHub App 或快取查詢結果。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q3: 如何讓 gh 預設使用 SSH 協議而非 HTTPS？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                在終端機中執行 <code class="text-purple-300">gh config set git_protocol ssh</code>，後續所有的 clone、fork 與 checkout 操作都會自動切換為 SSH 協定。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告與系列導航 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center">
+            <i data-lucide="github" class="w-4 h-4"></i>
+          </div>
+          <span class="text-slate-300 font-semibold">Antigravity Tools Hub · 開發者協作與自動化系列</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">首頁總覽</a>
+          <a href="github-cli.html" class="text-purple-400 font-semibold">GitHub CLI</a>
+          <a href="canva.html" class="hover:text-white transition-colors">Canva AI</a>
+          <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
+          <a href="google-sheets.html" class="hover:text-white transition-colors">Sheets</a>
+          <a href="gmail-calendar.html" class="hover:text-white transition-colors">Gmail & Calendar</a>
+          <a href="google-slides.html" class="hover:text-white transition-colors">Slides</a>
+          <a href="google-notebooklm.html" class="hover:text-white transition-colors">NotebookLM</a>
+          <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
+          <a href="google-cloud-gemini.html" class="hover:text-white transition-colors">Cloud & Gemini</a>
+          <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>本專案非 GitHub 官方產品，商標權屬 GitHub, Inc. 所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕腳本與 Lucide 初始化 -->
+  <script>
+    lucide.createIcons();
+
+    function copyCode(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = event.currentTarget;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-bold">已複製！</span>`;
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          lucide.createIcons();
+        }, 2000);
+      }).catch(err => {
+        console.error('複製失敗:', err);
+      });
+    }
+  </script>
+</body>
+</html>

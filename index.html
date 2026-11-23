@@ -63,7 +63,7 @@
         </div>
         <div>
           <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-sky-300 bg-clip-text text-transparent">Antigravity Tools Hub</span>
-          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-teal-950/80 text-teal-300 border border-teal-800/60 font-medium">Google家族 & Canva 旗艦版</span>
+          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60 font-medium">14 大旗艦工具完整版</span>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -89,7 +89,7 @@
         <span class="bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">必備外掛與 MCP 工具</span>
       </h1>
       <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
-        從底層瀏覽器除錯、Google Workspace 全家桶協作，到 Firebase 與 Google Cloud 旗艦雲端架構，全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
+        從底層瀏覽器除錯、Google Workspace 全家桶協作、Canva 視覺設計，到工程自動化（GitHub CLI、Figma、Notion、n8n、Supabase），全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
       </p>
     </div>
 
@@ -98,10 +98,10 @@
       <!-- 篩選標籤 -->
       <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto" id="filter-container">
         <button onclick="filterCards('all')" class="filter-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sky-500 text-white transition-all shadow-sm shadow-sky-500/20" data-filter="all">全部工具 (All)</button>
-        <button onclick="filterCards('workspace')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="workspace">Google 家族</button>
-        <button onclick="filterCards('debug')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="debug">除錯與效能</button>
-        <button onclick="filterCards('automation')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="automation">瀏覽器與自動化</button>
-        <button onclick="filterCards('design')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="design">創意設計與簡報</button>
+        <button onclick="filterCards('workspace')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="workspace">辦公協作與知識庫</button>
+        <button onclick="filterCards('debug')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="debug">後端與除錯</button>
+        <button onclick="filterCards('automation')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="automation">自動化與 CLI</button>
+        <button onclick="filterCards('design')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="design">創意設計與視覺</button>
       </div>
 
       <!-- 搜尋框 -->
@@ -520,49 +520,221 @@
         </a>
       </div>
 
-      <!-- 卡片 9：GitHub CLI 與自動化 (預告) -->
-      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group opacity-75 hover:opacity-100" data-category="automation debug" data-title="GitHub CLI gh PR Issue Actions 自動化">
+      <!-- 卡片 10：GitHub CLI (自動化第一棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="automation debug" data-title="GitHub CLI gh PR Issue Actions CI CD Release Repo 工作流 自動化">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
         <div>
           <div class="flex items-start justify-between mb-4">
-            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner">
-              <i data-lucide="git-branch" class="w-6 h-6 text-purple-400"></i>
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="git-pull-request" class="w-6 h-6 text-purple-400"></i>
             </div>
             <div class="flex flex-col items-end gap-1.5">
               <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-purple-950/80 text-purple-400 border border-purple-800/60">
-                開發者 CLI
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> 開發者 CLI
               </span>
-              <span class="text-[10px] text-slate-500">準備中</span>
+              <span class="text-[10px] text-slate-500 font-mono">gh CLI 整合</span>
             </div>
           </div>
-          <h2 class="text-xl font-bold text-white mb-2">GitHub CLI (`gh`)</h2>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors flex items-center gap-2">
+            <span>GitHub CLI (`gh`)</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-purple-400"></i>
+          </h2>
           <p class="text-slate-400 text-xs leading-relaxed mb-4">
-            讓 AI 與開發者直接在終端機建立 Pull Request、指派 Issue、觸發 GitHub Actions 工作流並管理 Release 發行。
+            讓 AI 深入版本控制與工程自動化。直接在終端機自動建立規格化 Pull Request、指派分類 Issue、即時監看 CI/CD 工作流與跨分支發行版打包。
           </p>
-          <div class="space-y-1.5 mb-5 bg-slate-900/40 p-3 rounded-xl border border-slate-800/60">
-            <div class="text-[11px] font-medium text-slate-400">主要能力亮點</div>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>工程工作流 · 實戰手冊</span>
+              <span class="text-purple-400 font-mono text-[10px]">5 大指令群 · 10 大角色範本</span>
+            </div>
             <div class="flex flex-wrap gap-1.5 pt-1">
-              <span class="px-2 py-0.5 rounded bg-slate-800/60 text-[10px] font-mono text-slate-400">PR 自動建立</span>
-              <span class="px-2 py-0.5 rounded bg-slate-800/60 text-[10px] font-mono text-slate-400">CI/CD 監看</span>
-              <span class="px-2 py-0.5 rounded bg-slate-800/60 text-[10px] font-mono text-slate-400">Repo 自動化</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">gh pr create</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">gh issue list</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">gh run watch</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
             </div>
           </div>
         </div>
-        <button disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-800/70 text-slate-400 cursor-not-allowed border border-slate-700/50">
-          <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-          <span>教學即將上線</span>
-        </button>
+        <a href="github-cli.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
       </div>
 
-      <!-- 卡片 10：擴充預留提示卡 (Expandable placeholder) -->
+      <!-- 卡片 11：Figma (創意設計第二棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="design automation" data-title="Figma UI UX 設計 Code Connect Design Tokens 設計稿 轉代碼 SVG 元件 圖標 視覺">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-pink-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="layout" class="w-6 h-6 text-pink-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-pink-950/80 text-pink-400 border border-pink-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-pink-400"></span> 設計系統
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Design-to-Code</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-pink-300 transition-colors flex items-center gap-2">
+            <span>Figma</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-pink-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            串接產品設計稿與前端工程的橋樑。AI 直接解析 Figma 圖層節點樹、擷取色彩字級 Design Tokens、生成 React/Tailwind 元件代碼與批次匯出向量 SVG 圖標。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>設計轉代碼 · 實戰手冊</span>
+              <span class="text-pink-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-pink-300">figma_get_node</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-pink-300">Code Connect</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-pink-300">Design Tokens</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="figma.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-pink-600 via-rose-600 to-indigo-600 hover:from-pink-500 hover:to-rose-500 text-white shadow-lg shadow-pink-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 12：Notion (協作知識庫第三棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace automation" data-title="Notion 筆記 知識庫 Database 資料庫 專案看板 Sprint 議事錄 知識管理 結構化">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="book-open" class="w-6 h-6 text-amber-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-950/80 text-amber-400 border border-amber-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> 團隊知識庫
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Database & Blocks</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors flex items-center gap-2">
+            <span>Notion</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-amber-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            模組化知識庫與專案管理中樞。支援結構化 Database 屬性過濾、跨專案看板雙向連動、富文本區塊自動排版，將會議逐字稿瞬轉為 Sprint 任務看板。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>結構知識庫 · 實戰手冊</span>
+              <span class="text-amber-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">query_database</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">create_page</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">append_blocks</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="notion.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-amber-600 via-orange-600 to-rose-600 hover:from-amber-500 hover:to-orange-500 text-white shadow-lg shadow-amber-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 13：n8n (自動化串接第四棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="automation debug" data-title="n8n 工作流 自動化 Webhook 自動串接 節點除錯 iPaaS 跨系統整合 JSON">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-rose-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="workflow" class="w-6 h-6 text-rose-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-950/80 text-rose-400 border border-rose-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> 無代碼整合
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Workflow Engine</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-rose-300 transition-colors flex items-center gap-2">
+            <span>n8n 工作流自動化</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-rose-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            開源自託管工作流編排引擎。讓 AI 分析並生成多節點自動化工作流程 JSON、配置 Webhook 即時觸發器、調試執行失敗日誌，串聯 CRM、通訊軟體與資料庫。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>跨系統編排 · 實戰手冊</span>
+              <span class="text-rose-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-rose-300">execute_workflow</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-rose-300">webhook_trigger</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-rose-300">node_debug</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="n8n.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-rose-600 via-orange-600 to-amber-600 hover:from-rose-500 hover:to-orange-500 text-white shadow-lg shadow-rose-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 14：Supabase (雲端後端第五棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="debug automation" data-title="Supabase PostgreSQL 資料庫 後端 BaaS SQL DDL RLS 權限 TypeScript Edge Functions">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="database" class="w-6 h-6 text-emerald-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 雲端後端
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Postgres & Auth</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors flex items-center gap-2">
+            <span>Supabase</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-emerald-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            開源 Firebase 替代方案。AI 直接產生 PostgreSQL 表結構與索引、撰寫精密 Row Level Security (RLS) 安全防護策略、生成 TypeScript 類型定義與 Edge Functions。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>現代後端架構 · 實戰手冊</span>
+              <span class="text-emerald-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-emerald-300">supabase_sql</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-emerald-300">rls_policy</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-emerald-300">type_gen</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="supabase.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 15：擴充預留提示卡 (Expandable placeholder) -->
       <div class="rounded-2xl border-2 border-dashed border-slate-800/80 hover:border-slate-700 p-6 flex flex-col items-center justify-center text-center transition-all bg-slate-950/40">
         <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-slate-500 mb-3 border border-slate-800">
           <i data-lucide="plus" class="w-6 h-6"></i>
         </div>
         <h3 class="font-bold text-slate-300 text-sm mb-1">更多工具持續擴充中</h3>
         <p class="text-xs text-slate-500 max-w-xs mb-3">
-          首頁具備模組化字卡結構，已完整收錄 Google 家族與 Canva 旗艦套件，後續將陸續納入 n8n、Atlassian、Stripe 等實戰指南。
+          首頁具備模組化字卡結構，已完整收錄 Chrome DevTools、Google 家族 7 大神器、Canva 以及開發自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase），共 14 大旗艦工具指南。
         </p>
-        <span class="text-[11px] text-sky-400/80 font-mono">持續更新 · 歡迎關注</span>
+        <span class="text-[11px] text-sky-400/80 font-mono">14 款工具上線 · 歡迎持續擴充</span>
       </div>
 
     </div>
@@ -578,7 +750,7 @@
             <i data-lucide="palette" class="w-4 h-4"></i>
           </div>
           <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
-          <span>• Google 家族與 Canva 旗艦視覺設計實戰指南已全數部署完畢</span>
+          <span>• 14 大旗艦工具（Google 家族、Canva、GitHub、Figma、Notion、n8n、Supabase）實戰指南全數上線</span>
         </div>
         <div class="flex flex-wrap gap-4 text-slate-400">
           <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
@@ -588,7 +760,12 @@
           <a href="google-notebooklm.html" class="hover:text-white transition-colors">NotebookLM</a>
           <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
           <a href="google-cloud-gemini.html" class="hover:text-white transition-colors">Cloud & Gemini</a>
-          <a href="canva.html" class="text-teal-400 font-semibold hover:text-white transition-colors">Canva AI</a>
+          <a href="canva.html" class="hover:text-white transition-colors">Canva AI</a>
+          <a href="github-cli.html" class="text-purple-400 font-semibold hover:text-white transition-colors">GitHub CLI</a>
+          <a href="figma.html" class="text-pink-400 font-semibold hover:text-white transition-colors">Figma</a>
+          <a href="notion.html" class="text-amber-400 font-semibold hover:text-white transition-colors">Notion</a>
+          <a href="n8n.html" class="text-rose-400 font-semibold hover:text-white transition-colors">n8n</a>
+          <a href="supabase.html" class="text-emerald-400 font-semibold hover:text-white transition-colors">Supabase</a>
           <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
         </div>
       </div>
