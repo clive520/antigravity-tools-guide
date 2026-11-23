@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>invideo AI 影音剪輯與短影音生成完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            invideo: {
+              rose: '#ff4b4b',
+              purple: '#7928ca',
+              dark: '#181124',
+              50: '#fff1f2',
+              500: '#ff4b4b',
+              600: '#e11d48',
+              700: '#be123c',
+              900: '#881337',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-rose-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-rose-600/15 via-purple-600/15 to-indigo-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-rose-950/20 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-rose-400" fill="currentColor">
+              <path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">invideo AI 影音指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">3. 核心工具架構與 API</a>
+              <a href="#prompts" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰 Prompt</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">5. 安裝外掛與設定教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-slate-900/80 transition-colors">6. 常見問題 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-rose-950/40 to-slate-900 border border-rose-800/40 text-xs text-slate-400 space-y-2">
+            <div class="flex items-center gap-2 text-rose-400 font-semibold">
+              <i data-lucide="video" class="w-4 h-4"></i>
+              <span>真實多軌時間軸</span>
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              不同於一般黑盒子 AI 影片生成，invideo 讓 Agent 能夠微調時間軸上的每一個剪輯點、配樂、字幕與轉場特效。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow max-w-4xl space-y-12 overflow-hidden">
+
+        <!-- 麵包屑導航 -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500">
+          <a href="index.html" class="hover:text-slate-300 transition-colors">首頁</a>
+          <span>/</span>
+          <span class="text-rose-400">invideo AI 影音創作生態</span>
+        </nav>
+
+        <!-- 頁面標題區 -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-950/80 border border-rose-800/60 text-xs text-rose-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse"></span>
+            <span>官方合作夥伴生態 · 第十棒</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            invideo AI 影音創作實戰指南 <br class="hidden sm:inline">
+            <span class="bg-gradient-to-r from-rose-400 via-pink-300 to-purple-400 bg-clip-text text-transparent">分鏡劇本、神經配音、逐字動態字幕與真實時間軸微調</span>
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            透過 Antigravity 的 invideo 專屬生態外掛，AI Agent 正式擁有了好萊塢級的影片編導與後製能力：將文字想法直接轉為分鏡腳本、自動檢索百萬高清 B-roll 影片素材、合成擬真人聲配音、精確對齊多語字幕，並在真實多軌時間軸上微調轉場與音效。
+          </p>
+        </div>
+
+        <!-- Section 1: 功能概述與生態定位 -->
+        <section id="overview" class="doc-section space-y-4 pt-4 border-t border-slate-800/80">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="info" class="w-5 h-5 text-rose-400"></i>
+            <span>1. 功能概述與生態定位</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-4 leading-relaxed text-sm text-slate-300">
+            <p>
+              在影音為王的短影音與自媒體時代（YouTube Shorts、Instagram Reels、TikTok），傳統影音製作面臨極高的時間與技術門檻：撰寫腳本、搜尋無版權素材、配音、上字幕、調色剪輯，往往需要數小時甚至數天。
+            </p>
+            <p>
+              invideo 是全球領先的 AI 原生影片編輯器。與一般僅能生成短秒數、無法精細微調的黑盒子影片生成工具不同，invideo 具備<strong>專業多軌時間軸 (Multi-track Timeline)</strong>。AI Agent 可以像資深剪輯師一樣，精準修剪某個片段的進出點、替換某個單詞的發音音色，實現「自然語言指揮、專業後台落地」。
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-rose-400 font-bold mb-1 text-xs">Prompt-to-Video 一鍵生成</div>
+                <div class="text-slate-400 text-xs">輸入一句話或貼上一篇長文章，AI 自動拆解分鏡、匹配高品質素材並完成剪輯。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-pink-400 font-bold mb-1 text-xs">擬真神經網路配音 (AI Voices)</div>
+                <div class="text-slate-400 text-xs">內建數百種具備情感抑揚頓挫的多國語言配音員，支援語速、情緒與性別自由挑選。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-purple-400 font-bold mb-1 text-xs">真實時間軸非破壞性微調</div>
+                <div class="text-slate-400 text-xs">隨時對 Agent 說「把第 3 段的背景音樂調小一點」、「換掉第 5 秒的畫面」，即時修正。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-5 h-5 text-rose-400"></i>
+            <span>2. 這個功能能做什麼？</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            invideo 整合套件賦予 Antigravity 4 大影音製作關鍵維度：
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-rose-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mb-3">
+                <i data-lucide="file-video" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">智慧劇本編排與分鏡腳本生成</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動將長篇部落格、技術架構文檔或電商商品特色，轉化為具有起承轉合、高完播率 Hook 的分鏡腳本。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-pink-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center mb-3">
+                <i data-lucide="sliders" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">多軌時間軸微調 (Multi-track Trim)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                精準調整視訊軌、配樂軌、旁白軌與音效軌 (SFX) 的音量配比，並能非破壞性替換單一片段或調整畫面裁切。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-purple-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-3">
+                <i data-lucide="subtitles" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">爆款逐字高動態字幕 (Karaoke Captions)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動生成具備熱門社群風格的跳動逐字卡 (Word-by-word Highlight)，自訂字型、描邊、發光與醒目標示色彩。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-indigo-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3">
+                <i data-lucide="maximize" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">全通路格式一鍵重構 (16:9 / 9:16)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                同一支核心影片可一鍵智慧重構為 YouTube 橫式 16:9、TikTok/Shorts 直式 9:16 或 IG 貼文方形 1:1，並智慧鎖定主體居中。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="wrench" class="w-5 h-5 text-rose-400"></i>
+            <span>3. 核心工具架構與 API</span>
+          </h2>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-300">invideo 官方外掛核心工具清單</span>
+              <span class="text-[11px] font-mono text-rose-400">Plugin ID: antigravity-plugins-partners/plugin/invideo</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px] tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th class="py-3 px-4">工具名稱</th>
+                    <th class="py-3 px-4">所屬模組</th>
+                    <th class="py-3 px-4">核心用途</th>
+                    <th class="py-3 px-4">關鍵參數範例</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono text-[11px]">
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-rose-400 font-semibold">invideo_script_gen</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Scripting</td>
+                    <td class="py-3 px-4 font-sans text-xs">依據主題生成分鏡、旁白與視覺 Prompt</td>
+                    <td class="py-3 px-4 text-slate-400"><code>topic: "AI Agent 開發", target_duration: 60, ratio: "9:16"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-rose-400 font-semibold">invideo_timeline_edit</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Timeline</td>
+                    <td class="py-3 px-4 font-sans text-xs">微調軌道元素、修剪秒數、更換素材</td>
+                    <td class="py-3 px-4 text-slate-400"><code>scene_index: 2, action: "replace_media", query: "cyberpunk"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-rose-400 font-semibold">invideo_caption_sync</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Captions</td>
+                    <td class="py-3 px-4 font-sans text-xs">生成動態逐字卡特效、樣式與多語翻譯</td>
+                    <td class="py-3 px-4 text-slate-400"><code>style: "karaoke_pop", highlight_color: "#fbbf24"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-rose-400 font-semibold">invideo_voiceover</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Audio</td>
+                    <td class="py-3 px-4 font-sans text-xs">配置神經網路配音員、情緒與背景配樂</td>
+                    <td class="py-3 px-4 text-slate-400"><code>voice_id: "zh-TW-YunJhe", speed: 1.1, bg_music: "tech_ambient"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-rose-400 font-semibold">invideo_export_render</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Render</td>
+                    <td class="py-3 px-4 font-sans text-xs">啟動高畫質雲端渲染並產出無浮水印 MP4</td>
+                    <td class="py-3 px-4 text-slate-400"><code>resolution: "1080p", format: "mp4", fps: 30</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: 10 大跨角色實戰 Prompt -->
+        <section id="prompts" class="doc-section space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                <i data-lucide="terminal" class="w-5 h-5 text-rose-400"></i>
+                <span>4. 10 大跨角色實戰 Prompt</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">涵蓋 YouTube 創作者、電商企劃、企業培訓師、房產經紀人與社群經營者</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">10 個高階範例</span>
+          </div>
+
+          <div class="space-y-4">
+
+            <!-- Prompt 1 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 01</span>
+                  <span class="text-xs font-bold text-white">YouTube 創作者 · 科技新知 60 秒爆款 Shorts</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_script_gen</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>將一篇關於「DeepMind 最新開源模型」的科技長文，轉化為前 3 秒具備極強吸睛 Hook 的 60 秒直式短影音。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具幫我製作一支 60 秒的 YouTube Shorts 科技短影音：
+1. 主題：「Google DeepMind 釋出最強開源 Agent！3 個顛覆開發者的神級功能」
+2. 畫面比例：9:16 直式。
+3. 分鏡節奏：
+   - 前 3 秒黃金 Hook：「你以為 AI 只能幫你寫代碼？這項新發布直接幫你把整個系統部署上線！」搭配震撼音效與快節奏科技 B-roll。
+   - 中間 45 秒：分 3 個重點展示核心能力，每 3 秒自動切換視角與特寫畫面。
+   - 最後 12 秒：強烈 CTA 引導按讚訂閱並在留言區領取提示詞。
+4. 字幕與配音：繁體中文台灣青年男聲（自信活力），開啟金色高亮跳動逐字卡。</pre>
+                <button onclick="copyPrompt('p1', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 自動生成包含畫面描述、旁白文案、配樂選擇與動態字幕的分鏡時間軸，並提供線上預覽編輯連結。
+              </div>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 02</span>
+                  <span class="text-xs font-bold text-white">電商行銷企劃 · 新季服飾 15 秒 IG Reels 廣告</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_timeline_edit</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為冬季羊毛大衣新品製作 15 秒快速節奏的 Instagram Reels 轉換型廣告，強調限時 8 折優惠。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具為我的服飾品牌生成 15 秒 Instagram Reels 促銷短片：
+1. 視覺調性：極簡米白與大地色系、高質感時尚街拍氛圍、柔和自然光。
+2. 結構編排（15 秒極限完播）：
+   - 0~4 秒：模特兒穿搭動態特寫，淡入大字「今年冬天，只穿最純粹的溫暖」。
+   - 5~10 秒：面料細節近拍（100% 澳洲美麗諾羊毛），展示防潑水與輕盈質感。
+   - 11~15 秒：跳出醒目字卡「早鳥限時 8 折優惠」，下方展示購買網址。
+3. 背景音樂：輕快時尚 Lo-fi Beats，結尾帶有清脆叮噹轉場音效。</pre>
+                <button onclick="copyPrompt('p2', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 匹配高級感時尚素材，生成精準踩點音樂節拍的轉場短片，提升廣告點擊率 (CTR)。
+              </div>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 03</span>
+                  <span class="text-xs font-bold text-white">企業培訓講師 · 新進員工手冊 3 分鐘生動導覽</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_voiceover</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>枯燥的 30 頁新進員工 PDF 手冊沒人想看，人資講師希望將其改編為 3 分鐘節奏輕快、生動專業的入職影片。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具幫我製作「新進夥伴入職導覽影片 (Onboarding Video)」：
+1. 影片長度：約 3 分鐘，比例 16:9 橫式。
+2. 內容模組：
+   - 第一章：公司願景與核心價值觀 (Culture & Mission)。
+   - 第二章：辦公室環境、休閒零食區與遠距混合辦公規範。
+   - 第三章：常用的內部系統入門（Slack 頻道、Notion 知識庫、請假報銷系統）。
+   - 第四章：Buddy 導師制度與第一週期待清單。
+3. 語音要求：親切溫暖的專業女性旁白，語速適中，搭配輕柔正向的企業輕音樂。</pre>
+                <button onclick="copyPrompt('p3', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 生成具備章節標頭（Chapter Cards）與辦公情境素材的專業培訓影片，大幅降低新人的摸索焦慮。
+              </div>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 04</span>
+                  <span class="text-xs font-bold text-white">房地產經紀人 · 豪宅建案開箱導覽短片</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_script_gen</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為台北信義區頂級景觀宅製作 45 秒開箱導覽短影音，需展現客廳採光、中島廚房與高空夜景。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具為高級建案「雲頂御邸」製作一支 45 秒沉浸式賞屋短片：
+1. 畫面比例：9:16 直式短影音。
+2. 腳本與分鏡：
+   - 0~10 秒：從大樓氣派挑高大廳進場，旁白：「回到家，就是走進喧囂都市中的綠洲秘境。」
+   - 11~25 秒：環景 180 度大面落地窗、名師設計進口中島廚具、三面採光主臥。
+   - 26~45 秒：夜幕降臨俯瞰城市璀璨燈海，帶出建坪、格局與私密預約專線字卡。
+3. 音樂與氛圍：沉穩優雅的鋼琴配樂，文字採用細緻襯線字體與金色光暈特效。</pre>
+                <button onclick="copyPrompt('p4', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 產出奢華大氣的分鏡腳本與電影級運鏡提示，完美烘托頂級住宅的尊榮格調。
+              </div>
+            </div>
+
+            <!-- Prompt 5 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 05</span>
+                  <span class="text-xs font-bold text-white">SaaS 產品經理 · 90 秒功能更新 Product Demo</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_timeline_edit</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>系統發布全新「AI 自動審批報銷」功能，需製作 90 秒專業演練影片寄送給所有付費用戶並放於官網首頁。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具幫我製作一段 90 秒的 Product Walkthrough 功能更新影片：
+1. 結構規劃：
+   - 痛點引入 (0~20s)：財務人員每到月底淹沒在紙本發票與核對 Excel 的痛苦畫面。
+   - 解決方案 (21~60s)：介紹「一鍵上傳收據 -> AI 視覺提取金額統編 -> 自動對帳標記」的流暢步驟。
+   - 效益總結 (61~90s)：為團隊節省 80% 審核時間，零錯誤率，引導點擊「立即免費體驗」。
+2. 視覺要求：乾淨的科技藍紫色調，軟體介面放大縮小特寫 (Zoom-in)，搭配清脆點擊音效。</pre>
+                <button onclick="copyPrompt('p5', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 安排清晰的痛點與功能對照分鏡，產出極富科技說服力的現代軟體演示短片。
+              </div>
+            </div>
+
+            <!-- Prompt 6 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 06</span>
+                  <span class="text-xs font-bold text-white">線上英文老師 · 雙語逐字字幕與發音跟讀短片</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_caption_sync</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>教學「商務談判常用 3 句破冰片語」，需製作雙語字幕逐字高亮，並在每句念完後留白 3 秒供學員跟讀。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具幫我製作一支「商務英語發音跟讀 (Shadowing)」教學短影音：
+1. 比例 9:16 直式，時長約 50 秒。
+2. 內容包含 3 個句型（例："Let's touch base next week." 等）。
+3. 關鍵排版要求：
+   - 上半部為標準美式發音嘴型特寫素材。
+   - 下半部顯示雙語字幕：第一行大字英文（單字逐字跳動變色），第二行小字繁中翻譯。
+   - 每個句型標準念 2 遍，第 2 遍後插入「Your turn!」動態倒數 3 秒進度條供學員開口練習。</pre>
+                <button onclick="copyPrompt('p6', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 生成具備互動節奏的時間軸，文字對齊神經配音毫秒級同步，是自媒體語言教學的利器。
+              </div>
+            </div>
+
+            <!-- Prompt 7 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 07</span>
+                  <span class="text-xs font-bold text-white">群眾募資發起人 · 感染力故事專案影片</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_script_gen</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為環保海洋回收保特瓶製成的「永續機能背包」撰寫群眾募資專案影片，營造強大的社會使命與產品實用感。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具幫我為群眾募資專案打造一支 2 分鐘的 Pitch 宣傳影片：
+1. 故事核心：每一只背包，等於從海洋拯救 28 個廢棄塑膠瓶。
+2. 鏡頭語言：
+   - 開場：灰暗冷冽的海灘塑膠垃圾特寫，喚起反思。
+   - 轉折：工廠高科技研發再生纖維、職人精密車縫細節。
+   - 爆發：年輕旅人背著背包穿梭在雨中城市與森林山徑，展現防刮、防水與人體工學。
+3. 配樂：前半段深沉低音大提琴，後半段轉為激昂勵志的交響弦樂，引導贊助早鳥方案。</pre>
+                <button onclick="copyPrompt('p7', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 精心調度情緒起伏與畫面張力，產出具備強烈情感共鳴與號召力的募資主力影片。
+              </div>
+            </div>
+
+            <!-- Prompt 8 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 08</span>
+                  <span class="text-xs font-bold text-white">旅遊部落客 · 5 天 4 夜京都賞楓 Vlog 精華剪輯</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_timeline_edit</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>手上擁有數十段清水寺、嵐山小火車與抹茶甜點的隨手拍短片，需剪輯成一部療癒質感的旅遊短片。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具幫我把京都旅遊素材剪輯為 45 秒的高質感治癒系短片：
+1. 主題：「走進秋天的京都：楓葉、古寺與一碗熱抹茶」
+2. 剪輯手法：
+   - 畫面轉場多使用自然遮罩（樹葉掠過、燈籠光影交錯）。
+   - 音樂搭配日本傳統三味線與現代 Lo-fi 結合的輕音樂。
+   - 插入環境音效（寺廟鐘聲、腳踩落葉聲、清脆水滴聲）。
+3. 字幕樣式：日系簡約白色手寫體字卡，標註拍攝地點（如「京都 · 清水舞台」）。</pre>
+                <button onclick="copyPrompt('p8', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 精心調色與混搭環境 ASMR 音效，幾分鐘內生成可直接發布在社群平台的高讚旅遊短片。
+              </div>
+            </div>
+
+            <!-- Prompt 9 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 09</span>
+                  <span class="text-xs font-bold text-white">活動主辦方 · 科技高峰會 30 秒倒數預熱宣傳片</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_script_gen</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>距「2026 全球 AI 代理人創新峰會」僅剩 7 天，需產出倒數搶票的緊湊節奏動態字卡短片。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具為即將召開的高峰會製作 30 秒倒數預告片：
+1. 視覺風格：賽博朋克未來科技感（霓虹藍紫、故障干擾特效 Glitch）。
+2. 文字動效重點：
+   - 巨大倒數數字「7 DAYS TO GO」震撼開場。
+   - 快速閃過 4 位國際重量級 Keynote 演講嘉賓頭銜與照片。
+   -「早鳥票最後倒數 50 席，錯過再等一年！」強烈急迫感。
+3. 輸出包含 16:9 與 9:16 兩種版本，方便同時投放大螢幕電視牆與 IG 廣告。</pre>
+                <button onclick="copyPrompt('p9', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 一鍵調用震撼動態字卡與粒子光效，迅速產出雙尺寸的高規格科技峰會宣傳影片。
+              </div>
+            </div>
+
+            <!-- Prompt 10 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-950 text-rose-400 border border-rose-800/60">角色 10</span>
+                  <span class="text-xs font-bold text-white">自媒體經營者 · 每日沉浸式勵志金句短影音</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">invideo_export_render</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為經營心靈成長 TikTok / Shorts 帳號，需每天批次生成配備壯麗空拍景觀與磁性沉穩旁白的 30 秒晨間金句。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 invideo 工具幫我製作晨間心靈勵志短影音：
+1. 金句內容：「不要害怕走得慢，你只要確保自己一直在往前走。今天的每一步微小堅持，都在為未來的奇蹟鋪路。」
+2. 畫面素材：壯闊的高山雲海日出空拍、奔騰海浪緩慢拍打岩石的 4K 慢動作。
+3. 旁白：成熟低沉富含磁性的大叔音色，語速稍慢，字字入心。
+4. 字幕：中央居中白色大字，開啟呼吸漸顯特效，隨音樂慢慢淡入淡出。</pre>
+                <button onclick="copyPrompt('p10', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-rose-400 font-semibold">預期成果：</strong>AI 完美結合高品質大自然 B-roll 與觸動心靈的磁性配音，產出極易引發轉發與收藏的高黏著短影音。
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Section 5: 安裝外掛與設定教學 -->
+        <section id="setup" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-5 h-5 text-rose-400"></i>
+            <span>5. 安裝外掛與設定教學</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-5 border border-slate-800 text-xs text-slate-300">
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟一：於 Antigravity 外掛市場安裝</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在 Antigravity 外掛管理員中搜尋並安裝 invideo 官方生態外掛：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-rose-400">
+                antigravity-plugins-partners/plugin/invideo
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟二：連接 invideo 帳戶與授權</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在終端機透過外掛管理員完成 invideo 帳戶綁定，或在環境變數配置 API 金鑰：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1 font-mono text-slate-300">
+                <div><span class="text-slate-500"># invideo 整合憑證</span></div>
+                <div><span class="text-rose-400">INVIDEO_API_KEY</span>="your_invideo_api_key_here"</div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟三：在對話中直接指揮影片製作</h3>
+              <p class="text-slate-400 leading-relaxed">
+                完成安裝後，只要以自然語言描述影片主題，Agent 便會自動啟動分鏡生成並在時間軸上完成編排。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: 常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="help-circle" class="w-5 h-5 text-rose-400"></i>
+            <span>6. 常見問題 (FAQ)</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>
+                <span>產出的影片是否有商業版權？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                invideo 內建包含 Storyblocks 與 Shutterstock 等數百萬授權素材庫，付費用戶匯出之影片皆享有合法全球商用版權，無侵權風險。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>
+                <span>能否上傳自家產品的照片與影片？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                可以。透過外掛的資產上傳功能，可將自家的商品圖、實拍影片或品牌 Logo 匯入時間軸，由 AI 自動與旁白節奏對齊。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>
+                <span>如何修改其中某一句不滿意的配音？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                只需對 Agent 說「把第 2 段最後一句的旁白改為：...」，AI 會精準重新合成該單句語音並更新時間軸，無需整部影片重新渲染。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>
+                <span>支援哪些匯出解析度？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                支援 720p、1080p Full HD 以及 4K 超高畫質匯出，預設格式為通用 MP4，可直接上傳 YouTube、IG、TikTok 等各大影音平台。
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-rose-500/20 text-rose-400 flex items-center justify-center">
+            <i data-lucide="film" class="w-4 h-4"></i>
+          </div>
+          <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
+          <span>• invideo AI 影音剪輯與短影音生成實戰指南</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">回導覽首頁</a>
+          <a href="canva.html" class="hover:text-white transition-colors">Canva AI</a>
+          <a href="figma.html" class="hover:text-white transition-colors">Figma</a>
+          <a href="google-slides.html" class="hover:text-white transition-colors">Google Slides</a>
+          <a href="cloudflare.html" class="hover:text-white transition-colors">Cloudflare</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>Hosted with GitHub Pages</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕與互動腳本 -->
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(id, btn) {
+      const parent = btn.closest('.glass-card');
+      const text = parent.querySelector('pre').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const span = btn.querySelector('span');
+        const originalText = span.innerText;
+        span.innerText = '已複製！';
+        btn.classList.add('bg-rose-600', 'text-white');
+        setTimeout(() => {
+          span.innerText = originalText;
+          btn.classList.remove('bg-rose-600', 'text-white');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

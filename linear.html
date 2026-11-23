@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linear 極速現代軟體工程專案管理指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            linear: {
+              purple: '#5e6ad2',
+              indigo: '#4f52b2',
+              dark: '#12141a',
+              50: '#f5f6fe',
+              500: '#5e6ad2',
+              600: '#4e59bf',
+              700: '#3e469c',
+              900: '#202456',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-indigo-600/15 via-blue-600/15 to-purple-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-indigo-950/20 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-indigo-400" fill="currentColor">
+              <path d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm13 0a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Linear 敏捷專案指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">3. 核心工具架構與 API</a>
+              <a href="#prompts" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰 Prompt</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">5. 安裝外掛與設定教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">6. 常見問題 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-800/40 text-xs text-slate-400 space-y-2">
+            <div class="flex items-center gap-2 text-indigo-400 font-semibold">
+              <i data-lucide="check-square" class="w-4 h-4"></i>
+              <span>現代工程團隊標竿</span>
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              Linear 以純粹極速、鍵盤優先與高美感著稱。Antigravity 原生整合讓 AI 成為敏捷團隊的最佳副駕駛。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow max-w-4xl space-y-12 overflow-hidden">
+
+        <!-- 麵包屑導航 -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500">
+          <a href="index.html" class="hover:text-slate-300 transition-colors">首頁</a>
+          <span>/</span>
+          <span class="text-indigo-400">Linear 敏捷專案管理</span>
+        </nav>
+
+        <!-- 頁面標題區 -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-800/60 text-xs text-indigo-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+            <span>官方合作夥伴生態 · 第八棒</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Linear 擴充功能實戰指南 <br class="hidden sm:inline">
+            <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-blue-400 bg-clip-text text-transparent">Issue 結構化追蹤、Sprint Cycles 與產品藍圖</span>
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            透過 Antigravity 的 Linear 專屬生態外掛，AI Agent 深度融入敏捷研發流程：自動將混亂的使用者需求拆解為驗收準則清晰的 Issue、合理分配 Sprint 週期與估點 (Story Points)、關聯 GitHub PR 自動更新看板狀態，並追蹤 Roadmap 戰略進度。
+          </p>
+        </div>
+
+        <!-- Section 1: 功能概述與生態定位 -->
+        <section id="overview" class="doc-section space-y-4 pt-4 border-t border-slate-800/80">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="info" class="w-5 h-5 text-indigo-400"></i>
+            <span>1. 功能概述與生態定位</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-4 leading-relaxed text-sm text-slate-300">
+            <p>
+              Linear 是現代全球頂尖科技公司（如 Vercel、OpenAI、Retool、Cash App）首選的軟體開發追蹤工具。相比傳統笨重的專案軟體，Linear 具備毫秒級同步、簡約設計與高度結構化的實體關聯。在 Antigravity 中連接 Linear，可大幅縮短工程師與產品經理在「記錄進度」與「寫程式」之間的摩擦力。
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-indigo-400 font-bold mb-1 text-xs">自然語言拆解 Issue</div>
+                <div class="text-slate-400 text-xs">AI 自動識別需求痛點，自動補齊重現步驟、驗收標準 (AC) 與預估複雜度 (Estimation)。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-purple-400 font-bold mb-1 text-xs">Cycles 節奏與燃盡分析</div>
+                <div class="text-slate-400 text-xs">即時掌握團隊 2 週 Sprint 週期負載，自動預警範圍蔓延 (Scope Creep) 與關鍵路徑阻礙。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-blue-400 font-bold mb-1 text-xs">代碼庫與 PR 自動閉環</div>
+                <div class="text-slate-400 text-xs">透過 Git 分支名稱或 Commit Message 自動關聯，當 PR 審閱通過即自動推進至 In Review 或 Done。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-5 h-5 text-indigo-400"></i>
+            <span>2. 這個功能能做什麼？</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            Linear 整合套件賦予 Antigravity 4 大工程組織協作能力：
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-indigo-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3">
+                <i data-lucide="list-todo" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">結構化 Issue 與 Sub-issues 樹狀管理</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                將龐大 Epics 拆分為父子 Issue，設定優先級（Urgent、High、Medium、Low）、標籤（Bug、Feature、Refactor）與指派人。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-purple-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center mb-3">
+                <i data-lucide="calendar" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">Sprint Cycles 自動化排程與速率預測</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動將待辦工單分配進當前或未來的 Cycle，計算團隊歷史速率 (Velocity)，避免工程師超額承諾造成延宕。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-blue-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-3">
+                <i data-lucide="map" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">Roadmap 產品藍圖與里程碑彙報</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                在季度維度上追蹤多個專案目標 (Milestones)，AI 一鍵彙整跨團隊進度，向領導層發送結構化專案狀態週報。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-slate-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-slate-500/10 border border-slate-500/20 text-slate-300 flex items-center justify-center mb-3">
+                <i data-lucide="git-merge" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">雙向 Git 聯動與自動狀態推進</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動產生包含 Issue ID 的標準 Git 分支名（例如 <code>eng-128-auth-refactor</code>），合併 PR 時自動關閉工單。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="wrench" class="w-5 h-5 text-indigo-400"></i>
+            <span>3. 核心工具架構與 API</span>
+          </h2>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-300">Linear 官方外掛核心工具清單</span>
+              <span class="text-[11px] font-mono text-indigo-400">Plugin ID: antigravity-plugins-partners/plugin/linear</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px] tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th class="py-3 px-4">工具名稱</th>
+                    <th class="py-3 px-4">所屬模組</th>
+                    <th class="py-3 px-4">核心用途</th>
+                    <th class="py-3 px-4">關鍵參數範例</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono text-[11px]">
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">linear_issue_create</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Issues</td>
+                    <td class="py-3 px-4 font-sans text-xs">建立結構化工單、設定優先級與估點</td>
+                    <td class="py-3 px-4 text-slate-400"><code>title: "修復登入逾時", team: "ENG", priority: 1, estimate: 3</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">linear_issue_search</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Query</td>
+                    <td class="py-3 px-4 font-sans text-xs">條件過濾工單狀態、負責人與標籤</td>
+                    <td class="py-3 px-4 text-slate-400"><code>query: "auth", state: "In Progress", assignee: "me"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">linear_cycle_manage</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Cycles</td>
+                    <td class="py-3 px-4 font-sans text-xs">查詢與分配工單至當前雙週 Sprint 週期</td>
+                    <td class="py-3 px-4 text-slate-400"><code>team: "ENG", cycle: "current", action: "assign"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">linear_project_update</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Roadmaps</td>
+                    <td class="py-3 px-4 font-sans text-xs">發布專案里程碑健康狀態與進度摘要</td>
+                    <td class="py-3 px-4 text-slate-400"><code>project: "v2-launch", health: "onTrack", body: "進度85%"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">linear_git_sync</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Git</td>
+                    <td class="py-3 px-4 font-sans text-xs">生成標準分支名稱並自動串接 PR 狀態</td>
+                    <td class="py-3 px-4 text-slate-400"><code>issue_id: "ENG-42", branch: "eng-42-oauth2-flow"</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: 10 大跨角色實戰 Prompt -->
+        <section id="prompts" class="doc-section space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                <i data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
+                <span>4. 10 大跨角色實戰 Prompt</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">涵蓋產品經理、工程主管、QA、資安與全端工程師等真實研發場景</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">10 個高階範例</span>
+          </div>
+
+          <div class="space-y-4">
+
+            <!-- Prompt 1 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 01</span>
+                  <span class="text-xs font-bold text-white">技術產品負責人 (PO) · 用戶回饋拆解為 User Story</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_issue_create</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>客戶訪談中提到「希望匯出報表時可以自選時間範圍與欄位」，PO 需要將其拆解為規格完備的 Linear Issue。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear_issue_create 為團隊「ENG」建立標準 User Story 工單：
+1. Title:「[Feature] 自訂時間範圍與欄位之 CSV/Excel 報表匯出功能」
+2. Description 需包含：
+   - 使用者故事（As a... I want to... So that...）
+   - 驗收準則 (Acceptance Criteria, AC 條列 4 點)
+   - 前後端技術考量（後端非同步佇列處理大檔案，前端提供進度條）
+3. 屬性指派：Priority 設為 2 (High)，預估故事點數 (Estimate) 設為 5 點，加入「Reporting」與「Customer-Request」標籤。</pre>
+                <button onclick="copyPrompt('p1', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 調用 Linear 建立格式工整的 Issue，Markdown 格式包含勾選清單 (Checklist) 與清楚指派屬性。
+              </div>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 02</span>
+                  <span class="text-xs font-bold text-white">敏捷工程主管 (EM) · Sprint Cycle 負載平衡與排程</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_cycle_manage</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>下個雙週 Cycle 即將開始，需檢視 Backlog 中優先級為 Urgent/High 的工單，根據每位工程師的容量上限 (Capacity) 進行合理分配。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear 工具協助規劃下一個雙週週期（Cycle 42）的排程：
+1. 查詢團隊「ENG」待辦清單中 Priority <= 2 (Urgent/High) 且尚未進入 Cycle 的所有 Issue。
+2. 計算團隊總容量上限為 35 點 Story Points。
+3. 按照前端 (Frontend) 與後端 (Backend) 標籤分組，自動將優先級最高的 Issue 規劃進 Cycle 42，確保總點數不超過 35 點。
+4. 輸出排程建議表格，並標註哪些高優先級工單因為容量不足需順延至下下個週期。</pre>
+                <button onclick="copyPrompt('p2', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 精算各 Issue 的點數總和，產出平衡的工作量分配建議，防止團隊工程師過勞或承諾超標。
+              </div>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 03</span>
+                  <span class="text-xs font-bold text-white">QA 測試組長 · 批次建立 Bug 票券與重現步驟</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_issue_create</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>在 Staging 環境回歸測試中發現 3 個結帳流程的瑕疵，需快速在 Linear 建立規格統一且標記清楚的 Bug 工單。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear_issue_create 批次建立 3 筆結帳模組 Bug 票券：
+1. Bug 1:「iOS Safari 結帳時點擊 Apple Pay 按鈕無任何反應」
+   - 嚴重度：Priority 1 (Urgent)，標籤：Bug, Mobile, iOS。
+2. Bug 2:「促銷代碼輸入小寫時顯示無效，未自動轉大寫比對」
+   - 嚴重度：Priority 3 (Medium)，標籤：Bug, UX。
+3. Bug 3:「發票統編欄位輸入 7 碼未即時驗證錯誤，送出後拋出 500」
+   - 嚴重度：Priority 2 (High)，標籤：Bug, Backend。
+每張票券均需包含：測試環境 (Staging v2.4)、重現步驟 (Steps to Reproduce)、預期結果與實際結果。</pre>
+                <button onclick="copyPrompt('p3', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 連續建立 3 張格式高度嚴謹的 Bug 票券，包含環境、重現步驟與預期行為，便於工程團隊快速定位修復。
+              </div>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 04</span>
+                  <span class="text-xs font-bold text-white">Release Manager · 當前週期 PR 狀態盤點與發布清單</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_issue_search</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>每週四下午發布日前夕，需要盤點當前 Cycle 內哪些 Issue 已經 Done、哪些仍在 In Review，產出精確的發布預告。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear_issue_search 盤點當前活躍 Cycle 的交付狀況：
+1. 查詢狀態為「In Review」的所有 Issue，列出其對應的 GitHub PR 連結與負責審查人，提醒今日下班前完成 Code Review。
+2. 查詢狀態為「Done」的所有 Issue，按照 Feature (新功能)、Improvement (優化) 與 Fix (修復) 進行分類。
+3. 自動產出一份標準結構的「Release Notes v2.5.0 草案」，包含工單編號 (如 ENG-123) 與簡明改動說明。</pre>
+                <button onclick="copyPrompt('p4', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 生成清楚的審查催促清單與專業版發行說明 (Release Notes)，大幅省去手動比對 Git 與 Jira/Linear 的時間。
+              </div>
+            </div>
+
+            <!-- Prompt 5 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 05</span>
+                  <span class="text-xs font-bold text-white">技術長 (CTO) · Roadmap 里程碑進度同步與週報</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_project_update</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>在 Linear Roadmap 更新「Q3 核心架構微服務化」專案狀態，發布健康度評估並向管理階層同步關鍵風險。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear_project_update 為專案「Q3 Microservices Migration」發布本週進度更新：
+1. 專案健康狀態：設為「At Risk（有風險）」。
+2. 進度百分比：更新為 65%。
+3. 內容摘要（Project Update Body）：
+   - 本週完成：用戶鑑權與計費模組已成功自單體 (Monolith) 抽離並完成負載測試。
+   - 關鍵阻礙 (Blockers)：庫存同步模組因舊版資料庫缺少外鍵限制，資料清洗時間超出預期 3 天。
+   - 下週重點：預計動員 2 位資深後端協助資料遷移，爭取下週五前進入灰度測試。
+4. 儲存更新並輸出可直接貼到 Slack #exec-updates 的簡報摘要。</pre>
+                <button onclick="copyPrompt('p5', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 更新 Linear Project 儀表板，並產出對主管與投資人極具說服力且客觀的高階週報。
+              </div>
+            </div>
+
+            <!-- Prompt 6 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 06</span>
+                  <span class="text-xs font-bold text-white">全端工程師 · 自動領取最高優先級工單並開分支</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_git_sync</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>工程師早上開始工作，讓 AI 在 Linear 抓出指派給自己的第一順位任務，將其移至「In Progress」並在本地開好 Git 分支。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear 工具協助我開始今天的研發工作：
+1. 查詢指派給我 (assignee: me) 且狀態為「Todo」中 Priority 最高的一張 Issue。
+2. 顯示該 Issue 的標題、驗收準則與附帶說明。
+3. 將該 Issue 狀態推進至「In Progress」。
+4. 呼叫 linear_git_sync 生成合乎規範的 Git 分支名稱（例如 feature/eng-145-payment-timeout），並輸出切換分支的 git 指令：git checkout -b [branch_name]。</pre>
+                <button onclick="copyPrompt('p6', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 實現終端極速開工流程：自動更新看板、展示需求細節，並生成乾淨符合團隊 GitFlow 規範的分支切換命令。
+              </div>
+            </div>
+
+            <!-- Prompt 7 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 07</span>
+                  <span class="text-xs font-bold text-white">Scrum Master · 燃盡圖 (Burndown) 與團隊速率分析</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_analytics</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>在雙週 Sprint 回顧會議 (Retrospective) 前，統計近 3 個 Cycle 的實際交付點數與未完成退回率。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear 分析團隊「ENG」最近結束的 3 個 Cycles (Cycle 39, 40, 41)：
+1. 統計每個週期的 Committed Points (初始承諾點數) 與 Completed Points (實際完成點數)。
+2. 計算團隊平均速率 (Average Velocity) 與承諾達成率 (Completion Ratio)。
+3. 列出各週期中最常出現延宕原因的標籤（例如 Technical-Debt 或 External-Dependency）。
+4. 撰寫一份供 Sprint Retro 會議討論的改進建議簡報。</pre>
+                <button onclick="copyPrompt('p7', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 深度計算歷史速率波動，提供基於數據的敏捷流程洞察，協助團隊找到估點失準的盲點。
+              </div>
+            </div>
+
+            <!-- Prompt 8 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 08</span>
+                  <span class="text-xs font-bold text-white">資安工程師 · CVE 漏洞修補專案追蹤</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_issue_create</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>安全掃描器發出 CVE-2026-XXXX 重大漏洞警報，需在 Linear 建立緊急安全專案並設定嚴格的 SLA 修補時效。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear 工具建立資安專屬防護專案與緊急工單：
+1. 專案名稱：「Security Remediation: CVE-2026-2189 OpenSSL Vulnerability」。
+2. 建立母 Issue：「[Urgent] 全面升級基礎 Docker Image 之 OpenSSL 版本至 3.0.15」
+   - Priority 設為 1 (Urgent)。
+   - Due Date (截止期限) 設為 48 小時之內。
+3. 建立 3 個子任務 (Sub-issues)：
+   -「Sub-task 1: 更新各微服務 Dockerfile 基礎映像並在本機通過單元測試」
+   -「Sub-task 2: 部署至 Staging 並執行自動化滲透迴歸掃描」
+   -「Sub-task 3: 安排深夜離峰時間進行 Production 零停機滾動更新」
+4. 自動標記指派給 DevOps 團隊主管。</pre>
+                <button onclick="copyPrompt('p8', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 在 Linear 建立帶有階層樹狀關係的資安專案與高時效性工單，確保漏洞修補合規透明。
+              </div>
+            </div>
+
+            <!-- Prompt 9 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 09</span>
+                  <span class="text-xs font-bold text-white">客服技術支援 · 客訴自動關聯至 Parent Issue</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_triage</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>收到多位客戶回報相同的「第三方登入跳出 400 Bad Request」，需在 Linear Triage 收件匣中將這些回饋合併關聯至主工單。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear 工具協助分揀 (Triage) 今日來自客訴系統的新工單：
+1. 查詢團隊「Triage」收件匣中所有未分類的新進請求。
+2. 比對關鍵字「Google OAuth / 400 Bad Request」，若發現有相同症狀的客訴，自動將其關聯為既有工單「ENG-89: Google OAuth Redirect URI 異常」的關聯回報 (Customer Feedback link)。
+3. 在工單內部留言標記：「已合併 4 筆客戶回報，受影響用戶清單：[user1, user2...]」。
+4. 提升 ENG-89 之優先級為 High，並通知原負責工程師。</pre>
+                <button onclick="copyPrompt('p9', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 智慧合併重複工單，聚合真實受害用戶名單，大幅提高研發團隊定位重大問題的靈敏度。
+              </div>
+            </div>
+
+            <!-- Prompt 10 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 10</span>
+                  <span class="text-xs font-bold text-white">跨部門協調員 · 標定相依性 (Dependencies & Blockers)</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">linear_relations</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>前端的新功能「線上發票即時預覽」必須等待後端「提供發票預覽 API」完成才能開工，需在 Linear 建立阻礙者 (Blocked By) 關聯。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 linear 工具為以下兩張工單建立精確相依性關係 (Relations)：
+1. 工單 A (FE-55)：「發票預覽前端抽屜 UI 元件開發」
+2. 工單 B (BE-102)：「發票即時 PDF 預覽 Stream API」
+3. 設定關係：FE-55「is blocked by」BE-102。
+4. 當 BE-102 狀態變更為 Done 時，自動觸發機器人通知 FE-55 的指派人「阻礙已排除，可開始前端對接整合」。</pre>
+                <button onclick="copyPrompt('p10', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 在工單關聯圖譜中建立阻礙鏈結，有效防範前後端資訊不對稱與停滯等待。
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Section 5: 安裝外掛與設定教學 -->
+        <section id="setup" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-5 h-5 text-indigo-400"></i>
+            <span>5. 安裝外掛與設定教學</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-5 border border-slate-800 text-xs text-slate-300">
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟一：於 Antigravity 外掛市場安裝</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在 Antigravity 外掛管理員中搜尋並安裝 Linear 官方生態外掛：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-indigo-400">
+                antigravity-plugins-partners/plugin/linear
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟二：設定 Linear Personal API Key</h3>
+              <p class="text-slate-400 leading-relaxed">
+                登入 Linear 後前往 Settings > Account > API，產出個人存取金鑰 (Personal API Key)，並配置於環境變數：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1 font-mono text-slate-300">
+                <div><span class="text-slate-500"># Linear API 存取金鑰</span></div>
+                <div><span class="text-indigo-400">LINEAR_API_KEY</span>="lin_api_xxxx..."</div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟三：連接 GitHub 組織以啟用自動閉環</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在 Linear 設定中開啟 GitHub Integration，即可享有 PR 建立自動推進狀態、PR 合併自動關閉工單的完整體驗。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: 常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="help-circle" class="w-5 h-5 text-indigo-400"></i>
+            <span>6. 常見問題 (FAQ)</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-indigo-400"></i>
+                <span>Linear 與 Jira 主要差異在哪裡？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                Linear 主打<strong>極致輕量、無加載延遲與鍵盤快捷鍵優先</strong>，介面極簡直覺；Jira 則偏向巨型企業高度自定義工作流與合規審計。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-indigo-400"></i>
+                <span>什麼是 Triage 收件匣模式？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                Triage 是團隊的過濾收件匣，所有來自客服、Slack 或非工程人員提出的請求會先暫存在此，經主管或 PO 核可後才會轉為正式 Backlog。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-indigo-400"></i>
+                <span>Story Points 估點建議使用何種數列？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                Linear 支援費氏數列 (1, 2, 3, 5, 8) 或線性數列。建議團隊採用費氏數列，越複雜的任務不確定性越高，能有效防止估點過於細碎。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-indigo-400"></i>
+                <span>如何防止工程師忘記更新工單？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                建議善用分支名稱綁定（例如 <code>eng-42-title</code>）與 Git Commit 關鍵字（例如 <code>Fixes ENG-42</code>），由系統全自動推進狀態，免去手動操作。
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <i data-lucide="check-circle" class="w-4 h-4"></i>
+          </div>
+          <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
+          <span>• Linear 極速現代軟體工程專案管理指南</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">回導覽首頁</a>
+          <a href="stripe.html" class="hover:text-white transition-colors">Stripe</a>
+          <a href="notion.html" class="hover:text-white transition-colors">Notion</a>
+          <a href="github-cli.html" class="hover:text-white transition-colors">GitHub CLI</a>
+          <a href="cloudflare.html" class="hover:text-white transition-colors">Cloudflare</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>Hosted with GitHub Pages</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕與互動腳本 -->
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(id, btn) {
+      const parent = btn.closest('.glass-card');
+      const text = parent.querySelector('pre').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const span = btn.querySelector('span');
+        const originalText = span.innerText;
+        span.innerText = '已複製！';
+        btn.classList.add('bg-indigo-600', 'text-white');
+        setTimeout(() => {
+          span.innerText = originalText;
+          btn.classList.remove('bg-indigo-600', 'text-white');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

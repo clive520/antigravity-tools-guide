@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloudflare 邊緣運算與全球網路防護完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cf: {
+              orange: '#f38020',
+              amber: '#faad3f',
+              dark: '#1e1b18',
+              50: '#fff7ed',
+              500: '#f38020',
+              600: '#ea580c',
+              700: '#c2410c',
+              900: '#7c2d12',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-orange-600/15 via-amber-600/15 to-red-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-orange-950/20 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-orange-400" fill="currentColor">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Cloudflare 邊緣生態指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-orange-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-orange-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-orange-400 hover:bg-slate-900/80 transition-colors">3. 核心工具架構與 API</a>
+              <a href="#prompts" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-orange-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰 Prompt</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-orange-400 hover:bg-slate-900/80 transition-colors">5. 安裝外掛與設定教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-orange-400 hover:bg-slate-900/80 transition-colors">6. 常見問題 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-orange-950/40 to-slate-900 border border-orange-800/40 text-xs text-slate-400 space-y-2">
+            <div class="flex items-center gap-2 text-orange-400 font-semibold">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>全球 330+ 邊緣節點</span>
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              Cloudflare 將無伺服器微服務 (Workers)、邊緣資料庫 (D1)、物件儲存 (R2) 與 AI 推論部署於使用者毫秒級身旁。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow max-w-4xl space-y-12 overflow-hidden">
+
+        <!-- 麵包屑導航 -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500">
+          <a href="index.html" class="hover:text-slate-300 transition-colors">首頁</a>
+          <span>/</span>
+          <span class="text-orange-400">Cloudflare 邊緣運算與全球防護</span>
+        </nav>
+
+        <!-- 頁面標題區 -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-950/80 border border-orange-800/60 text-xs text-orange-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse"></span>
+            <span>官方合作夥伴生態 · 第六棒</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Cloudflare 擴充功能實戰指南 <br class="hidden sm:inline">
+            <span class="bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-500 bg-clip-text text-transparent">邊緣無伺服器微服務、D1/R2 儲存與 WAF 防護</span>
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            透過 Antigravity 的 Cloudflare 專屬生態外掛，AI Agent 能直接在終端管理全球 CDN 快取規則、調用 Workers 撰寫邊緣地理位置路由、維護分散式 D1 SQLite 資料庫、操作零出口傳輸費之 R2 儲存桶，並一鍵套用 WAF 安全防護規則。
+          </p>
+        </div>
+
+        <!-- Section 1: 功能概述與生態定位 -->
+        <section id="overview" class="doc-section space-y-4 pt-4 border-t border-slate-800/80">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="info" class="w-5 h-5 text-orange-400"></i>
+            <span>1. 功能概述與生態定位</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-4 leading-relaxed text-sm text-slate-300">
+            <p>
+              在現代雲端開發中，傳統中心化雲端伺服器（Centralized Cloud）常受限於跨國網路延遲（High Latency）與高昂的頻寬出站費用（Egress Fees）。Cloudflare 提供了覆蓋全球 330 多個城市的邊緣網路（Edge Network），使運算與儲存直接發生在終端使用者的毫秒級身旁。
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-orange-400 font-bold mb-1 text-xs">極速邊緣冷啟動 (0ms)</div>
+                <div class="text-slate-400 text-xs">基於 V8 Isolates 架構，Workers 幾乎沒有冷啟動延遲，可在全球邊緣節點瞬間執行程式。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-amber-400 font-bold mb-1 text-xs">零頻寬出站費 (Zero Egress)</div>
+                <div class="text-slate-400 text-xs">R2 物件儲存打破傳統雲端廠商的頻寬出口稅壁壘，節省高達 80% 以上的檔案傳輸成本。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-yellow-400 font-bold mb-1 text-xs">邊緣 AI 模型推論 (Workers AI)</div>
+                <div class="text-slate-400 text-xs">在邊緣直接調用開源頂尖大模型（Llama 3、Mistral、Whisper），免去自行管理 GPU 叢集的痛苦。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-5 h-5 text-orange-400"></i>
+            <span>2. 這個功能能做什麼？</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            Cloudflare 整合套件賦予 Antigravity 4 大邊緣基礎建設掌控力：
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-orange-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center mb-3">
+                <i data-lucide="cpu" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">邊緣無伺服器微服務 (Workers)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                利用 JavaScript/TypeScript 撰寫邊緣反向代理、AB 測試分流、API Gateway 請求過濾與身份認證驗證，幾毫秒內全球同步部署。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-amber-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
+                <i data-lucide="database" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">邊緣無伺服器儲存矩陣 (D1 / R2 / KV)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                D1 提供分散式關聯 SQLite 資料庫；R2 提供無出口費的 S3 兼容物件儲存；KV 提供全球超低延遲鍵值快取。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-yellow-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 flex items-center justify-center mb-3">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">企業級 WAF 與智慧防護</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                一鍵調用 WAF 安全規則阻止 SQL Injection 與 XSS 攻擊、設定頻率限制 (Rate Limiting) 與驗證碼阻斷惡意爬蟲機器人。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-red-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 flex items-center justify-center mb-3">
+                <i data-lucide="globe" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">DNS 解析與 SSL/TLS 自動化</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動化管理網域 DNS 記錄（A/CNAME/TXT/MX）、配置自動憑證輪轉，並強制開啟 Full (Strict) 端到端加密防線。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="wrench" class="w-5 h-5 text-orange-400"></i>
+            <span>3. 核心工具架構與 API</span>
+          </h2>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-300">Cloudflare 專屬外掛核心工具清單</span>
+              <span class="text-[11px] font-mono text-orange-400">Plugin ID: antigravity-plugins-partners/plugin/cloudflare</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px] tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th class="py-3 px-4">工具名稱</th>
+                    <th class="py-3 px-4">所屬模組</th>
+                    <th class="py-3 px-4">核心用途</th>
+                    <th class="py-3 px-4">關鍵參數範例</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono text-[11px]">
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-orange-400 font-semibold">cloudflare_workers</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Compute</td>
+                    <td class="py-3 px-4 font-sans text-xs">部署、更新與除錯邊緣無伺服器腳本</td>
+                    <td class="py-3 px-4 text-slate-400"><code>name: "geo-proxy", script: "export default..."</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-orange-400 font-semibold">cloudflare_d1</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Database</td>
+                    <td class="py-3 px-4 font-sans text-xs">執行 SQL 查詢、結構建立與資料庫遷移</td>
+                    <td class="py-3 px-4 text-slate-400"><code>database: "prod_db", query: "SELECT * FROM users"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-orange-400 font-semibold">cloudflare_r2</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Storage</td>
+                    <td class="py-3 px-4 font-sans text-xs">上傳、下載與管理無出口費物件儲存桶</td>
+                    <td class="py-3 px-4 text-slate-400"><code>bucket: "assets", key: "logo.png", action: "put"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-orange-400 font-semibold">cloudflare_kv</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Caching</td>
+                    <td class="py-3 px-4 font-sans text-xs">全球邊緣毫秒級鍵值資料讀寫與過期設定</td>
+                    <td class="py-3 px-4 text-slate-400"><code>namespace: "rate_limits", key: "ip:1.2.3.4", ttl: 300</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-orange-400 font-semibold">cloudflare_dns</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Networking</td>
+                    <td class="py-3 px-4 font-sans text-xs">配置網域 DNS 解析記錄、代理 (Proxy) 狀態</td>
+                    <td class="py-3 px-4 text-slate-400"><code>zone_id: "...", type: "CNAME", name: "app", proxied: true</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: 10 大跨角色實戰 Prompt -->
+        <section id="prompts" class="doc-section space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                <i data-lucide="terminal" class="w-5 h-5 text-orange-400"></i>
+                <span>4. 10 大跨角色實戰 Prompt</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">覆蓋全端架構、資安 SRE、邊緣資料庫與靜態託管等多元實戰情境</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">10 個高階範例</span>
+          </div>
+
+          <div class="space-y-4">
+
+            <!-- Prompt 1 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 01</span>
+                  <span class="text-xs font-bold text-white">全端架構師 · 邊緣地理反向代理</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_workers</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為跨國 SaaS 系統在 Cloudflare Workers 部署邊緣路由，依據訪客地理位置（`request.cf.country`）自動反向代理至最接近的後端節點（亞洲/歐洲/美洲）。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare_workers 撰寫並部署一個邊緣反向代理腳本「geo-edge-router」：
+1. 讀取連線請求的地理資訊 request.cf.country。
+2. 若來自 TW、JP、KR、SG 等亞洲國家，反向代理至 https://asia-origin.myapi.com；若來自歐洲國家則代理至 https://eu-origin.myapi.com；其餘統一導向美洲主節點。
+3. 同時在 Response Header 加入「X-Edge-Region: [區域]」以利客戶端排錯。
+4. 請輸出完整 TypeScript 代碼與 wrangler.toml 綁定設定。</pre>
+                <button onclick="copyPrompt('p1', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 生成具備完整型別的 Cloudflare Worker 原始碼，精確處理 `fetch` 轉發與自定義標頭，並提供本機預覽與發布指令。
+              </div>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 02</span>
+                  <span class="text-xs font-bold text-white">資安維運 SRE · WAF 防火牆自定義規則</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_waf</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>官網近日遭遇惡意爬蟲針對 `/api/v1/auth/login` 進行撞庫與爆破攻擊，需在 Cloudflare 邊緣建立 WAF 規則與自定義 Managed Challenge。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare 相關工具為網域「example.com」建立精準安全防護規則：
+1. 目標端點：http.request.uri.path eq "/api/v1/auth/login"
+2. 觸發條件：若連線來自已知爬蟲機器人（cf.client.bot eq true）或 1 分鐘內同一 IP 請求數超過 20 次。
+3. 動作處置：對一般高頻訪客觸發「Managed Challenge (驗證碼)」，對惡意機器人與黑名單 ASN 直接採取「Block (阻斷)」。
+4. 輸出規則表達式 (Expression Rule) 與部署配置。</pre>
+                <button onclick="copyPrompt('p2', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 提供符合 Cloudflare Firewall Rules 語法的精準布林表達式，並說明如何於儀表板或 API 快速套用生效。
+              </div>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 03</span>
+                  <span class="text-xs font-bold text-white">資料工程師 · Cloudflare D1 邊緣資料庫遷移</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_d1</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為全球邊緣部落格系統設計 Cloudflare D1 結構，包含文章表、分類標籤表，並撰寫高效分頁與索引 SQL 腳本。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare_d1 為資料庫「edge_blog_db」規劃並執行結構遷移：
+1. 建立「posts」表：包含 id (UUID)、slug (唯一索引)、title、content、published_at、view_count。
+2. 建立「tags」與關聯表「post_tags」。
+3. 建立複合索引加速首頁最新文章分頁查詢 (published_at DESC)。
+4. 寫入 3 筆擬真測試資料，並示範在 Cloudflare Worker 中透過 env.DB.prepare 執行參數化安全查詢。</pre>
+                <button onclick="copyPrompt('p3', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 生成合規 SQLite DDL 檔案，並給出 Worker 程式碼範例，包含預編譯防範 SQL Injection 的實作方式。
+              </div>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 04</span>
+                  <span class="text-xs font-bold text-white">雲端成本優化師 · S3 零退出費遷移至 R2</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_r2</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>公司每月被 AWS S3 收取數千美元出站頻寬費，需撰寫自動化搬遷評估，並利用 Cloudflare R2 取代 S3 提供圖片與備份儲存。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare_r2 工具協助規劃 S3 至 Cloudflare R2 的無縫搬遷方案：
+1. 建立名為「company-public-assets」的 R2 儲存桶，並綁定自定義子網域 cdn.company.com。
+2. 配置 S3-compatible API 連線憑證與跨來源資源共享 (CORS) 政策（僅允許公司網域讀取）。
+3. 撰寫 Node.js 腳本使用 @aws-sdk/client-s3 串接 R2 執行流式上傳 (Streaming Upload)。
+4. 計算每月 10TB 流量下，相比 AWS S3 可節省的頻寬與儲存費用對照表。</pre>
+                <button onclick="copyPrompt('p4', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 提供 R2 CORS JSON 設定、相容 S3 SDK 的客戶端初始化代碼，以及清晰的 FinOps 成本省損評估表格。
+              </div>
+            </div>
+
+            <!-- Prompt 5 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 05</span>
+                  <span class="text-xs font-bold text-white">跨國電商工程師 · Workers KV 全球即時匯率快取</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_kv</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>跨境電商需要每小時從中央匯率服務拉取最新幣別對照，並將匯率快照快取至全球邊緣 KV，確保商品換算延遲小於 10ms。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare_kv 工具為跨國電商建立全域貨幣匯率快取管線：
+1. 在命名空間「CURRENCY_RATES」中配置排程更新邏輯（Cron Triggers 每 60 分鐘觸發一次）。
+2. Worker 抓取最新匯率資料後，寫入 key「rates:latest」，設定 TTL 為 7200 秒（容錯防呆）。
+3. 實作結帳端點 GET /api/convert?from=USD&to=TWD&amount=100，直接在邊緣從 KV 讀取並完成計算後回傳 JSON。
+4. 輸出包含 Cron 觸發與 HTTP 處理的單一 Worker 程式碼。</pre>
+                <button onclick="copyPrompt('p5', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 生成具備 `scheduled()` 與 `fetch()` 雙重事件監聽的 Worker 腳本，實現零後端伺服器依賴的邊緣即時匯率換算。
+              </div>
+            </div>
+
+            <!-- Prompt 6 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 06</span>
+                  <span class="text-xs font-bold text-white">AI 應用工程師 · Workers AI 邊緣模型即時推論</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_ai</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>打造端到端無伺服器語音逐字稿與摘要服務，利用 Workers AI 邊緣直接執行 Whisper 與 Llama 3 雙模型。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare 相關外掛撰寫一個整合 Workers AI 的無伺服器音訊轉錄與摘要 Worker：
+1. 接收前端上傳的音訊檔案（POST /api/transcribe）。
+2. 調用 Workers AI 模型「@cf/openai/whisper」將語音轉為文字。
+3. 緊接著將轉錄文字送入「@cf/meta/llama-3-8b-instruct」生成繁體中文 3 點會議結論。
+4. 全程不需額外 API 金鑰，使用 Cloudflare 原生 env.AI.run 綁定完成，輸出完整代碼。</pre>
+                <button onclick="copyPrompt('p6', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 生成免託管 GPU 的輕量級 Worker 代碼，無縫串聯語音辨識與 LLM 摘要，並給出延遲與資源消耗優化建議。
+              </div>
+            </div>
+
+            <!-- Prompt 7 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 07</span>
+                  <span class="text-xs font-bold text-white">API Gateway 維運者 · 邊緣 Rate Limiting 頻率限制</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_ratelimit</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為開放 API 端點 `/api/v2/search` 實施精確限流政策，防止惡意爬蟲發送巨量查詢拖垮後端 Elasticsearch 叢集。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare 工具為指定 API 規劃頻率限制 (Rate Limiting) 規則：
+1. 作用路徑：/api/v2/search*
+2. 限流規則：以「客戶端 IP」+「X-API-Key」組合特徵識別，限制 10 秒內最高允許 50 次請求。
+3. 超出限制行為：回傳 HTTP 429 Too Many Requests，並在標頭加上 Retry-After: 10 與 JSON 格式錯誤訊息。
+4. 提供 Cloudflare 儀表板規則設定步驟與 Cloudflare Terraform / API 呼叫範例。</pre>
+                <button onclick="copyPrompt('p7', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 提供標準 Rate Limiting 規則定義與對應的自定義回應內容，保障後端核心運算資源免於雪崩。
+              </div>
+            </div>
+
+            <!-- Prompt 8 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 08</span>
+                  <span class="text-xs font-bold text-white">網域管理員 · DNS 批次維護與 Full Strict SSL</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_dns</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>全新微服務上線，需為多個子網域配置 CNAME 記錄、開啟 Cloudflare Proxy (小橘雲) 與端到端最高等級 SSL/TLS 加密。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare_dns 為網域「mydomain.io」進行自動化設定：
+1. 建立 CNAME「api.mydomain.io」指向負載平衡器「lb.aws.mydomain.io」，開啟 Cloudflare Proxy (CDN 加速與防護)。
+2. 建立 CNAME「docs.mydomain.io」指向 Notion 站點，關閉 Proxy (DNS Only)。
+3. 新增 Google Workspace 郵件 MX 記錄與 SPF TXT 防偽冒記錄。
+4. 檢查 SSL/TLS 加密模式，確保開啟「Full (Strict)」並強制啟用 Always Use HTTPS。</pre>
+                <button onclick="copyPrompt('p8', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 輸出完整的 DNS 批次配置 Payload，並給予 SSL/TLS 配置檢查清單，防止出現常見的重定向無窮迴圈（Error 521/522）。
+              </div>
+            </div>
+
+            <!-- Prompt 9 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 09</span>
+                  <span class="text-xs font-bold text-white">靜態站點站長 · Cloudflare Pages 自動部署與預覽</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_pages</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>利用 Cloudflare Pages 部署 Astro / Next.js 現代靜態網站，配置 GitHub 每次提交自動產出獨立 Preview URL 與邊緣函式。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare 工具規劃靜態專案於 Cloudflare Pages 的全自動部署：
+1. 專案框架：Vite + React，建置指令為「npm run build」，輸出目錄為「dist」。
+2. 設定環境變數：VITE_API_BASE_URL (正式站與預覽站分別綁定不同後端)。
+3. 在專案根目錄建立「_routes.json」與「functions/api/time.ts」示範邊緣無伺服器 API 路由。
+4. 輸出完整的 wrangler pages 部署指令與 GitHub Actions CI/CD 配置檔。</pre>
+                <button onclick="copyPrompt('p9', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 提供 Pages 邊緣路由規範檔案、極速部署命令與 GitHub Actions YAML，實現一鍵自動化 Git-push 即部署。
+              </div>
+            </div>
+
+            <!-- Prompt 10 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-orange-950 text-orange-400 border border-orange-800/60">角色 10</span>
+                  <span class="text-xs font-bold text-white">影音串流工程師 · Cloudflare Stream 防盜鏈上傳</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">cloudflare_stream</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>線上教學平台需要上傳高品質付費教學影片，防止影片 URL 被外洩盜錄，需利用 Cloudflare Stream 簽名 URL 與網域白名單限制。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 cloudflare 工具規劃線上課程影片防盜鏈與直傳機制：
+1. 配置 Cloudflare Stream Direct Creator Upload，允許前端直接將影片上傳至 Cloudflare（不經由我們自家後端伺服器）。
+2. 開啟 Require Signed URLs 防盜鏈設定，只有帶有效 JWT 簽名的播放請求才能觀看。
+3. 限制播放網域僅限「academy.mybrand.com」，防止被外部 iframe 嵌入盜連。
+4. 撰寫 Node.js 產生 1 小時有效播放 JWT Token 的後端範例代碼。</pre>
+                <button onclick="copyPrompt('p10', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-orange-400 font-semibold">預期成果：</strong>AI 提供完整的安全簽名播放流程圖、直傳取得 Upload URL 的 API 呼叫，以及 RSA-SHA256 JWT Token 生成腳本。
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Section 5: 安裝外掛與設定教學 -->
+        <section id="setup" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-5 h-5 text-orange-400"></i>
+            <span>5. 安裝外掛與設定教學</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-5 border border-slate-800 text-xs text-slate-300">
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟一：於 Antigravity 外掛市場安裝</h3>
+              <p class="text-slate-400 leading-relaxed">
+                打開 Antigravity 外掛管理員，搜尋或直接指定合作夥伴外掛 ID 進行啟用：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-orange-400">
+                antigravity-plugins-partners/plugin/cloudflare
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟二：設定 Cloudflare API 存取憑證</h3>
+              <p class="text-slate-400 leading-relaxed">
+                前往 Cloudflare Dashboard 建立具備 Workers、D1、R2 與 DNS 編輯權限的 API Token，並於專案環境變數檔（<code>.env</code>）配置：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1 font-mono text-slate-300">
+                <div><span class="text-slate-500"># Cloudflare API 憑證</span></div>
+                <div><span class="text-amber-400">CLOUDFLARE_API_TOKEN</span>="your_api_token_here"</div>
+                <div><span class="text-amber-400">CLOUDFLARE_ACCOUNT_ID</span>="your_account_id_here"</div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟三：搭配 Wrangler CLI 進行本機模擬</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在終端機安裝 Cloudflare 官方命令列工具 <code>wrangler</code>，即可在本機完全模擬邊緣 Isolates 環境：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-slate-200">
+                npm install -g wrangler && npx wrangler dev
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: 常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="help-circle" class="w-5 h-5 text-orange-400"></i>
+            <span>6. 常見問題 (FAQ)</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-orange-400"></i>
+                <span>Cloudflare Workers 與 AWS Lambda 有何不同？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                Workers 採用 Google V8 Isolates 輕量架構，無需啟動完整 Node.js 容器，因此幾乎<strong>零冷啟動延遲 (0ms)</strong>，且記憶體與 CPU 成本顯著更低。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-orange-400"></i>
+                <span>什麼是「小橘雲 (Proxied)」狀態？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                在 DNS 設定中開啟 Proxy (小橘雲)，流量會先經過 Cloudflare 全球節點進行快取加速與 WAF 防禦，並隱藏真實伺服器原始 IP。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-orange-400"></i>
+                <span>D1 與一般關聯式資料庫差異？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                D1 底層是分散式 SQLite，具有強大的讀取快取能力，非常適合讀多寫少、邊緣超低延遲查詢的 Web 應用。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-orange-400"></i>
+                <span>R2 為何沒有出口流量費？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                Cloudflare 自主建立全球光纖骨幹網路，並加入 Bandwidth Alliance，因此 R2 物件儲存徹底免除外傳流量費，僅依儲存容量與操作次數計費。
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-orange-500/20 text-orange-400 flex items-center justify-center">
+            <i data-lucide="cloud" class="w-4 h-4"></i>
+          </div>
+          <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
+          <span>• Cloudflare 邊緣運算與全球網路防護實戰指南</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">回導覽首頁</a>
+          <a href="supabase.html" class="hover:text-white transition-colors">Supabase</a>
+          <a href="n8n.html" class="hover:text-white transition-colors">n8n</a>
+          <a href="github-cli.html" class="hover:text-white transition-colors">GitHub CLI</a>
+          <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>Hosted with GitHub Pages</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕與互動腳本 -->
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(id, btn) {
+      const parent = btn.closest('.glass-card');
+      const text = parent.querySelector('pre').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const span = btn.querySelector('span');
+        const originalText = span.innerText;
+        span.innerText = '已複製！';
+        btn.classList.add('bg-orange-600', 'text-white');
+        setTimeout(() => {
+          span.innerText = originalText;
+          btn.classList.remove('bg-orange-600', 'text-white');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

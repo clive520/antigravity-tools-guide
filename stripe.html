@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stripe 全球金流與 SaaS 訂閱計費完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            stripe: {
+              blurple: '#635bff',
+              teal: '#00d4aa',
+              dark: '#0a2540',
+              50: '#f4f5fd',
+              500: '#635bff',
+              600: '#4b45d6',
+              700: '#3832a8',
+              900: '#1e1b69',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-indigo-600/15 via-violet-600/15 to-teal-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-indigo-950/20 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-indigo-400" fill="currentColor">
+              <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697.5 12.784.5 6.643.5 2.378 3.738 2.378 9.243c0 4.887 3.393 7.37 8.358 9.07 2.392.831 3.23 1.547 3.23 2.533 0 .979-.864 1.487-2.277 1.487-2.316 0-5.32-1.077-7.218-2.21l-.916 5.568c2.08 1.072 4.966 1.809 8.134 1.809 6.46 0 10.983-3.087 10.983-8.877 0-4.839-3.21-7.247-8.7-9.473z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Stripe 全球金流指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">3. 核心工具架構與 API</a>
+              <a href="#prompts" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰 Prompt</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">5. 安裝外掛與設定教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-indigo-400 hover:bg-slate-900/80 transition-colors">6. 常見問題 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-800/40 text-xs text-slate-400 space-y-2">
+            <div class="flex items-center gap-2 text-indigo-400 font-semibold">
+              <i data-lucide="credit-card" class="w-4 h-4"></i>
+              <span>支援 135+ 種貨幣</span>
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              Stripe 官方 MCP 伺服器讓 AI 直接管理客戶帳戶、配置月費/年費訂閱計費、開立商業發票與對抗詐欺爭議款。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow max-w-4xl space-y-12 overflow-hidden">
+
+        <!-- 麵包屑導航 -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500">
+          <a href="index.html" class="hover:text-slate-300 transition-colors">首頁</a>
+          <span>/</span>
+          <span class="text-indigo-400">Stripe 全球金流與 SaaS 訂閱</span>
+        </nav>
+
+        <!-- 頁面標題區 -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-800/60 text-xs text-indigo-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse"></span>
+            <span>官方合作夥伴生態 · 第七棒</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Stripe 擴充功能實戰指南 <br class="hidden sm:inline">
+            <span class="bg-gradient-to-r from-indigo-400 via-violet-300 to-teal-400 bg-clip-text text-transparent">SaaS 訂閱計費、Payment Links 與財務自動化</span>
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            透過 Antigravity 的 Stripe 專屬生態外掛，AI Agent 具備商業金流的完整掌控力：一鍵生成商品收款連結 (Payment Links)、自動配置月繳/年繳階梯計費、調閱交易流水對帳、管理客戶信用卡續訂狀態，並能自動防範詐欺爭議款。
+          </p>
+        </div>
+
+        <!-- Section 1: 功能概述與生態定位 -->
+        <section id="overview" class="doc-section space-y-4 pt-4 border-t border-slate-800/80">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="info" class="w-5 h-5 text-indigo-400"></i>
+            <span>1. 功能概述與生態定位</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-4 leading-relaxed text-sm text-slate-300">
+            <p>
+              Stripe 是全球領先的金融基礎設施平台，支撐著從微型獨立開發者 (Indie Hackers) 到 OpenAI、Amazon、Shopify 等跨國巨頭的金流運作。在 Antigravity 中導入 Stripe 官方 MCP 伺服器，讓 AI 跨越了「寫代碼」的邊界，正式獲得了「直接經營商業模式」的能力。
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-indigo-400 font-bold mb-1 text-xs">零代碼極速收款 (Payment Links)</div>
+                <div class="text-slate-400 text-xs">無需撰寫前端結帳頁，AI 一句話即可產出支援 Apple Pay / Google Pay 的全球支付網址。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-violet-400 font-bold mb-1 text-xs">現代 SaaS 週期訂閱 (Billing)</div>
+                <div class="text-slate-400 text-xs">支援按用量計費 (Metered)、階梯式定價 (Tiered)、試用期 (Free Trial) 與平滑升降級 (Proration)。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-teal-400 font-bold mb-1 text-xs">AI 財務審計與防偽 (Radar)</div>
+                <div class="text-slate-400 text-xs">機器學習即時評估交易風險分數，自動攔截盜刷，並智慧安排扣款失敗後的最佳重試時機。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-5 h-5 text-indigo-400"></i>
+            <span>2. 這個功能能做什麼？</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            Stripe 整合套件賦予 Antigravity 4 大商業變現與財務自動化維度：
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-indigo-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3">
+                <i data-lucide="repeat" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">SaaS 訂閱計費與客戶生命週期</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動化註冊客戶帳戶、建立月費/年費訂閱合約、設定扣款寬限期，以及處理訂閱更換時的差額比例計算。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-violet-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center mb-3">
+                <i data-lucide="link" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">Payment Links 與促銷折扣碼</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                隨時按需求生成客製化付款連結，可預先帶入促銷 Coupon 折扣碼、收集顧客收件地址，或限制購買數量。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-teal-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">B2B 電子商業發票與對帳</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                針對大額客戶開立 Net 30/60 天期國際商業發票 (Invoice)，自動寄送 PDF 與線上信用卡/ACH 轉帳付款入口。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-amber-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-3">
+                <i data-lucide="shield-alert" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">Radar 風險控管與爭議款反擊</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                即時掌握盜刷風險分數，當遭遇爭議款 (Dispute / Chargeback) 時，AI 能快速整理訂單履約證明自動提交申訴。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="wrench" class="w-5 h-5 text-indigo-400"></i>
+            <span>3. 核心工具架構與 API</span>
+          </h2>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-300">Stripe 官方外掛核心工具清單</span>
+              <span class="text-[11px] font-mono text-indigo-400">Plugin ID: antigravity-plugins-partners/plugin/stripe</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px] tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th class="py-3 px-4">工具名稱</th>
+                    <th class="py-3 px-4">所屬模組</th>
+                    <th class="py-3 px-4">核心用途</th>
+                    <th class="py-3 px-4">關鍵參數範例</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono text-[11px]">
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">stripe_payment_links</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Checkout</td>
+                    <td class="py-3 px-4 font-sans text-xs">建立與調閱一鍵付款連結與短網址</td>
+                    <td class="py-3 px-4 text-slate-400"><code>price: "price_1Ov...", quantity: 1, allow_promotion_codes: true</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">stripe_customers</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Customers</td>
+                    <td class="py-3 px-4 font-sans text-xs">建立、查詢與更新客戶資料與綁定卡片</td>
+                    <td class="py-3 px-4 text-slate-400"><code>email: "alex@co.com", name: "Alex Chen", metadata: {team: "eng"}</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">stripe_subscriptions</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Billing</td>
+                    <td class="py-3 px-4 font-sans text-xs">建立週期訂閱合約、設定試用期與升降級</td>
+                    <td class="py-3 px-4 text-slate-400"><code>customer: "cus_...", items: [{price: "price_pro"}], trial_days: 14</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">stripe_invoices</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Invoicing</td>
+                    <td class="py-3 px-4 font-sans text-xs">開立、定稿與透過 Email 寄送商業請款單</td>
+                    <td class="py-3 px-4 text-slate-400"><code>customer: "cus_...", days_until_due: 30, auto_advance: true</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-indigo-400 font-semibold">stripe_balance_transactions</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Treasury</td>
+                    <td class="py-3 px-4 font-sans text-xs">調閱流水帳明細、扣除手續費與退款查詢</td>
+                    <td class="py-3 px-4 text-slate-400"><code>limit: 50, type: "charge", created: {gte: 1704067200}</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: 10 大跨角色實戰 Prompt -->
+        <section id="prompts" class="doc-section space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                <i data-lucide="terminal" class="w-5 h-5 text-indigo-400"></i>
+                <span>4. 10 大跨角色實戰 Prompt</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">涵蓋 SaaS 創辦人、電商財務、全端工程師與爭議款處理等真實商業場景</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">10 個高階範例</span>
+          </div>
+
+          <div class="space-y-4">
+
+            <!-- Prompt 1 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 01</span>
+                  <span class="text-xs font-bold text-white">SaaS 創辦人 · 3 階訂閱產品與 Payment Links</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_payment_links</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>全新 AI 工具上線，需要建立 Starter ($19/月)、Pro ($49/月) 與 Team ($199/月) 三個訂閱商品，並為每個方案生成開箱即用的 Payment Link。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe 工具為我的 SaaS 服務建立三階訂閱計費體系：
+1. 產品名稱：「Antigravity Assistant」
+   - Starter Plan：每月 $19 USD，代碼 price_starter_monthly。
+   - Pro Plan：每月 $49 USD，代碼 price_pro_monthly，提供 14 天免費試用期。
+   - Team Plan：每月 $199 USD，代碼 price_team_monthly。
+2. 為這三個價格方案分別產出 Stripe Payment Links。
+3. 每個連結需開啟「允許使用促銷代碼 (allow_promotion_codes: true)」並設定成功結帳後跳轉至 https://app.myai.com/welcome。
+4. 輸出三個連結與前端嵌入之 Pricing Table HTML/Tailwind 範例。</pre>
+                <button onclick="copyPrompt('p1', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 調用 Stripe API 建立 Product 與 Price，產出 3 組 Payment Link 網址，並附帶具現代感的三欄收費表前端代碼。
+              </div>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 02</span>
+                  <span class="text-xs font-bold text-white">電商財務會計 · 上月營收流水對帳與手續費拆解</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_balance_transactions</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>月底結算，需要調閱上月所有交易紀錄，拆分銷售毛額、Stripe 處理手續費與淨提現金額，產出會計核銷報表。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe_balance_transactions 調閱上個日曆月份的所有資金交易流水：
+1. 篩選條件：created 在上月 1 號 00:00:00 至上月最後一天 23:59:59。
+2. 匯總統計：
+   - 總交易筆數 (Transactions Count)
+   - 銷售總金額 (Gross Volume in USD)
+   - Stripe 扣除手續費總額 (Total Processing Fees)
+   - 退款總額 (Total Refunded)
+   - 實際入帳淨額 (Net Payout Amount)
+3. 標出其中手續費比例異常高於 3.5% 的跨國交易，並輸出成清晰的 Markdown 財務月報對帳表。</pre>
+                <button onclick="copyPrompt('p2', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 分頁拉取流水紀錄，精確計算毛額、淨額與手續費總額，並條列異常高費率訂單供財務部門核對。
+              </div>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 03</span>
+                  <span class="text-xs font-bold text-white">全端結帳工程師 · Webhook 簽名驗證與防掉單</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_webhooks</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>在 Node.js / Express 或 Next.js API 實作 Stripe Webhook 接收器，必須使用 `stripe.webhooks.constructEvent` 嚴格防禦重放攻擊與偽造支付事件。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe 工具為我的後端撰寫健壯的 Webhook 處理器（TypeScript）：
+1. 監聽端點：/api/stripe/webhook，正確讀取原始二進位 body (raw-body)。
+2. 使用 STRIPE_WEBHOOK_SECRET 驗證「stripe-signature」標頭，防範中間人偽造請求。
+3. 嚴謹處理以下關鍵事件：
+   - checkout.session.completed：將訂單標記為已付款，發放用戶 SaaS 權限。
+   - invoice.payment_failed：記錄扣款失敗，發送郵件通知客戶更新信用卡。
+   - customer.subscription.deleted：降級用戶權限至免費版。
+4. 加入防重複消費機制（Idempotency），確保同一個 event_id 不會重複發放點數。</pre>
+                <button onclick="copyPrompt('p3', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 提供兼顧資安防禦與冪等性 (Idempotency) 的後端程式碼，附帶 Stripe CLI 本機觸發測試事件指令。
+              </div>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 04</span>
+                  <span class="text-xs font-bold text-white">獨立開發者 (Indie Hacker) · 電子書單次購買與早鳥折扣</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_coupons</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>獨立作者發售新技術電子書，定價 $29 USD，需生成限時 100 名「EARLYBIRD」折扣碼（折抵 $10 USD）的付款短網址。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe 工具為我建立電子書發售收款機制：
+1. 建立商品「Agentic AI 開發實戰指南」，一次性付費金額為 $29 USD。
+2. 建立折價券「EARLYBIRD」，折抵金額固定為 $10 USD，限制最多兌換 100 次 (max_redemptions: 100)。
+3. 生成 Payment Link，預設自動帶入此早鳥折價券，並在結帳頁面收集買家之電子信箱與真實姓名。
+4. 輸出連結並提供一段發布在 X (Twitter) / Threads 的吸睛推廣文案。</pre>
+                <button onclick="copyPrompt('p4', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 成功在 Stripe 建立折扣碼與綁定連結，並給出帶有社群吸引力的發布文案。
+              </div>
+            </div>
+
+            <!-- Prompt 5 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 05</span>
+                  <span class="text-xs font-bold text-white">客服爭議處理員 · 爭議款 (Dispute) 舉證反擊</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_disputes</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>收到來自發卡銀行的「未授權交易」爭議款 (Chargeback)，必須在 7 天舉證期內整理客戶登入 IP、數位商品下載紀錄與對話紀錄提出反駁。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe 工具查詢爭議編號為「dp_1Pxxxxxx」的案件詳情：
+1. 檢視爭議原因（Reason）、被扣押金額與發卡機構要求的反駁截止日期。
+2. 協助組織有效抗辯證據（Evidence Submission）：
+   - 客戶電子信箱與購買時填寫姓名。
+   - 伺服器存取日誌：顯示該客戶在購買後 5 分鐘內使用相同 IP (118.163.xx.xx) 登入並下載數位授權碼。
+   - 服務條款條文連結：明確載明數位商品開通後不予退貨之約定。
+3. 撰寫一份專業嚴謹的英文反駁陳述信 (Evidence Text)，準備提交給銀行審查。</pre>
+                <button onclick="copyPrompt('p5', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 解析爭議款狀態，按照 Visa/Mastercard 規範整理關鍵證據格式，並草擬高勝訴率的英文申訴說明。
+              </div>
+            </div>
+
+            <!-- Prompt 6 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 06</span>
+                  <span class="text-xs font-bold text-white">客戶成功主管 (CSM) · 訂閱合約平滑升級 (Proration)</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_subscriptions</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>老客戶原訂閱 Starter ($19/月)，在計費週期第 15 天決定升級至 Pro ($49/月)，需計算當月剩餘天數折抵差額並即刻生效。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe_subscriptions 為客戶「cus_Nxxxxxx」執行訂閱方案即時升級：
+1. 查詢其現有作用中訂閱項目（sub_xxxx）。
+2. 將訂閱項目更換為「price_pro_monthly」。
+3. 設定 proration_behavior: "create_prorations"（自動按日計算未用完的 Starter 額度折抵 Pro 新費用）。
+4. 先行調用 Preview Upcoming Invoice 計算客戶當下需要補繳的具體差額（美元），向我回報後再確認送出。</pre>
+                <button onclick="copyPrompt('p6', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 試算出按比例折算的發票預覽明細（例如折抵 $9.5，新增 $24.5，需補繳 $15.0），保障交易透明無爭議。
+              </div>
+            </div>
+
+            <!-- Prompt 7 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 07</span>
+                  <span class="text-xs font-bold text-white">跨國 B2B 業務 · 開立 Net 30 天期企業發票</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_invoices</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>與日本企業簽署年度企業級顧問專案，需開立金額 $12,000 USD 之商業發票，支援 30 天付款期限與線上直接電匯 (Wire Transfer)。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe_invoices 為企業客戶建立正式請款單：
+1. 客戶資訊：Acme Tokyo Inc. (統編/稅號: JP1234567890123，聯絡信箱: billing@acme-tokyo.co.jp)。
+2. 請款品項：「Enterprise AI Consulting & System Integration (Year 2026)」，單價 $12,000 USD。
+3. 付款期限設定：Net 30 天 (days_until_due: 30)。
+4. 開放付款方式：支援信用卡與國際銀行電匯 (bank_transfer)。
+5. 定稿發票 (Finalize Invoice) 並取得客戶專屬付款連結 (hosted_invoice_url) 與 PDF 下載連結。</pre>
+                <button onclick="copyPrompt('p7', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 生成具備完整稅務資訊的國際發票，回傳 Stripe 官方線上託管發票頁面網址與 PDF 直連。
+              </div>
+            </div>
+
+            <!-- Prompt 8 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 08</span>
+                  <span class="text-xs font-bold text-white">財務長 (CFO) · SaaS 核心營運指標 (MRR / Churn) 計算</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_analytics</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>在召開董事會前夕，需要統計近一季的 MRR (月經常性營收)、ARR、客戶流失率 (Churn Rate) 與平均顧客價值 (LTV)。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe 工具分析我所有 active 狀態的訂閱合約：
+1. 統計當前總作用中訂閱數 (Active Subscriptions)。
+2. 計算目前實時月經常性營收 (Current MRR = 月繳合約金額總和 + 年繳合約總和/12)。
+3. 統計過去 30 天內主動取消 (canceled) 或扣款失敗被終止的訂閱數量，計算月客戶流失率 (Logo Churn Rate)。
+4. 預估當前用戶之 ARPU (每用戶平均收入) 與預估 LTV (顧客終生價值)。
+5. 產出一份供投資人閱覽的簡潔財務儀表板摘要。</pre>
+                <button onclick="copyPrompt('p8', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 精確聚合 Subscription 數據，計算出關鍵 SaaS 指標並結構化排版為管理階層決策報表。
+              </div>
+            </div>
+
+            <!-- Prompt 9 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 09</span>
+                  <span class="text-xs font-bold text-white">資安風控官 · Stripe Radar 詐欺防禦規則設定</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_radar</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>防範來自匿名 VPN 節點與無 3D Secure 驗證的高風險盜刷卡片，設定自定義 Radar 阻斷規則。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe 工具為我的支付網關規劃 Radar 詐欺防範策略：
+1. 阻斷規則 (Block Rule)：
+   - 當 :risk_score: > 75（極高風險交易）時，直接拒絕付款。
+   - 當發卡國與客戶連線 IP 所在國不一致，且金額大於 $500 USD 時，強制阻斷。
+2. 審查規則 (Review Rule)：
+   - 當 :risk_score: 介於 60 至 75 之間時，標記為 Manual Review 人工審查。
+3. 3D Secure 驗證規則：
+   - 針對所有非 3DS 驗證通過且金額大於 $100 USD 的跨國交易，要求觸發 3DS 簡訊/APP 認證。
+4. 提供規則設定語法與誤殺率降低指引。</pre>
+                <button onclick="copyPrompt('p9', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 提供符合 Stripe Radar 語法規則的防護表達式，有效降低盜刷拒付率至 0.1% 以下。
+              </div>
+            </div>
+
+            <!-- Prompt 10 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-950 text-indigo-400 border border-indigo-800/60">角色 10</span>
+                  <span class="text-xs font-bold text-white">訂閱挽留經理 · 智慧扣款失敗重試 (Smart Retries) 與客戶提醒</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">stripe_billing_settings</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>每月因信用卡過期或額度不足導致被動流失 (Involuntary Churn)，配置 Smart Retries 與自動化卡片即將過期通知。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 stripe 工具為我的 SaaS 訂閱配置防流失 (Dunning Management) 機制：
+1. 開啟 Stripe 機器學習 Smart Retries：在 3 週內於最佳時間點智慧重試扣款最多 4 次。
+2. 配置客戶提醒信：
+   - 信用卡將在 30 天內過期時，自動發送信件提醒更新。
+   - 第一次扣款失敗時，自動寄送包含專屬安全更新連結 (Customer Portal) 的通知信。
+3. 扣款重試全數失敗後之處置：不要立即刪除訂閱，將合約標記為「unpaid」，保留 7 天寬限期。
+4. 輸出完整的 Dunning 策略流程圖與客戶通知信繁體中文範本。</pre>
+                <button onclick="copyPrompt('p10', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-indigo-400 font-semibold">預期成果：</strong>AI 提供完整的自動扣款失敗補償排程設定，以及語調客氣專業的客戶卡片更新提醒信件範本。
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Section 5: 安裝外掛與設定教學 -->
+        <section id="setup" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-5 h-5 text-indigo-400"></i>
+            <span>5. 安裝外掛與設定教學</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-5 border border-slate-800 text-xs text-slate-300">
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟一：於 Antigravity 外掛市場安裝</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在 Antigravity 外掛管理員中搜尋並安裝 Stripe 官方生態外掛：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-indigo-400">
+                antigravity-plugins-partners/plugin/stripe
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟二：設定 Stripe 密鑰與 Webhook 密鑰</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在 Stripe Developers 後台取得 <code>sk_test_...</code> 或正式 <code>sk_live_...</code> 密鑰，並配置於環境變數：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1 font-mono text-slate-300">
+                <div><span class="text-slate-500"># Stripe API 密鑰配置</span></div>
+                <div><span class="text-indigo-400">STRIPE_SECRET_KEY</span>="sk_test_51Px..."</div>
+                <div><span class="text-indigo-400">STRIPE_WEBHOOK_SECRET</span>="whsec_..."</div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟三：搭配 Stripe CLI 進行本地測試</h3>
+              <p class="text-slate-400 leading-relaxed">
+                推薦在終端機安裝 Stripe CLI，方便在本地即時轉發 Webhook 事件至本機開發埠：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-slate-200">
+                stripe login && stripe listen --forward-to localhost:3000/api/stripe/webhook
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: 常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="help-circle" class="w-5 h-5 text-indigo-400"></i>
+            <span>6. 常見問題 (FAQ)</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-indigo-400"></i>
+                <span>Payment Links 與 Stripe Checkout 有何不同？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                Payment Links 是<strong>零代碼</strong>產生的固定靜態收款網址，適合貼在社群或 Email；Checkout Session 則是動態透過後端 API 生成，支援高度客製化購物車與回呼。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-indigo-400"></i>
+                <span>測試環境 (Test Mode) 與正式環境如何切換？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                只需切換 API Key 前綴即可：以 <code>sk_test_</code> 開頭為沙盒測試模式，以 <code>sk_live_</code> 開頭則為正式營業扣款模式。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-indigo-400"></i>
+                <span>什麼是 Customer Portal (客戶自助後台)？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                Stripe 內建的安全託管頁面，客戶可自行在此查看歷史發票、更換綁定信用卡或升降級/取消訂閱，無需工程師從頭撰寫會員中心。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-indigo-400"></i>
+                <span>如何防止 Webhook 重複處理 (Idempotency)？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                每個 Stripe 事件均包含唯一的 <code>event.id</code>。在後端資料庫記錄已處理的 Event ID，處理前先查詢是否存在即可百分之百避免重複發放商品或扣款。
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+            <i data-lucide="credit-card" class="w-4 h-4"></i>
+          </div>
+          <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
+          <span>• Stripe 全球金流與 SaaS 訂閱計費實戰指南</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">回導覽首頁</a>
+          <a href="cloudflare.html" class="hover:text-white transition-colors">Cloudflare</a>
+          <a href="supabase.html" class="hover:text-white transition-colors">Supabase</a>
+          <a href="github-cli.html" class="hover:text-white transition-colors">GitHub CLI</a>
+          <a href="n8n.html" class="hover:text-white transition-colors">n8n</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>Hosted with GitHub Pages</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕與互動腳本 -->
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(id, btn) {
+      const parent = btn.closest('.glass-card');
+      const text = parent.querySelector('pre').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const span = btn.querySelector('span');
+        const originalText = span.innerText;
+        span.innerText = '已複製！';
+        btn.classList.add('bg-indigo-600', 'text-white');
+        setTimeout(() => {
+          span.innerText = originalText;
+          btn.classList.remove('bg-indigo-600', 'text-white');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

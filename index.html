@@ -63,7 +63,7 @@
         </div>
         <div>
           <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-sky-300 bg-clip-text text-transparent">Antigravity Tools Hub</span>
-          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60 font-medium">14 大旗艦工具完整版</span>
+          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60 font-medium">19 大旗艦工具完整版</span>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -89,7 +89,7 @@
         <span class="bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">必備外掛與 MCP 工具</span>
       </h1>
       <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
-        從底層瀏覽器除錯、Google Workspace 全家桶協作、Canva 視覺設計，到工程自動化（GitHub CLI、Figma、Notion、n8n、Supabase），全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
+        從底層瀏覽器除錯、Google Workspace 全家桶、Canva 視覺設計，到工程自動化與雲端金流（GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo），全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
       </p>
     </div>
 
@@ -725,16 +725,221 @@
         </a>
       </div>
 
-      <!-- 卡片 15：擴充預留提示卡 (Expandable placeholder) -->
+      <!-- 卡片 15：Cloudflare (雲端邊緣第六棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="debug automation" data-title="Cloudflare 邊緣運算 Workers D1 資料庫 R2 儲存 KV 快取 WAF 防護 DNS">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-orange-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="cloud" class="w-6 h-6 text-orange-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-orange-950/80 text-orange-400 border border-orange-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> 全球邊緣雲端
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Edge & Workers</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-orange-300 transition-colors flex items-center gap-2">
+            <span>Cloudflare</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-orange-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            全球邊緣無伺服器微服務與網路安全中樞。支援 Workers 邊緣地理路由、D1 分散式 SQLite 遷移、零出口頻寬費 R2 儲存與 WAF 防火牆智慧防禦。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>邊緣運算 · 實戰手冊</span>
+              <span class="text-orange-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-orange-300">workers</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-orange-300">cloudflare_d1</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-orange-300">cloudflare_r2</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="cloudflare.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-lg shadow-orange-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 16：Stripe (商業金流第七棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="automation workspace" data-title="Stripe 金流 商業 收款 訂閱 計費 Payment Links 發票 Radar 爭議款 財務 對帳">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="credit-card" class="w-6 h-6 text-indigo-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-950/80 text-indigo-400 border border-indigo-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> 商業金流
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Billing & Payments</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-indigo-300 transition-colors flex items-center gap-2">
+            <span>Stripe</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-indigo-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            全球商業變現與 SaaS 訂閱計費引擎。AI 直接生成免代碼 Payment Links、配置月費/年費階梯合約、處理爭議款 (Disputes) 與開立 B2B 商業請款單。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>商業變現 · 實戰手冊</span>
+              <span class="text-indigo-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-indigo-300">payment_links</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-indigo-300">subscriptions</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-indigo-300">stripe_invoices</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="stripe.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-indigo-600 via-violet-600 to-teal-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 17：Linear (敏捷專案第八棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace automation" data-title="Linear 敏捷專案 軟體工程 Issue 追蹤 Sprint Cycles Roadmap 產品藍圖 Git 聯動">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="check-square" class="w-6 h-6 text-purple-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-purple-950/80 text-purple-400 border border-purple-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> 敏捷研發
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Issues & Cycles</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors flex items-center gap-2">
+            <span>Linear</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-purple-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            極速現代軟體工程專案管理標竿。AI 自動拆解需求痛點為標準 User Story、排程 2 週 Sprint 週期負載、發布產品 Roadmap 狀態並關聯 Git PR。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>極速敏捷 · 實戰手冊</span>
+              <span class="text-purple-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">issue_create</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">cycle_manage</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">git_sync</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="linear.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 18：Atlassian TWG (企業脈絡第九棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace automation" data-title="Atlassian Teamwork Graph Jira 工單 Confluence 知識庫 Bitbucket PR 企業脈絡 JQL ADR">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="network" class="w-6 h-6 text-blue-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-950/80 text-blue-400 border border-blue-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> 企業脈絡
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Jira & Confluence</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors flex items-center gap-2">
+            <span>Atlassian TWG</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-blue-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            跨巨型企業工作脈絡全景中樞。Teamwork Graph CLI 打破系統孤島，統一檢索 Jira 待辦需求、自動撰寫 Confluence 架構 ADR，並稽核 Bitbucket PR 合規。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>企業級協作 · 實戰手冊</span>
+              <span class="text-blue-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-blue-300">jira_query</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-blue-300">confluence_create</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-blue-300">bitbucket_link</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="atlassian.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 via-cyan-600 to-indigo-600 hover:from-blue-500 hover:to-cyan-500 text-white shadow-lg shadow-blue-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 19：invideo (影音創作第十棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="design automation" data-title="invideo AI 影音 剪輯 短影音 YouTube Shorts Instagram Reels 逐字字幕 旁白配音 時間軸">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-rose-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <i data-lucide="film" class="w-6 h-6 text-rose-400"></i>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-rose-950/80 text-rose-400 border border-rose-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> AI 影音創作
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Timeline & Shorts</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-rose-300 transition-colors flex items-center gap-2">
+            <span>invideo AI 影音</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-rose-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            自然語言驅動的專業多軌影音剪輯器。AI 自動編排分鏡劇本、合成擬真人聲配音、生成社群爆款跳動逐字卡，並可在真實多軌時間軸上微調畫面。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>影音剪輯 · 實戰手冊</span>
+              <span class="text-rose-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-rose-300">script_gen</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-rose-300">timeline_edit</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-rose-300">caption_sync</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="invideo.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 hover:from-rose-500 hover:to-pink-500 text-white shadow-lg shadow-rose-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 20：擴充預留提示卡 (Expandable placeholder) -->
       <div class="rounded-2xl border-2 border-dashed border-slate-800/80 hover:border-slate-700 p-6 flex flex-col items-center justify-center text-center transition-all bg-slate-950/40">
         <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-slate-500 mb-3 border border-slate-800">
           <i data-lucide="plus" class="w-6 h-6"></i>
         </div>
         <h3 class="font-bold text-slate-300 text-sm mb-1">更多工具持續擴充中</h3>
         <p class="text-xs text-slate-500 max-w-xs mb-3">
-          首頁具備模組化字卡結構，已完整收錄 Chrome DevTools、Google 家族 7 大神器、Canva 以及開發自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase），共 14 大旗艦工具指南。
+          首頁具備模組化字卡結構，已完整收錄 Chrome DevTools、Google 家族 7 大神器、Canva、開發自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）以及擴充五棒（Cloudflare、Stripe、Linear、Atlassian、invideo），共 19 大旗艦工具指南。
         </p>
-        <span class="text-[11px] text-sky-400/80 font-mono">14 款工具上線 · 歡迎持續擴充</span>
+        <span class="text-[11px] text-sky-400/80 font-mono">19 款工具上線 · 歡迎持續擴充</span>
       </div>
 
     </div>
@@ -750,7 +955,7 @@
             <i data-lucide="palette" class="w-4 h-4"></i>
           </div>
           <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
-          <span>• 14 大旗艦工具（Google 家族、Canva、GitHub、Figma、Notion、n8n、Supabase）實戰指南全數上線</span>
+          <span>• 19 大旗艦工具（含 Google 家族、Canva、GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo）實戰指南全數上線</span>
         </div>
         <div class="flex flex-wrap gap-4 text-slate-400">
           <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
@@ -766,6 +971,11 @@
           <a href="notion.html" class="text-amber-400 font-semibold hover:text-white transition-colors">Notion</a>
           <a href="n8n.html" class="text-rose-400 font-semibold hover:text-white transition-colors">n8n</a>
           <a href="supabase.html" class="text-emerald-400 font-semibold hover:text-white transition-colors">Supabase</a>
+          <a href="cloudflare.html" class="text-orange-400 font-semibold hover:text-white transition-colors">Cloudflare</a>
+          <a href="stripe.html" class="text-indigo-400 font-semibold hover:text-white transition-colors">Stripe</a>
+          <a href="linear.html" class="text-purple-400 font-semibold hover:text-white transition-colors">Linear</a>
+          <a href="atlassian.html" class="text-blue-400 font-semibold hover:text-white transition-colors">Atlassian</a>
+          <a href="invideo.html" class="text-rose-400 font-semibold hover:text-white transition-colors">invideo</a>
           <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
         </div>
       </div>

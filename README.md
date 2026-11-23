@@ -10,7 +10,7 @@
 
 本專案收錄並整理 Antigravity 2.0 擴充套件市場（Marketplace）中官方與合作夥伴提供的關鍵工具使用指南，旨在幫助開發者、教育工作者、設計師、數據分析師與各領域專業人士充分發揮 AI Agent 的自動化、雲端協作與視覺生產力。
 
-目前已全面完成收錄 **Chrome DevTools**、**Google 家族（Google Family）全系列核心服務**、**Canva AI 視覺設計旗艦生態**，以及**開發者自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）**，共計 14 大專題頁面與 140 組以上跨角色實戰 Prompt。
+目前已全面完成收錄 **Chrome DevTools**、**Google 家族（Google Family）全系列核心服務**、**Canva AI 視覺設計旗艦生態**、**開發者自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）**，以及**擴充第 6～10 棒（Cloudflare、Stripe、Linear、Atlassian TWG、invideo）**，共計 19 大專題頁面與 190 組以上跨角色實戰 Prompt。
 
 ---
 
@@ -18,7 +18,7 @@
 
 ### 1. 核心首頁與導航 (`index.html`)
 - **模組化高擴充性字卡網格（Card Grid）**：支援即時關鍵字模糊搜尋、多類別標籤過濾（全部、辦公協作與知識庫、後端與除錯、自動化與 CLI、創意設計與視覺）。
-- **完整導覽連結**：一鍵直達 14 大工具專屬手冊，並具備優雅的暗黑毛玻璃（Dark Tech Glassmorphism）現代科技美學。
+- **完整導覽連結**：一鍵直達 19 大工具專屬手冊，並具備優雅的暗黑毛玻璃（Dark Tech Glassmorphism）現代科技美學。
 
 ### 2. Chrome DevTools MCP (`chrome-devtools.html`)
 - **官方維護版本**：由 Chrome DevTools 官方團隊維護的 MCP 擴充套件完整解析（v1.10.1）。
@@ -90,13 +90,38 @@
 - **核心能力**：PostgreSQL 表結構 DDL 與高階索引自動生成、精密 Row Level Security (RLS) 權限防禦政策、TypeScript 類型定義自動產生與 Edge Functions 邊緣運算邏輯。
 - **10 大跨角色實戰範例**：涵蓋後端資料庫架構師、SaaS 創辦人、資安長、全端 TypeScript 開發者、Mobile 後端工程師等。
 
+### 16. Cloudflare (`cloudflare.html`) · 雲端邊緣第六棒
+- **全球邊緣無伺服器與防護中樞**：`antigravity-plugins-partners/plugin/cloudflare`。
+- **核心能力**：Workers 邊緣地理路由與反向代理、D1 分散式 SQLite 遷移、零出口頻寬費 R2 物件儲存、Workers AI 邊緣模型推論與 WAF 防火牆自定義防禦規則。
+- **10 大跨角色實戰範例**：涵蓋全端架構師、資安 SRE、資料工程師、雲端成本優化師、跨國電商工程師、AI 應用工程師等。
+
+### 17. Stripe (`stripe.html`) · 商業金流第七棒
+- **全球商業金流與 SaaS 變現中樞**：`antigravity-plugins-partners/plugin/stripe`。
+- **核心能力**：一鍵生成免代碼 Payment Links、SaaS 階梯週期訂閱 (Billing)、Radar 智慧防盜刷評分、爭議款 (Disputes) 自動反擊舉證與 B2B 電子商業發票。
+- **10 大跨角色實戰範例**：涵蓋 SaaS 創辦人、電商財務、全端結帳工程師、獨立開發者 (Indie Hacker)、客戶成功主管、資安風控官等。
+
+### 18. Linear (`linear.html`) · 敏捷專案第八棒
+- **極速現代軟體工程專案管理標竿**：`antigravity-plugins-partners/plugin/linear`。
+- **核心能力**：自然語言需求拆解為 User Story、Sprint Cycles 節奏負載平衡與速率 (Velocity) 預測、Roadmap 產品藍圖進度追蹤與 Git 分支/PR 雙向自動狀態推進。
+- **10 大跨角色實戰範例**：涵蓋技術產品負責人 (PO)、敏捷工程主管 (EM)、QA 組長、Release Manager、技術長 (CTO)、Scrum Master 等。
+
+### 19. Atlassian TWG CLI (`atlassian.html`) · 企業脈絡第九棒
+- **跨巨型企業工作脈絡全景圖譜**：`antigravity-plugins-partners/plugin/atlassian-twg-cli`。
+- **核心能力**：Jira JQL 精密深度檢索、Confluence 知識庫檢索與架構決策 (ADR) 生成、Bitbucket PR 程式審查稽核與 Teamwork Graph 全景實體脈絡整合。
+- **10 大跨角色實戰範例**：涵蓋企業架構師、Jira 專案管理員、跨團隊 PM、DevOps 專家、資安稽核員、研發副總 (VP of Eng) 等。
+
+### 20. invideo AI 影音創作 (`invideo.html`) · 影音創作第十棒
+- **AI 原生多軌影音編輯與短影音生成**：`antigravity-plugins-partners/plugin/invideo`。
+- **核心能力**：自然語言一鍵生成分鏡劇本 (Prompt-to-Video)、神經網路擬真人聲配音、動態逐字卡 (Karaoke Captions)、真實多軌時間軸微調與 16:9 / 9:16 全通路重構。
+- **10 大跨角色實戰範例**：涵蓋 YouTube 創作者、電商行銷企劃、企業培訓師、房產經紀人、SaaS 產品經理、社群自媒體經營者等。
+
 ---
 
 ## 📁 檔案結構
 
 ```tree
 antigravity-tools-guide/
-├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 14 大旗艦專題)
+├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 19 大旗艦專題)
 ├── chrome-devtools.html         # Chrome DevTools MCP 詳細教學指南
 ├── google-drive-docs.html       # Google Drive & Docs 完整使用指南
 ├── google-sheets.html           # Google Sheets 試算表與數據分析指南
@@ -111,6 +136,11 @@ antigravity-tools-guide/
 ├── notion.html                  # Notion 模組化資料庫與團隊知識庫指南
 ├── n8n.html                     # n8n 開源工作流編排與 Webhook 自動化指南
 ├── supabase.html                # Supabase PostgreSQL、RLS 與 Edge Functions 指南
+├── cloudflare.html              # Cloudflare 邊緣運算、D1/R2 與 WAF 指南
+├── stripe.html                  # Stripe 全球金流、SaaS 訂閱與財務指南
+├── linear.html                  # Linear 極速敏捷專案管理與 Cycles 指南
+├── atlassian.html               # Atlassian TWG CLI Jira、Confluence 企業脈絡指南
+├── invideo.html                 # invideo AI 影音創作與時間軸短影音指南
 ├── data/
 │   └── sheets/                  # 10 組情境擬真 UTF-8 BOM 練習用 CSV 資料檔
 ├── .nojekyll                    # 確保 GitHub Pages 靜態檔案正常運作

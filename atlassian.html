@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atlassian Teamwork Graph CLI 企業協作全脈絡指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            atlassian: {
+              blue: '#0052cc',
+              cyan: '#00b8d9',
+              dark: '#0747a6',
+              50: '#f4f7fc',
+              500: '#0052cc',
+              600: '#0747a6',
+              700: '#172b4d',
+              900: '#091e42',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-blue-600/15 via-cyan-600/15 to-indigo-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-blue-950/20 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-blue-400" fill="currentColor">
+              <path d="M11.53 2c0 2.4-1.97 4.35-4.39 4.35H2.86c-.5 0-.86.44-.86.94 0 2.4 1.97 4.35 4.39 4.35h4.28c.5 0 .86-.44.86-.94V2zm.94 20c0-2.4 1.97-4.35 4.39-4.35h4.28c.5 0 .86-.44.86-.94 0-2.4-1.97-4.35-4.39-4.35h-4.28c-.5 0-.86.44-.86.94V22z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Atlassian TWG CLI 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">3. 核心工具架構與 API</a>
+              <a href="#prompts" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰 Prompt</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">5. 安裝外掛與設定教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">6. 常見問題 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-blue-950/40 to-slate-900 border border-blue-800/40 text-xs text-slate-400 space-y-2">
+            <div class="flex items-center gap-2 text-blue-400 font-semibold">
+              <i data-lucide="network" class="w-4 h-4"></i>
+              <span>Teamwork Graph 核心</span>
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              專為 Agent 設計的企業脈絡介面：打破 Jira 工單、Confluence 知識庫與 Bitbucket PR 孤島，全鏈路串接。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow max-w-4xl space-y-12 overflow-hidden">
+
+        <!-- 麵包屑導航 -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500">
+          <a href="index.html" class="hover:text-slate-300 transition-colors">首頁</a>
+          <span>/</span>
+          <span class="text-blue-400">Atlassian Teamwork Graph CLI</span>
+        </nav>
+
+        <!-- 頁面標題區 -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-800/60 text-xs text-blue-400">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+            <span>官方合作夥伴生態 · 第九棒</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Atlassian TWG CLI 實戰指南 <br class="hidden sm:inline">
+            <span class="bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400 bg-clip-text text-transparent">Jira 敏捷需求、Confluence 知識庫與 Bitbucket PR 企業脈絡圖譜</span>
+          </h1>
+          <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+            透過 Antigravity 的 Atlassian Teamwork Graph CLI (TWG) 專屬外掛，AI Agent 具備了深度理解巨型企業工作脈絡的超能力：一鍵以 JQL 語義檢索 Jira 待辦項目、查閱與更新 Confluence 架構文檔、追蹤 Bitbucket PR 審查狀態，並在跨部門專案間建立全景脈絡圖譜。
+          </p>
+        </div>
+
+        <!-- Section 1: 功能概述與生態定位 -->
+        <section id="overview" class="doc-section space-y-4 pt-4 border-t border-slate-800/80">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="info" class="w-5 h-5 text-blue-400"></i>
+            <span>1. 功能概述與生態定位</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-4 leading-relaxed text-sm text-slate-300">
+            <p>
+              在大型企業與跨國科技巨頭中，團隊協作常分散於三大系統：Jira（追蹤任務進度）、Confluence（沉澱架構設計與政策）、Bitbucket（版本控制與審查）。過去 AI 只能孤立操作單一工具，常出現「看得到 PR 卻找不到原始需求」、「看得到 Jira 票卻漏掉 Confluence 決策依據」的資訊斷層。
+            </p>
+            <p>
+              Atlassian Teamwork Graph CLI (TWG) 是 Atlassian 官方專為 Coding Agents 設計的統一中樞，透過 Graph 實體關聯模型，將<strong>人（People）、需求（Issues）、文件（Pages）與代碼（Pull Requests）</strong>無縫黏合為立體脈絡。
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-blue-400 font-bold mb-1 text-xs">Jira JQL 精準下鑽</div>
+                <div class="text-slate-400 text-xs">支援全功能 Jira Query Language，精確篩選跨季度、跨專案、跨 SLA 逾期之高風險工單。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-cyan-400 font-bold mb-1 text-xs">Confluence 活態知識庫</div>
+                <div class="text-slate-400 text-xs">AI 可直接搜尋企業 Wiki，自動產生架構決策紀錄 (ADR) 與 PRD 規格書，並排版上線。</div>
+              </div>
+              <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
+                <div class="text-indigo-400 font-bold mb-1 text-xs">Bitbucket 企業審查閉環</div>
+                <div class="text-slate-400 text-xs">將代碼審閱意見直接關聯回對應 Jira 驗收準則，確保每一次 Merge 皆具備合規可追溯性。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-5 h-5 text-blue-400"></i>
+            <span>2. 這個功能能做什麼？</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            Atlassian TWG CLI 整合套件賦予 Antigravity 4 大企業級協作護城河：
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-blue-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center mb-3">
+                <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">Jira 敏捷需求管理與工作流自動化</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                撰寫 JQL 查詢、批次更新工單狀態（Open -> In Progress -> Closed）、指派處理人員、維護 Story Points 與 Sprint 週期。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-cyan-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mb-3">
+                <i data-lucide="book-marked" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">Confluence 企業百科檢索與架構文件撰寫</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                檢索歷年技術架構規格、撰寫軟體架構決策 (ADR)、建立產品規格 (PRD) 與重大故障復盤紀錄 (Post-Mortem)。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-indigo-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3">
+                <i data-lucide="git-pull-request" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">Bitbucket PR 程式審查與審計追溯</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動稽核所有 Pull Request 是否符合合規標準、檢查是否綁定 Jira 票號、統整 Reviewer 留言與代碼變更 Diff。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 hover:border-teal-500/40 transition-colors">
+              <div class="w-9 h-9 rounded-xl bg-teal-500/10 border border-teal-500/20 text-teal-400 flex items-center justify-center mb-3">
+                <i data-lucide="share-2" class="w-5 h-5"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white mb-1.5">Teamwork Graph 跨組織知識大腦</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                以圖譜形式查詢「誰負責什麼」、「這份文件跟哪些 PR 與工單相依」，在大型複雜系統中精確定位利害關係人。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="wrench" class="w-5 h-5 text-blue-400"></i>
+            <span>3. 核心工具架構與 API</span>
+          </h2>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-300">Atlassian TWG CLI 核心工具清單</span>
+              <span class="text-[11px] font-mono text-blue-400">Plugin ID: antigravity-plugins-partners/plugin/atlassian-twg-cli</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px] tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th class="py-3 px-4">工具名稱</th>
+                    <th class="py-3 px-4">所屬模組</th>
+                    <th class="py-3 px-4">核心用途</th>
+                    <th class="py-3 px-4">關鍵參數範例</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300 font-mono text-[11px]">
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-blue-400 font-semibold">atlassian_jira_query</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Jira</td>
+                    <td class="py-3 px-4 font-sans text-xs">執行 JQL 複雜篩選、工單狀態與指派流轉</td>
+                    <td class="py-3 px-4 text-slate-400"><code>jql: "project = PROD AND status = 'In Progress'"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-blue-400 font-semibold">atlassian_confluence_read</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Confluence</td>
+                    <td class="py-3 px-4 font-sans text-xs">全文檢索與提取企業 Wiki 空間規格文章</td>
+                    <td class="py-3 px-4 text-slate-400"><code>space_key: "ARCH", title: "Microservices Guidelines"</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-blue-400 font-semibold">atlassian_confluence_create</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Confluence</td>
+                    <td class="py-3 px-4 font-sans text-xs">自動撰寫並發布結構化技術文件與會議紀錄</td>
+                    <td class="py-3 px-4 text-slate-400"><code>space: "ENG", title: "ADR-042: Database Sharding", body: "..."</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-blue-400 font-semibold">atlassian_bitbucket_link</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">Bitbucket</td>
+                    <td class="py-3 px-4 font-sans text-xs">比對程式碼提交與 Jira 工單合規關聯度</td>
+                    <td class="py-3 px-4 text-slate-400"><code>repo: "core-api", pr_id: 128, check_jira: true</code></td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40 transition-colors">
+                    <td class="py-3 px-4 text-blue-400 font-semibold">atlassian_graph_context</td>
+                    <td class="py-3 px-4 text-slate-400 font-sans">TWG Graph</td>
+                    <td class="py-3 px-4 font-sans text-xs">跨系統聚合專案全貌圖譜（人員、需求、PR）</td>
+                    <td class="py-3 px-4 text-slate-400"><code>entity_id: "PROD-1024", depth: 2, include_related: true</code></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: 10 大跨角色實戰 Prompt -->
+        <section id="prompts" class="doc-section space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                <i data-lucide="terminal" class="w-5 h-5 text-blue-400"></i>
+                <span>4. 10 大跨角色實戰 Prompt</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">覆蓋企業架構師、Jira 管理員、DevOps、資安長與敏捷教練等全維度實戰</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">10 個高階範例</span>
+          </div>
+
+          <div class="space-y-4">
+
+            <!-- Prompt 1 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 01</span>
+                  <span class="text-xs font-bold text-white">企業架構師 · 舊架構檢索與新微服務拆分 ADR</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_confluence_create</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>在 Confluence 搜尋團隊過去關於會員系統的技術文件，並為即將進行的微服務拆分撰寫一份標準架構決策紀錄 (ADR)。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian_confluence 工具協助完成架構重構規劃：
+1. 先在空間「ARCH」檢索標題含「User Service Architecture」或「Monolith Auth」的既有頁面，摘要其核心資料庫依賴。
+2. 在空間「ARCH」建立全新頁面「ADR-089: 拆分會員鑑權微服務與事件驅動架構」：
+   - Context (背景)：單體架構中 Auth 模組在促銷期間造成 DB 連線數耗盡。
+   - Decision (決策)：採用 Go 語言重寫 Auth 服務，引入 Redis 快取 Session，並透過 Kafka 發布用戶註冊事件。
+   - Consequences (影響與代價)：需維護跨服務分散式事務與資料一致性補償。
+3. 自動將此 ADR 關聯至 Jira Epic「ARCH-2026-MIGRATION」。</pre>
+                <button onclick="copyPrompt('p1', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 快速提取舊文檔痛點，撰寫出符合標準 Michael Nygard 規範的專業 ADR 並排版發布至 Confluence。
+              </div>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 02</span>
+                  <span class="text-xs font-bold text-white">Jira 專案管理員 · 複雜 JQL 抓出延宕工單與 SLA 稽核</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_jira_query</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為跨部門專案進行健康度體檢，找出逾期未交付且 SLA 已違規的所有 High/Blocker 工單。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian_jira_query 執行精密 JQL 查詢並產出風險預警報告：
+1. 查詢語法 JQL：
+   project in ("CORE", "FIN", "APP") AND priority in ("Blocker", "High") AND status not in ("Done", "Closed", "Resolved") AND duedate < now() ORDER BY duedate ASC
+2. 分析查詢結果：
+   - 逾期天數大於 14 天的嚴重滯留工單。
+   - 負責人統計：哪些工程師身上積壓了超過 3 張以上的逾期高風險工單。
+3. 輸出 Markdown 格式的「SLA 逾期風險清單」，包含 Jira ID、摘要、負責人與建議介入方案。</pre>
+                <button onclick="copyPrompt('p2', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 解析 JQL 檢索結果，精確抓出專案管理盲點與人力瓶頸，協助團隊即時調整研發資源。
+              </div>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 03</span>
+                  <span class="text-xs font-bold text-white">跨團隊專案經理 · Teamwork Graph 聚合專案全景</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_graph_context</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>新任專案經理接手代號為「Project Titan」的跨部門大案，需一鍵聚合所有相關 Jira 需求、Confluence 規格與 Bitbucket PR。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian_graph_context 查詢專案「PROJ-TITAN」的完整關聯脈絡圖譜：
+1. 追溯頂層 Epic「TITAN-1」向下開展的所有 Story 與 Bug 清單。
+2. 找出所有引用或被該 Epic 鏈結的 Confluence 規格頁面（PRD、UI/UX 設計規範）。
+3. 統計已開啟與已合併的 Bitbucket Pull Requests 總數與代碼審閱涵蓋率。
+4. 繪製一份以 Mermaid 圖表表示的「全系統實體相依關係圖」，包含核心利害關係人名單。</pre>
+                <button onclick="copyPrompt('p3', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 調用 Teamwork Graph API 串聯跨系統節點，產出結構清晰的 Mermaid 關聯圖與全域綜覽報告。
+              </div>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 04</span>
+                  <span class="text-xs font-bold text-white">DevOps 導入專家 · Bitbucket PR 與 Jira 合規稽核</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_bitbucket_link</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為滿足 SOC2 / ISO27001 合規審查，稽核本月 Bitbucket 儲存庫中所有 Merge 至 main 分支的 PR 是否皆嚴格關聯審批通過的 Jira 票號。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian_bitbucket_link 稽核「payment-service」倉庫過去 30 天的合併記錄：
+1. 遍歷所有已合併 (Merged) 的 Pull Requests。
+2. 檢查條件：
+   - PR 標題或分支名稱是否包含合法 Jira Issue Key（如 PROD-XXXX）。
+   - 該對應 Jira 工單狀態是否已抵達「Approved」或「Verified」。
+   - 是否包含至少 2 位資深 Reviewer 的 Approve 簽核。
+3. 標記出任何「孤兒 PR（無對應 Jira）」或「未經 2 人審批強制合併」的違規項目，產出合規稽核清冊。</pre>
+                <button onclick="copyPrompt('p4', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 比對代碼庫歷史與工單審批紀錄，提供合規性百分比指標與異常清單，滿足高規格稽核需求。
+              </div>
+            </div>
+
+            <!-- Prompt 5 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 05</span>
+                  <span class="text-xs font-bold text-white">企業資安稽核員 · Confluence 敏感權限空間掃描</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_confluence_read</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>清查 Confluence 內部 Wiki 中是否存在被誤設為「全公司公開 (Anonymous/All Users)」的敏感空間（如薪酬、商業機密與金鑰備忘）。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian 工具協助執行企業知識庫安全合規掃描：
+1. 檢視 Confluence 中所有 Spaces 的權限矩陣。
+2. 找出關鍵字涉及「Salary」、「Credential」、「Secret」、「API Key」、「Investor Terms」的頁面。
+3. 檢查這些頁面的權限限制（Restrictions），確認是否開放給「All Employees」或未經受限的群組。
+4. 輸出資安風險清單，建議應立即限縮為「僅限 C-Level 與 HR Admin」的頁面連結與具體修正指引。</pre>
+                <button onclick="copyPrompt('p5', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 提供具備敏感資料外洩風險的頁面清單，並產出權限收斂的最佳實踐建議。
+              </div>
+            </div>
+
+            <!-- Prompt 6 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 06</span>
+                  <span class="text-xs font-bold text-white">資深業務分析師 (BA) · 會議重點轉換為 Confluence PRD</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_confluence_create</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>將與業務部門進行的 1 小時訪談文字稿，迅速轉化為符合 Atlassian 官方產品需求文件標準模板的 Confluence 頁面。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian_confluence_create 在空間「PROD」建立「PRD: B2B 大宗採購折扣引擎」：
+1. 目標背景：業務代表回報現有系統無法支援「購買 500 件以上給予階梯折扣 + 客製帳期」。
+2. 功能範圍 (Scope)：
+   - 階段一 (In Scope)：階梯單價設定、購物車自動套用折扣試算。
+   - 階段二 (Out of Scope)：ERP 離線合約自動匯入。
+3. 使用者流程與線框圖說明：條列買家結帳 4 步驟。
+4. 成功衡量指標 (Success Metrics)：提升企業大單轉換率 15%。
+5. 排版規範：採用標準 Confluence Panel、Status Badge 與 Table 格式，建立頁面並回傳網址。</pre>
+                <button onclick="copyPrompt('p6', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 將口語化需求提煉為具備嚴密邏輯結構的標準 PRD 文件，並排版發布至企業 Confluence 空間。
+              </div>
+            </div>
+
+            <!-- Prompt 7 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 07</span>
+                  <span class="text-xs font-bold text-white">產品維運 SRE · 重大故障復盤 (Post-Mortem) 彙整</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_confluence_create</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>昨日 Production 環境發生 25 分鐘的支付中斷事故 (Sev-1)，需聚合 Jira 應變工單日誌與 Slack 紀錄，產出無指責事故檢討書。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian 工具為昨日事故建立完整的 Post-Mortem 檢討文檔：
+1. 查詢事故工單「INCIDENT-892」中記錄的時間戳記與處置日誌。
+2. 在空間「SRE」建立「Incident Post-Mortem: 2026-11-23 Payment Gateway Timeout」：
+   - 事故摘要：Sev-1 等級，影響 1,200 名用戶，中斷時長 25 分鐘。
+   - 完整時間軸 (Timeline)：從 14:02 監控發報，到 14:15 隔離故障節點，至 14:27 服務完全恢復。
+   - 根本原因 (Root Cause - 5 Whys 分析)：DNS 輪詢設定錯誤導致負載傾斜至單一伺服器。
+   - 預防行動項 (Action Items)：自動在 Jira 建立 3 張預防性改善工單並指派給維運小組。</pre>
+                <button onclick="copyPrompt('p7', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 自動將事故歷程整合成高規格復盤報告，並自動派發 Jira 改善任務，落實可靠性工程閉環。
+              </div>
+            </div>
+
+            <!-- Prompt 8 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 08</span>
+                  <span class="text-xs font-bold text-white">敏捷教練 (Agile Coach) · Sprint Retrospective 回顧範本</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_confluence_create</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為即將舉行的 Sprint 45 回顧會議在 Confluence 建立 Mad/Sad/Glad 結構化互動看板，並匯入本週期 Jira 燃盡數據。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian_confluence 工具為團隊建立 Sprint 45 回顧會議頁面：
+1. 目標空間「SCRUM」，頁面名稱「Sprint 45 Retrospective: Mobile Checkout Team」。
+2. 自動嵌入本週期的 Jira 數據：
+   - 承諾 Story Points: 40，實際完成: 36，完成率 90%。
+3. 建立經典回顧三大欄位：
+   - What went well (值得慶祝與保持的事項)。
+   - What didn't go well (遇到阻礙或沮喪的瓶頸)。
+   - Action Items (具體負責人與截止日期的行動項)。
+4. 加入讓團隊成員可以自由投票的 Emoji 表情符號互動機制，輸出建立結果。</pre>
+                <button onclick="copyPrompt('p8', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 在 Confluence 產出美觀且便於協作的會議頁面，預載量化數據，讓團隊迅速展開深入復盤。
+              </div>
+            </div>
+
+            <!-- Prompt 9 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 09</span>
+                  <span class="text-xs font-bold text-white">客服專案經理 · Tier-3 重大客訴提升為 Jira Bug</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_jira_query</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>客服回報某 VIP 大客戶帳單計算金額出現四捨五入落差，需緊急在 Jira 建立高優先級 Bug 並鏈結客服工單號。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian_jira 工具建立緊急客訴缺陷工單：
+1. 專案：BILLING，Issue Type: Bug，Priority: High。
+2. 標題：「[VIP Incident] 跨幣別匯率結算四捨五入累積落差 $0.05 缺陷」
+3. 描述內容：
+   - 投訴客戶：Enterprise Tier 客戶 (ID: CUS-9912)。
+   - 問題重現：當單筆訂單含有 15 項細項且個別幣別換算後，總計與明細累加不一致。
+   - 業務影響：造成客戶財務系統對帳失敗，有阻斷合約續約風險。
+4. 設定 Link Issue：關聯至既有 Epic「BILLING-ENGINE-V2」，並即刻通知帳務後端負責人。</pre>
+                <button onclick="copyPrompt('p9', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 迅速在 Jira 建立資訊齊全的 Bug 工單，串聯客戶脈絡與核心研發 Epic，爭取第一時間排解危機。
+              </div>
+            </div>
+
+            <!-- Prompt 10 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-950 text-blue-400 border border-blue-800/60">角色 10</span>
+                  <span class="text-xs font-bold text-white">研發副總 (VP of Eng) · 10 個 Scrum 團隊成果一鍵彙報</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">atlassian_graph_context</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>每月向 CEO 與技術委員會進行全工程部月報，需要橫跨 10 個專案統計總交付 Story 數、關鍵 Bug 修復量與技術債清理進展。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 atlassian 工具跨專案聚合整個研發部門本月成果數據：
+1. 查詢所有 10 個活躍專案在本月內 Resolve 的 Issue 總數與 Story Points 總和。
+2. 依照「新增商業價值功能 (Features)」、「系統穩定性修復 (Bug Fixes)」與「架構技術債 (Tech Debt)」三個維度統計比例。
+3. 標出本月交付成果最豐碩的 Top 3 團隊與遭遇最多外部阻礙的專案。
+4. 在 Confluence 空間「EXEC」生成一份「Engineering Department Monthly Review (November 2026)」高階管理報表。</pre>
+                <button onclick="copyPrompt('p10', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/40">
+                <strong class="text-blue-400 font-semibold">預期成果：</strong>AI 大規模拉取數百張工單資料，提煉出清晰的圖表化比例與高階洞察，免去主管數小時的人工報表作業。
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Section 5: 安裝外掛與設定教學 -->
+        <section id="setup" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-5 h-5 text-blue-400"></i>
+            <span>5. 安裝外掛與設定教學</span>
+          </h2>
+          <div class="glass-card rounded-2xl p-6 space-y-5 border border-slate-800 text-xs text-slate-300">
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟一：於 Antigravity 外掛市場安裝</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在 Antigravity 外掛管理員中搜尋並安裝 Atlassian 官方合作夥伴外掛：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-blue-400">
+                antigravity-plugins-partners/plugin/atlassian-twg-cli
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟二：設定 Atlassian 網域與 API Token</h3>
+              <p class="text-slate-400 leading-relaxed">
+                前往 Atlassian Account Settings > Security > API Tokens 建立個人金鑰，並於專案環境變數配置：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1 font-mono text-slate-300">
+                <div><span class="text-slate-500"># Atlassian 存取憑證</span></div>
+                <div><span class="text-blue-400">ATLASSIAN_INSTANCE_URL</span>="https://your-company.atlassian.net"</div>
+                <div><span class="text-blue-400">ATLASSIAN_USER_EMAIL</span>="engineer@company.com"</div>
+                <div><span class="text-blue-400">ATLASSIAN_API_TOKEN</span>="your_api_token_here"</div>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-sm font-bold text-white">步驟三：驗證 Teamwork Graph CLI 連線</h3>
+              <p class="text-slate-400 leading-relaxed">
+                在終端機執行測試指令，確認是否成功連通 Jira 與 Confluence 空間：
+              </p>
+              <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-slate-200">
+                atlassian-twg whoami && atlassian-twg jira list-projects
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 6: 常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="help-circle" class="w-5 h-5 text-blue-400"></i>
+            <span>6. 常見問題 (FAQ)</span>
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i>
+                <span>什麼是 Teamwork Graph (TWG)？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                它是 Atlassian 底層的語義脈絡圖譜，專為 AI 代理設計，能夠將人員、工單、文件、程式碼跨系統自動關聯為動態知識網絡。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i>
+                <span>JQL 查詢速度慢如何優化？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                建議查詢時優先加入 <code>project = ...</code> 與 <code>status category</code> 索引條件，避免對巨型企業全部歷史工單進行全文模糊掃描。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i>
+                <span>AI 是否會覆蓋 Confluence 既有版本？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                不會。Confluence 具備完整版本歷史 (Page History)，AI 每次更新皆會產生全新的修訂版本，可隨時一鍵還原至任何時間點。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <h3 class="font-bold text-white flex items-center gap-1.5">
+                <i data-lucide="alert-circle" class="w-4 h-4 text-blue-400"></i>
+                <span>支援 Jira Data Center (地端私有部署) 嗎？</span>
+              </h3>
+              <p class="text-slate-400 leading-relaxed">
+                該外掛主要針對 Atlassian Cloud 進行最佳化。若為地端私有 Data Center 版本，需確認 REST API v2/v3 端點具備對應存取權限。
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
+            <i data-lucide="git-branch" class="w-4 h-4"></i>
+          </div>
+          <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
+          <span>• Atlassian TWG CLI 企業協作全脈絡實戰指南</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">回導覽首頁</a>
+          <a href="linear.html" class="hover:text-white transition-colors">Linear</a>
+          <a href="github-cli.html" class="hover:text-white transition-colors">GitHub CLI</a>
+          <a href="notion.html" class="hover:text-white transition-colors">Notion</a>
+          <a href="stripe.html" class="hover:text-white transition-colors">Stripe</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>Hosted with GitHub Pages</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕與互動腳本 -->
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(id, btn) {
+      const parent = btn.closest('.glass-card');
+      const text = parent.querySelector('pre').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const span = btn.querySelector('span');
+        const originalText = span.innerText;
+        span.innerText = '已複製！';
+        btn.classList.add('bg-blue-600', 'text-white');
+        setTimeout(() => {
+          span.innerText = originalText;
+          btn.classList.remove('bg-blue-600', 'text-white');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
