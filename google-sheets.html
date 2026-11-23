@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Sheets 擴充功能完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              900: '#14532d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[600px] h-[400px] bg-gradient-to-tr from-emerald-600/15 to-teal-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[500px] h-[500px] bg-green-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-full h-full text-emerald-400">
+              <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H5v-4h4v4zm0-6H5V7h4v4zm6 6h-4v-4h4v4zm0-6h-4V7h4v4zm4 6h-4v-4h4v4zm0-6h-4V7h4v4z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Google Sheets 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">3. 核心 MCP 工具 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#formulas" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">5. AI 生成高階公式技巧</a>
+              <a href="#auth-setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">6. 安裝與授權流程</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">7. 常見問題與除錯 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-900/30 text-xs">
+            <div class="flex items-center gap-2 text-emerald-400 font-bold mb-1">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Google 家族第二棒</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              結構化數據與自動化報表的核心！AI 懂得自動寫 QUERY、XLOOKUP 與統計函數，從此告別手動算成績與排表格。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow min-w-0 space-y-12">
+
+        <!-- 標頭英雄區 -->
+        <div id="overview" class="doc-section">
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Google 官方原生擴充套件
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-slate-400 border border-slate-800">
+              Workspace Ecosystem
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-emerald-300 border border-slate-800">
+              plugin/gsheets
+            </span>
+          </div>
+
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center p-3 shadow-xl shrink-0">
+              <!-- Google Sheets 圖示 -->
+              <svg viewBox="0 0 24 24" class="w-10 h-10 text-emerald-400">
+                <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H5v-4h4v4zm0-6H5V7h4v4zm6 6h-4v-4h4v4zm0-6h-4V7h4v4zm4 6h-4v-4h4v4zm0-6h-4V7h4v4z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Google Sheets</h1>
+              <p class="text-slate-400 text-sm mt-1">開發者：<span class="text-slate-200 font-medium">Google Workspace Official</span></p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-sm text-slate-300 leading-relaxed font-mono">
+            "Read, write, clean, formula-automate, and format spreadsheets directly in Google Sheets with AI Agent integration."
+          </div>
+          <p class="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+            **Google Sheets 擴充套件**是 Antigravity 與數值資料協同處理的核心中樞。它允許 AI 直接存取雲端試算表儲存格、批次清洗髒資料、自動補齊或修正複雜的試算表公式（如 <code class="text-emerald-400">QUERY</code>, <code class="text-emerald-400">XLOOKUP</code>, <code class="text-emerald-400">ARRAYFORMULA</code>）、動態加上條件式格式高亮熱圖，並建立自動化儀表板。
+          </p>
+        </div>
+
+        <!-- 區塊 2：這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="layers" class="w-6 h-6 text-emerald-400"></i>
+              <span>2. 這個功能能做什麼？（核心數據處理能力）</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-emerald-950 flex items-center justify-center text-emerald-400 mb-3 border border-emerald-800/60">
+                <i data-lucide="table" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">大批次儲存格讀取與即時寫入</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                指定試算表 ID 與範圍（如 <code class="text-slate-300 font-mono">Sheet1!A1:H100</code>），由 AI 批次精確提取每列每欄數值，或將運算結果秒級寫回試算表。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-teal-950 flex items-center justify-center text-teal-400 mb-3 border border-teal-800/60">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">智慧資料清洗、正規化與去重</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                自動辨識前後空格、統一電話與日期格式（如 YYYY-MM-DD）、刪除完全重複的報名資料，並填補缺失值或空值異常。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-blue-950 flex items-center justify-center text-blue-400 mb-3 border border-blue-800/60">
+                <i data-lucide="sigma" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">自動注入高階試算表公式</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                不用再背公式！AI 能自動依需求建立包含多條件判斷、動態過濾的公式（如 <code class="text-slate-300 font-mono">SUMIFS</code>, <code class="text-slate-300 font-mono">XLOOKUP</code>, <code class="text-slate-300 font-mono">QUERY</code>, <code class="text-slate-300 font-mono">IMPORTRANGE</code>）。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-amber-950 flex items-center justify-center text-amber-400 mb-3 border border-amber-800/60">
+                <i data-lucide="palette" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">條件式格式與警示視覺化</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                自動設定數值範圍規則：低於警戒值自動標紅（例如庫存過低、成績不及格）、超出目標值標綠，建立清晰的視覺熱圖。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-purple-950 flex items-center justify-center text-purple-400 mb-3 border border-purple-800/60">
+                <i data-lucide="git-merge" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">多工作表關聯與樞紐彙總</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                跨分頁自動以主鍵（如學生座號、客戶編號、產品 SKU）合併多張表格，建立動態樞紐摘要並計算群組總和與平均。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-sky-950 flex items-center justify-center text-sky-400 mb-3 border border-sky-800/60">
+                <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">新建自動化報表與匯出</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                將本機或網路上抓取的大量 JSON / CSV 資料，秒級轉為排版乾淨、凍結首列、格式化欄寬的全新 Google 試算表。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 3：核心 MCP 工具 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="wrench" class="w-6 h-6 text-emerald-400"></i>
+              <span>3. 核心 MCP 工具 API 對照表</span>
+            </h2>
+            <p class="text-slate-400 text-xs mt-1">Google Sheets 官方擴充套件向 Antigravity 註冊的底層微型工具：</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 bg-slate-900/50">
+                  <th class="py-2.5 px-3 font-semibold">MCP 工具名稱</th>
+                  <th class="py-2.5 px-3 font-semibold">主要參數 (Parameters)</th>
+                  <th class="py-2.5 px-3 font-semibold">功能作用與說明</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr>
+                  <td class="py-2.5 px-3 text-emerald-400 font-sans font-medium">gsheets_read</td>
+                  <td class="py-2.5 px-3 text-slate-200">spreadsheetId, range</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">讀取指定試算表分頁的二維資料矩陣（支援 A1 標記法）</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-emerald-400 font-sans font-medium">gsheets_write</td>
+                  <td class="py-2.5 px-3 text-slate-200">spreadsheetId, range, values</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">覆寫指定儲存格範圍，支援文字、數字與以 '=' 開頭的公式</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-emerald-400 font-sans font-medium">gsheets_append</td>
+                  <td class="py-2.5 px-3 text-slate-200">spreadsheetId, range, values</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">在現有資料的最下方新起一行追加資料，適合流水帳與日誌紀錄</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-emerald-400 font-sans font-medium">gsheets_create</td>
+                  <td class="py-2.5 px-3 text-slate-200">title, sheets</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">建立全新的試算表，可預先定義多個分頁名稱與標題欄位</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-emerald-400 font-sans font-medium">gsheets_format</td>
+                  <td class="py-2.5 px-3 text-slate-200">spreadsheetId, range, format</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">設定儲存格背景色、字體粗細、對齊方式、貨幣或百分比格式</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-emerald-400 font-sans font-medium">gsheets_clear</td>
+                  <td class="py-2.5 px-3 text-slate-200">spreadsheetId, range</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">清空指定區域的數值或公式，保留工作表結構</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 區塊 4：10 大跨角色實戰應用範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-6 h-6 text-emerald-400"></i>
+                <span>4. 我該如何使用？（10 大跨角色實戰 Prompt Playbook）</span>
+              </h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">
+                數據分析與自動化算表
+              </span>
+            </div>
+            <p class="text-slate-400 text-xs mt-1">無論您是導師算成績、電商看 ROAS、財務對帳或人資查出勤，複製以下提示詞即可讓 AI 直接代勞：</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4">
+
+            <!-- 範例 1：教師與教務人員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-emerald-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-emerald-950 text-emerald-400 text-xs font-semibold border border-emerald-800">
+                    範例 01 · 班級導師 / 教務組長
+                  </span>
+                  <h4 class="text-white font-bold text-sm">段考多科成績加權總分、排名計算與不及格警示</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write, gsheets_format
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>試算表裡有全班 28 人的國語、數學、自然、社會四科分數，需要按照加權比重計算加權總分、全班名次，並將 60 分以下自動標記紅底。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-emerald-300 leading-relaxed mb-2">
+                &gt; 「讀取我 Google Drive 裡的『五年二班期中考成績表』，在 G 欄幫我加入『加權總分』（公式：國語*4 + 數學*4 + 自然*3 + 社會*3），在 H 欄用 RANK 公式計算班排名，並在 I 欄判斷若任一科小於 60 分則標示『需補救教學』，最後幫我把不及格的儲存格加上淡紅色背景標註。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>省去導師手動拉公式與比對成績的繁瑣時間，且計算零出錯。</span>
+              </div>
+            </div>
+
+            <!-- 範例 2：電商營運與行銷分析師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-blue-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-blue-950 text-blue-400 text-xs font-semibold border border-blue-800">
+                    範例 02 · 電商營運 / 成長行銷師
+                  </span>
+                  <h4 class="text-white font-bold text-sm">跨渠道廣告投放成效彙總、ROAS 自動試算與預算調配</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>每天需匯入 Meta Ads、Google Ads、TikTok 的曝光、點擊、花費與訂單金額，需要即時計算 ROAS 與轉化成本（CPA）。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-blue-300 leading-relaxed mb-2">
+                &gt; 「開啟試算表『2026_Q4廣告每日監控表』，讀取最近 7 天各渠道花費與營收數據，自動計算各渠道的 CPC、CPA 與 ROAS（公式：營收/花費），並在下方新增一個彙總列，標記出 ROAS 低於 2.5 的異常廣告組合，提供預算縮減建議。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>每日廣告日報自動化，快速抓出燒錢卻沒轉單的虧損廣告組。</span>
+              </div>
+            </div>
+
+            <!-- 範例 3：財務與會計專員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                    範例 03 · 財務會計專員
+                  </span>
+                  <h4 class="text-white font-bold text-sm">員工報銷單據分類核銷、預算餘額監控與月結損益表</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_append, gsheets_format
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>月底要審核上百筆差旅與採購發票，需按部門分類統計累計報銷金額，避免各部門預算超支。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                &gt; 「讀取『11月份各部門費用報銷明細』，使用 SUMIFS 依據部門（研發、業務、行銷）與科目（交通、餐費、雲端伺服器）分類統計各組總支出，比對『年度預算表』分頁，若任一部門累計消耗超過 90% 則將該格以橙色醒目標註，並生成結餘摘要表。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>免去人工手動計算器敲算，預算超支自動攔截與預警。</span>
+              </div>
+            </div>
+
+            <!-- 範例 4：人資招募與行政人資 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-purple-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-purple-950 text-purple-400 text-xs font-semibold border border-purple-800">
+                    範例 04 · 人資招募 / HRBP
+                  </span>
+                  <h4 class="text-white font-bold text-sm">打卡出勤異常核對、特休時數剩餘統計與招募漏斗追蹤</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要將打卡鐘匯出的原始 CSV 與請假系統對照，抓出未打卡且未請假的缺勤員工，並統計年假天數。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-purple-300 leading-relaxed mb-2">
+                &gt; 「開啟試算表『全公司出勤與請假統計』，比對『打卡記錄』分頁與『請假單』分頁，使用 VLOOKUP 檢查上月所有上班日：若遲到大於 15 分鐘或未打卡且無對應假單者，在『出勤異常名單』分頁自動列出員工編號、姓名與日期，方便發送核對信件。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>人資每月結算薪資前的工時對帳時間從半天縮短到 2 分鐘。</span>
+              </div>
+            </div>
+
+            <!-- 範例 5：軟體專案經理 / Scrum Master -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-sky-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-sky-950 text-sky-400 text-xs font-semibold border border-sky-800">
+                    範例 05 · 專案經理 / Scrum Master
+                  </span>
+                  <h4 class="text-white font-bold text-sm">Sprint 工時燃盡統計、Bug 嚴重等級分佈與交付排程</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write, gsheets_create
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>團隊每兩週一個 Sprint，需要將 Jira/GitHub 上的 Issue 狀態與預估工時匯總，統計當前進度與瓶頸。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-sky-300 leading-relaxed mb-2">
+                &gt; 「開啟『Sprint_24_進度追蹤表』，統計目前狀態為『In Progress』、『Review』與『Done』的故事點數（Story Points），在右側生成一個每日工時燃盡進度表，並統計 Priority 為 P0/P1 的未解 Bug 數量，標注誰的手上有超過 3 個未關閉的高優先級任務。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>每日 Standup 會議前自動產出最新進度數據，透明化團隊工作負載。</span>
+              </div>
+            </div>
+
+            <!-- 範例 6：零售倉儲與供應鏈管理 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-rose-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-rose-950 text-rose-400 text-xs font-semibold border border-rose-800">
+                    範例 06 · 倉儲庫存 / 供應鏈主管
+                  </span>
+                  <h4 class="text-white font-bold text-sm">現有庫存安全水位預警、建議補貨量與採購單生成</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write, gsheets_format
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>倉庫有 500+ 項商品 SKU，需根據過去 30 天每日銷量平均值，計算各商品還能支撐幾天，並自動提出補貨量。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-rose-300 leading-relaxed mb-2">
+                &gt; 「開啟試算表『即時庫存總表』，讀取庫存量與『日均銷量』欄位，計算『預估可售天數』（公式：現有庫存 / 日均銷量）。若可售天數小於 7 天，該列自動標紅並於建議採購欄填入補貨數量（補滿 30 天安全存量），同時將需採購的品項單獨列在『待採購清單』分頁。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>杜絕熱賣商品斷貨危機，庫存資金周轉率大幅提升。</span>
+              </div>
+            </div>
+
+            <!-- 範例 7：活動企劃與社群管理員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-teal-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-teal-950 text-teal-400 text-xs font-semibold border border-teal-800">
+                    範例 07 · 活動企劃 / 社群經理
+                  </span>
+                  <h4 class="text-white font-bold text-sm">線上表單問卷資料清洗、電話格式正規化與分組名單</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>Google Forms 報名問卷匯入後，電話號碼格式五花八門（如 0912-345-678、0912345678、+886912345678），甚至有人重複報名多次。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-teal-300 leading-relaxed mb-2">
+                &gt; 「讀取『2026年黑客松報名原始表單』：1. 依據 Email 欄位去除重複報名只保留最後一筆；2. 將手機欄位一律正規化為『09xx-xxx-xxx』格式；3. 依據報名者選填的『專長領域（前端、後端、設計）』進行自動 4 人跨領域隨機分組，在『分組結果』分頁產生團隊名單。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>活動主辦人免去耗費數小時人工肉眼篩洗電話與 Excel 分組的痛苦。</span>
+              </div>
+            </div>
+
+            <!-- 範例 8：業務銷售主管 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-indigo-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-indigo-950 text-indigo-400 text-xs font-semibold border border-indigo-800">
+                    範例 08 · 業務銷售總監
+                  </span>
+                  <h4 class="text-white font-bold text-sm">銷售管線 (Pipeline) 階段轉換率與階梯式業績獎金試算</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要追蹤業務團隊從「初訪 $\rightarrow$ 提案 $\rightarrow$ 報價 $\rightarrow$ 簽約」的漏斗階段轉換率，並計算階梯式抽成佣金。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-indigo-300 leading-relaxed mb-2">
+                &gt; 「讀取『Q3 業務團隊業績總表』，統計各業務人員的簽約總金額與達標率。根據公司的階梯獎金政策（達標 80%~100% 抽成 3%，達標 100%~120% 抽成 5%，超過 120% 抽成 8%），在『獎金試算』欄位以 IFS 公式自動計算應發獎金總額，並標註誰是本季業務冠軍。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>獎金透明無爭議，秒級產出業績龍虎榜。</span>
+              </div>
+            </div>
+
+            <!-- 範例 9：實驗室與學術研究員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-cyan-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-cyan-950 text-cyan-400 text-xs font-semibold border border-cyan-800">
+                    範例 09 · 實驗室研究員 / 資料科學家
+                  </span>
+                  <h4 class="text-white font-bold text-sm">實驗觀測數據異常值 (Outliers) 篩除、平均值與標準差統計</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>感測器採集的 1,000 組溫度數據中有雜訊跳針，需以統計學 IQR 法則或 3 倍標準差剔除離群值並重新平均。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-cyan-300 leading-relaxed mb-2">
+                &gt; 「開啟試算表『光學感測實驗日誌』，讀取 B 欄的讀數，先計算全體資料的平均數（AVERAGE）與標準差（STDEV），將超出『平均數 ± 2.5 倍標準差』的離群值自動標記為『異常捨棄』，並在旁邊以剩餘正常樣本重新計算精確的平均值、中位數與變異係數（CV）。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>數據科學前置清洗完全自動化，避免髒資料影響實驗論文成果。</span>
+              </div>
+            </div>
+
+            <!-- 範例 10：自由工作者與個人理財 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-slate-600 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                    範例 10 · 自由工作者 / 個人理財規劃
+                  </span>
+                  <h4 class="text-white font-bold text-sm">接案里程碑請款追蹤、外幣匯率折算與年化投資報酬率 (IRR)</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gsheets_read, gsheets_write
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>有多個國內外客戶的不同接案專案，計價幣別包含 USD 與 TWD，需追蹤未收款項與即時折算新台幣收入。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-200 leading-relaxed mb-2">
+                &gt; 「在我的『2026個人財務與接案管理』試算表中，加入 GOOGLEFINANCE('CURRENCY:USDTWD') 公式取得即時美元匯率，將 USD 專案酬勞自動換算為台幣。並用 SUMIF 統計『已請款未入帳』的呆帳總金額，若請款逾期超過 30 天自動將客戶名稱上色提醒催款。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>掌握現金流動態，利用 Google 原生財經函數即時換匯不卡關。</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5：AI 生成高階公式技巧 -->
+        <section id="formulas" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="code-2" class="w-6 h-6 text-emerald-400"></i>
+              <span>5. AI 在 Google Sheets 最常運用的 4 大神級公式</span>
+            </h2>
+            <p class="text-slate-400 text-xs mt-1">AI 代理人會依據您的口語要求，自動為試算表寫入以下強大的陣列與查詢公式：</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-emerald-400 font-mono font-bold text-xs mb-1">=QUERY(data, query, [headers])</div>
+              <p class="text-xs text-slate-300 mb-2">以類 SQL 語法在試算表內部進行選取、篩選、排序與分組：</p>
+              <code class="text-[11px] bg-slate-900 p-2 rounded block text-emerald-300 font-mono">=QUERY(A1:F100, "SELECT A, B, SUM(E) WHERE D='已付款' GROUP BY A, B ORDER BY SUM(E) DESC", 1)</code>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-emerald-400 font-mono font-bold text-xs mb-1">=XLOOKUP(search_key, lookup_range, result_range)</div>
+              <p class="text-xs text-slate-300 mb-2">全面取代舊版 VLOOKUP，支援向左查找、找不到預設值與精確比對：</p>
+              <code class="text-[11px] bg-slate-900 p-2 rounded block text-emerald-300 font-mono">=XLOOKUP(A2, '學生資料'!A:A, '學生資料'!C:C, "查無此人", 0)</code>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-emerald-400 font-mono font-bold text-xs mb-1">=ARRAYFORMULA(array_formula)</div>
+              <p class="text-xs text-slate-300 mb-2">只需在首列寫一行公式，整欄數百萬列自動向下即時套用：</p>
+              <code class="text-[11px] bg-slate-900 p-2 rounded block text-emerald-300 font-mono">=ARRAYFORMULA(IF(A2:A="", "", B2:B * C2:C))</code>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-emerald-400 font-mono font-bold text-xs mb-1">=IMPORTRANGE(spreadsheet_url, range_string)</div>
+              <p class="text-xs text-slate-300 mb-2">跨不同的 Google 試算表檔案進行即時動態資料關聯與同步：</p>
+              <code class="text-[11px] bg-slate-900 p-2 rounded block text-emerald-300 font-mono">=IMPORTRANGE("試算表URL", "總帳!A1:D50")</code>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6：安裝與 OAuth 授權流程 -->
+        <section id="auth-setup" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="key" class="w-6 h-6 text-emerald-400"></i>
+              <span>6. 如何在 Antigravity 中啟用與授權？</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-emerald-400 font-bold text-sm mb-1">步驟 1：安裝擴充套件</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                在左側選單進入「Skills & Customizations」$\rightarrow$「Marketplace」，搜尋並安裝 <code class="text-slate-200">Google Sheets</code> 官方插件。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-emerald-400 font-bold text-sm mb-1">步驟 2：登入授權</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                在彈出的 Google OAuth 視窗中完成身分授權。若您先前已經授權過 Google Docs/Drive，通常會共享相同的使用者 Token 快速通過。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-emerald-400 font-bold text-sm mb-1">步驟 3：開始操作試算表</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                只要在對話框給出試算表網址或檔名，AI 就會自動提取 ID 並按您的口語需求進行算表與視覺化！
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 7：常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-6 h-6 text-emerald-400"></i>
+              <span>7. 常見問題與除錯 (FAQ)</span>
+            </h2>
+          </div>
+
+          <div class="space-y-3">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q1：AI 寫入試算表時，會不小心覆蓋掉我現有的資料嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                AI 在執行寫入操作前會嚴格計算範圍。若您希望完全不破壞舊資料，可以向 AI 指定「另開新分頁（Sheet）」或使用「追加（Append）在最下方空白行」，確保原始數據完整無缺。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q2：它可以一次讀取幾萬列的大型試算表嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                Google Sheets MCP 支援分頁（Pagination）與區域範圍讀取。如果資料量高達數萬行，建議指示 AI 以 <code class="text-emerald-300 font-mono">QUERY</code> 公式在試算表雲端直接先聚合篩選，或批次讀取特定欄位，以獲得最高的處理效率。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q3：試算表分析完後，可以連動 Google Docs 產出報告嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                這正是 Google 家族串聯的極致威力！您可以告訴 AI：「讀取這份 Sheets 試算表的成績數據，計算各科平均值後，自動起草一份期中考成績分析 Google Docs 文件」，AI 會在一次對話中串聯完成。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="font-semibold text-slate-300 hover:text-white transition-colors">Antigravity Tools Hub</a>
+        <span>• Google Sheets 官方指南</span>
+      </div>
+      <div>
+        <span>本專案支援 GitHub Pages 即時瀏覽</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
