@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase 擴充功能完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              900: '#78350f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[600px] h-[400px] bg-gradient-to-tr from-amber-600/15 to-orange-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[500px] h-[500px] bg-yellow-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-full h-full text-amber-500">
+              <path fill="currentColor" d="M3.89 15.672L6.255.461A.542.542 0 0 1 7.27.283l2.543 4.771zm16.794 3.692l-2.25-14a.54.54 0 0 0-.919-.295L3.316 19.365l7.857 4.427a1.62 1.62 0 0 0 1.587 0zM14.3 7.147l-1.82-3.482a.542.542 0 0 0-.96 0L3.52 17.615z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Firebase 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">3. 核心工具架構</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#security-rules" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">5. 安全規則 (Security Rules) 防呆</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">6. 常見問題與除錯 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-amber-950/40 to-slate-900 border border-amber-900/30 text-xs">
+            <div class="flex items-center gap-2 text-amber-400 font-bold mb-1">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Google 家族第六棒</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              全端應用與雲端架構的極速發動機！從 Firestore 資料庫、Auth 身分驗證到 Hosting 一鍵上線，告別繁瑣伺服器維護。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow min-w-0 space-y-12">
+
+        <!-- 標頭英雄區 -->
+        <div id="overview" class="doc-section">
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-950 text-amber-400 border border-amber-800">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span> Google 官方全端雲端開發平台
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-slate-400 border border-slate-800">
+              Build with Google
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-amber-300 border border-slate-800">
+              plugin/firebase
+            </span>
+          </div>
+
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center p-3 shadow-xl shrink-0">
+              <svg viewBox="0 0 24 24" class="w-10 h-10 text-amber-500">
+                <path fill="currentColor" d="M3.89 15.672L6.255.461A.542.542 0 0 1 7.27.283l2.543 4.771zm16.794 3.692l-2.25-14a.54.54 0 0 0-.919-.295L3.316 19.365l7.857 4.427a1.62 1.62 0 0 0 1.587 0zM14.3 7.147l-1.82-3.482a.542.542 0 0 0-.96 0L3.52 17.615z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Google Firebase</h1>
+              <p class="text-slate-400 text-sm mt-1">開發者：<span class="text-slate-200 font-medium">Google Firebase Team</span></p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-sm text-slate-300 leading-relaxed font-mono">
+            "Prototype, build & run modern apps that users love with Firebase's backend, real-time database, Auth, and operational infrastructure."
+          </div>
+          <p class="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+            **Firebase 擴充套件**讓 Antigravity 的 AI 能直接接管您的現代雲端後端。無需自己架設伺服器與資料庫，AI 即可協助您完成 Firestore NoSQL 集合結構設計、整合 Authentication 帳號系統、一鍵將前端應用發布至全球 CDN（Firebase Hosting）、編寫 Cloud Functions 後端微服務，並審查資安規則防範勒索注入。
+          </p>
+        </div>
+
+        <!-- 區塊 2：這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="layers" class="w-6 h-6 text-amber-400"></i>
+              <span>2. 這個功能能做什麼？（全端無伺服器架構）</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-amber-950 flex items-center justify-center text-amber-400 mb-3 border border-amber-800/60">
+                <i data-lucide="database" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Firestore 即時 NoSQL 資料庫</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                自動建立集合（Collections）與文件（Documents），支援即時數據同步（Real-time listeners）與離線本地快取。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-orange-950 flex items-center justify-center text-orange-400 mb-3 border border-orange-800/60">
+                <i data-lucide="shield-check" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Firebase Authentication 身分驗證</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                幾行代碼快速搞定 Google 一鍵登入、Email 密碼認證、手機簡訊 OTP 與匿名登入，省去自建 JWT 認證的資安風險。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-yellow-950 flex items-center justify-center text-yellow-400 mb-3 border border-yellow-800/60">
+                <i data-lucide="globe" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Firebase Hosting 全球 CDN 部署</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                一鍵將 Vite、Next.js、React、Vue 靜態與 SSR 應用發布至 Google 全球邊緣伺服器，自動配發免費 SSL 證書與自訂網域。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-emerald-950 flex items-center justify-center text-emerald-400 mb-3 border border-emerald-800/60">
+                <i data-lucide="cpu" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Cloud Functions 伺服器雲端函式</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                編寫事件驅動微服務：資料庫寫入時觸發發信、用戶註冊時建立初始檔案、定時 Cron 排程執行資料備份與清理。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-rose-950 flex items-center justify-center text-rose-400 mb-3 border border-rose-800/60">
+                <i data-lucide="lock" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Security Rules 安全規則智慧審查</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                自動檢核 Firestore 與 Storage 安全規則，杜絕「開放任何人讀寫（read/write: if true）」的嚴重資料洩漏漏洞。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-blue-950 flex items-center justify-center text-blue-400 mb-3 border border-blue-800/60">
+                <i data-lucide="sliders" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Remote Config 遠端動態開關</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                無需重新打包發布 App 或網頁，在雲端動態調整營銷活動開關、版本升級提醒與進行 A/B 測試。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 3：核心工具架構 -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="wrench" class="w-6 h-6 text-amber-400"></i>
+              <span>3. 核心工具架構與 CLI 整合</span>
+            </h2>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 leading-relaxed font-mono">
+            Firebase 擴充套件原生結合 Firebase Admin SDK、Firebase CLI (`firebase-tools`) 與 Google Cloud 權限架構，讓 AI 能從環境初始化、架構代碼生成到終端部署全程自動化。
+          </div>
+        </section>
+
+        <!-- 區塊 4：10 大跨角色實戰應用範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-6 h-6 text-amber-400"></i>
+                <span>4. 我該如何使用？（10 大跨角色實戰 Prompt Playbook）</span>
+              </h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-950 text-amber-400 border border-amber-800">
+                從個人獨立開發到企業架構
+              </span>
+            </div>
+            <p class="text-slate-400 text-xs mt-1">從 24 小時黑客松打樣、Flutter App 即時連線到生產環境資安防禦，複製以下提示詞體驗全端極速開發：</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5">
+
+            <!-- 範例 1：獨立開發者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                    範例 01 · 獨立全端開發者 (Indie Hacker)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">零自建後端伺服器快速上線 SaaS 產品與 Google 登入</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: Firebase Auth, Firestore
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>自己一個人開發微型 SaaS 工具，不想花時間維護 Linux 伺服器、Nginx 與 PostgreSQL。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                &gt; 「幫我在現有的 Next.js 14 專案中整合 Firebase：1. 建立 Firebase Auth 的 Google 一鍵登入與登出流程；2. 當新使用者登入時，自動在 Firestore 的 users 集合建立使用者檔案（包含 email, displayName, plan: 'free', createdAt）；3. 提供完整的 React Hook 供全站讀取登入狀態。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>半小時內搞定會員帳號與權限系統，直接專注於產品核心商業邏輯。</span>
+              </div>
+            </div>
+
+            <!-- 範例 2：移動端 App 工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-blue-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-blue-950 text-blue-400 text-xs font-semibold border border-blue-800">
+                    範例 02 · 行動端工程師 (Flutter / React Native)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">Firestore 即時資料監聽 (Snapshot) 與離線本機快取同步</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: Cloud Firestore Offline Cache
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>聊天或即時協同 App 在進入電梯斷網時容易崩潰，需要開啟離線持久化與即時數據流監聽。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-blue-300 leading-relaxed mb-2">
+                &gt; 「為我的 Flutter 專案編寫 Firestore 即時監聽代碼：監聽 messages 集合中指定 roomId 的新訊息，開啟本機離線持久化（enablePersistence），讓使用者在斷網時依然能讀取歷史訊息並在本地暫存新留言，恢復連線後自動雙向同步至雲端。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>零 WebSocket 複雜架構，享有毫秒級資料庫推播與頂級離線體驗。</span>
+              </div>
+            </div>
+
+            <!-- 範例 3：前端工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-emerald-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-emerald-950 text-emerald-400 text-xs font-semibold border border-emerald-800">
+                    範例 03 · 前端工程師
+                  </span>
+                  <h4 class="text-white font-bold text-sm">Vite / React 專案一鍵自動建置並發布至 Firebase Hosting</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: Firebase Hosting, CLI Deploy
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>剛完成前端切版與功能開發，需要立刻產生一個全球 CDN 的公開展示網址給主管與客戶檢視。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-emerald-300 leading-relaxed mb-2">
+                &gt; 「幫我檢查本機的專案設定，配置 firebase.json 指向 dist 目錄，執行 npm run build 打包專案，並調用 firebase deploy --only hosting 將最新前端部署至 Firebase Hosting，完成後回傳線上 https 預覽網址。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>自動打包並推送到 Google 全球邊緣節點，免去繁瑣的伺服器環境配置。</span>
+              </div>
+            </div>
+
+            <!-- 範例 4：資安工程師 / 後端架構師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-rose-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-rose-950 text-rose-400 text-xs font-semibold border border-rose-800">
+                    範例 04 · 資安工程師 / DevSecOps
+                  </span>
+                  <h4 class="text-white font-bold text-sm">Firestore Security Rules 安全規則防勒索與細緻權限隔離</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: firestore.rules 審查
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>許多新手常將安全規則設為全部允許，導致資料庫面臨被爬蟲全數刪除勒索的高危險。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-rose-300 leading-relaxed mb-2">
+                &gt; 「審查我目前的 firestore.rules：1. 確保只有經過 Auth 登入的使用者能讀寫自己的個人資料（request.auth.uid == userId）；2. 管理員角色（透過 custom claims admin: true）可讀取全域 audit 日誌；3. 所有寫入操作必須通過欄位型態驗證，禁止未經授權的欄位注入。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>徹底封堵資料外洩漏洞，符合企業級雲端資安合規要求。</span>
+              </div>
+            </div>
+
+            <!-- 範例 5：黑客松 (Hackathon) 參賽隊伍 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-purple-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-purple-950 text-purple-400 text-xs font-semibold border border-purple-800">
+                    範例 05 · 黑客松參賽隊伍 / 學生開發者
+                  </span>
+                  <h4 class="text-white font-bold text-sm">24 小時極限黑客松：一鍵完成資料模型與即時後端打樣</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: Firebase 全套快速原型
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>黑客松只有 24 小時，團隊必須在幾小時內做出有登入、有真實資料庫儲存的 MVP 作品。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-purple-300 leading-relaxed mb-2">
+                &gt; 「我們正在進行黑客松，要做一個『校園二手書即時競標市集』。請在 10 分鐘內幫我建立完整的 Firebase 初始化代碼：包含 Google 登入按鈕組件、books 集合的增刪查改代碼，以及即時出價 bids 監聽邏輯，並直接給出前端呼叫範例。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>一人抵一個後端團隊，當晚即可端出完整端到端可運行的 Demo。</span>
+              </div>
+            </div>
+
+            <!-- 範例 6：電商營運與微服務工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-teal-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-teal-950 text-teal-400 text-xs font-semibold border border-teal-800">
+                    範例 06 · 電商工程師 / 系統營運
+                  </span>
+                  <h4 class="text-white font-bold text-sm">Cloud Functions 事件觸發：訂單成立自動扣庫存與通知</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: Cloud Functions for Firebase
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>客戶付款成功後，需在後端以資料庫事務（Transaction）扣除商品庫存，並寄發電子發票通知。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-teal-300 leading-relaxed mb-2">
+                &gt; 「編寫一個 Firebase Cloud Function onDocumentCreated('orders/{orderId}')：當新訂單寫入 Firestore 時，自動在 Transaction 內扣除對應 products 庫存數量（若庫存不足則拋出錯誤回滾），並調用第三方 Email API 寄發訂單成立通知信。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>事件驅動架構無伺服器運行，零超賣風險且自動彈性擴展。</span>
+              </div>
+            </div>
+
+            <!-- 範例 7：教育科技 (EdTech) 開發者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-sky-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-sky-950 text-sky-400 text-xs font-semibold border border-sky-800">
+                    範例 07 · 教育軟體 (EdTech) 工程師
+                  </span>
+                  <h4 class="text-white font-bold text-sm">課堂全班 30 人即時互動搶答與即時得分排行榜</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: Realtime Database / Firestore
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>課堂答題遊戲需要老師按出題目後，全班 30 位學生的平板螢幕在 1 秒內同步看到題目並即時反饋排行榜。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-sky-300 leading-relaxed mb-2">
+                &gt; 「為課堂互動答題系統設計資料架構：在 rooms/{roomId} 存放當前題目與計時器，在 answers 集合收集學生即時答案。利用 Firestore 的即時快照監聽（onSnapshot），當老師切換題目時自動廣播給所有連線的學生端，並即時計算前三名累積積分。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>流暢無卡頓的課堂互動，無需自架複雜的 Socket 伺服器。</span>
+              </div>
+            </div>
+
+            <!-- 範例 8：數據分析師 / BI 工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                    範例 08 · 商業智慧 (BI) / 數據分析師
+                  </span>
+                  <h4 class="text-white font-bold text-sm">Firebase 跨事件無縫串接 BigQuery 進行深層留存分析</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: BigQuery Export Extension
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>App 埋點事件量龐大，在 Firebase 儀表板只能看基本圖表，需將原始日誌匯入 BigQuery 進行複雜 SQL 留存分析。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                &gt; 「指導我啟用 Firebase 擴充功能『Stream Firestore to BigQuery』：當 orders 與 user_events 有異動時自動即時同步至 BigQuery 資料表，並為我寫一段 SQL 查詢分析：新用戶在註冊第 7 天的留存率（D7 Retention）與首次付費轉換漏斗。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>從營運操作無縫打通至海量數據分析，數據驅動決策。</span>
+              </div>
+            </div>
+
+            <!-- 範例 9：產品成長經理 (Growth PM) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-indigo-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-indigo-950 text-indigo-400 text-xs font-semibold border border-indigo-800">
+                    範例 09 · 成長經理 / 產品營運
+                  </span>
+                  <h4 class="text-white font-bold text-sm">Remote Config 遠端灰度發布與結帳按鈕顏色 A/B 測試</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: Firebase Remote Config, A/B Testing
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>想測試把結帳按鈕從灰色改為亮綠色是否能提高 5% 轉換率，但不想重新走 Apple/Google 商店審核。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-indigo-300 leading-relaxed mb-2">
+                &gt; 「在 App 程式碼中整合 Firebase Remote Config：讀取參數 checkout_btn_color（預設值為 #3B82F6）。並在 Firebase 後台配置一場 A/B 測試實驗，將 50% 流量分配給 #10B981（亮綠色），自動追蹤結帳成功事件（checkout_success）的轉化率差異。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>無需重新發版，雲端秒級切換測試參數，用科學實驗數據驗證假設。</span>
+              </div>
+            </div>
+
+            <!-- 範例 10：自由接案工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-slate-600 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                    範例 10 · 自由接案工作室 / 顧問
+                  </span>
+                  <h4 class="text-white font-bold text-sm">為企業客戶搭建零維護、多租戶 (Multi-Tenant) 雲端後台</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  模組: Firebase 完整架構方案
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>客戶預算有限且無專任網管人員，需要一套穩定、每月幾乎零帳單成本、且不需要經常重開機維護的系統。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-200 leading-relaxed mb-2">
+                &gt; 「為傳產客戶設計一個『產品型錄與詢價管理後台』：採用 React + Firebase 架構。後端全部使用免費額度充裕的 Firestore 與 Firebase Hosting，提供一份『如何交接給客戶自管 Firebase 專案與免費額度防爆指引』的標準操作手冊。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>交付後零後顧之憂，免去客戶半夜打電話抱怨伺服器掛掉的噩夢。</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5：安全規則防呆 -->
+        <section id="security-rules" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="shield-alert" class="w-6 h-6 text-amber-400"></i>
+              <span>5. Firebase 安全規則 (Security Rules) 黃金範本</span>
+            </h2>
+          </div>
+
+          <div class="bg-slate-900 rounded-xl p-4 border border-slate-800 overflow-x-auto">
+            <div class="text-[11px] text-slate-400 mb-2 font-mono">// 杜絕漏洞的標準身分隔離規則範例</div>
+            <pre class="text-xs text-amber-300 font-mono"><code>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 嚴格限制：使用者只能讀寫屬於自己的資料文件
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    // 公開文章：所有人可讀，但僅有登入者可發表
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && resource.data.authorId == request.auth.uid;
+    }
+  }
+}</code></pre>
+          </div>
+        </section>
+
+        <!-- 區塊 6：常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-6 h-6 text-amber-400"></i>
+              <span>6. 常見問題與除錯 (FAQ)</span>
+            </h2>
+          </div>
+
+          <div class="space-y-3">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q1：Firebase 的免費額度（Spark Plan）夠個人或中小型專案使用嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                非常充裕！Firestore 提供每天 50,000 次讀取與 20,000 次寫入、Authentication 支援每月高達 50,000 位活躍用戶，Hosting 提供 10GB 儲存與每月 360MB/天流量。對個人或中小型 MVP 產品而言幾乎完全免費。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q2：它和傳統關聯式資料庫（如 MySQL / PostgreSQL）有何不同？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                Firestore 是靈活的 NoSQL 文件型資料庫（Document Database），不需要預先定義 Schema 或繁瑣的 Migration，直接存取 JSON 物件，特別適合敏捷開發與移動端即時同步。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q3：如何在 Antigravity 中登入綁定我的 Firebase 專案？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                只要在專案根目錄執行 <code class="text-amber-300 font-mono">firebase login</code> 完成 Google 帳號授權，AI 就能在對話中直接透過 CLI 指令幫您讀取專案列表並執行部署。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="font-semibold text-slate-300 hover:text-white transition-colors">Antigravity Tools Hub</a>
+        <span>• Firebase 官方指南</span>
+      </div>
+      <div>
+        <span>本專案支援 GitHub Pages 即時瀏覽</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google NotebookLM 擴充功能完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f5f3ff',
+              100: '#ede9fe',
+              500: '#8b5cf6',
+              600: '#7c3aed',
+              700: '#6d28d9',
+              900: '#4c1d95',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-purple-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[600px] h-[400px] bg-gradient-to-tr from-purple-600/15 to-indigo-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[500px] h-[500px] bg-fuchsia-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-full h-full text-purple-400">
+              <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Google NotebookLM 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">3. 核心 MCP 工具 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#audio-overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">5. AI 音訊廣播 (Podcast) 密技</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-purple-400 hover:bg-slate-900/80 transition-colors">6. 常見問題與除錯 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-950/40 to-slate-900 border border-purple-900/30 text-xs">
+            <div class="flex items-center gap-2 text-purple-400 font-bold mb-1">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Google 家族第五棒</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              深度文獻研究與思考副駕駛！多資料源錨定問答（零幻覺、附精確引用來源），並支援一鍵生成雙人 Podcast 語音對談。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow min-w-0 space-y-12">
+
+        <!-- 標頭英雄區 -->
+        <div id="overview" class="doc-section">
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-950 text-purple-400 border border-purple-800">
+              <span class="w-2 h-2 rounded-full bg-purple-400"></span> Google Labs 旗艦 AI 研究助理
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-slate-400 border border-slate-800">
+              Source-Grounded AI
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-purple-300 border border-slate-800">
+              gemini-notebook-mcp
+            </span>
+          </div>
+
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center p-3 shadow-xl shrink-0">
+              <svg viewBox="0 0 24 24" class="w-10 h-10 text-purple-400">
+                <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Google NotebookLM</h1>
+              <p class="text-slate-400 text-sm mt-1">開發者：<span class="text-slate-200 font-medium">Google Labs / Gemini MCP</span></p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-sm text-slate-300 leading-relaxed font-mono">
+            "Your personalized AI research collaborator: Grounded in your notes, PDFs, web sources, with automated study guides and Audio Overviews."
+          </div>
+          <p class="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+            **Google NotebookLM MCP** 是個人與學術研究者最強大的「客製化虛擬智庫」。不同於一般的大語言模型，它所有回答**嚴格基於您餵入的資料來源（PDF 論文、田野筆記、網頁、YouTube 影片逐字稿）**，杜絕幻覺捏造，並附帶精準的可點擊反向引用（Citations）。更能透過 Studio 一鍵產出引人入勝的「雙人 AI Podcast 廣播對談（Audio Overview）」。
+          </p>
+        </div>
+
+        <!-- 區塊 2：這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="layers" class="w-6 h-6 text-purple-400"></i>
+              <span>2. 這個功能能做什麼？（核心研究與學習能力）</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-purple-950 flex items-center justify-center text-purple-400 mb-3 border border-purple-800/60">
+                <i data-lucide="book-open-check" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">多源文獻匯入與零幻覺問答</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                可一次餵入多份 PDF 論文、長篇報告、Google Drive 文件與網頁，AI 嚴格在資料範圍內解答，每句回答皆標註精確頁碼引用。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-indigo-950 flex items-center justify-center text-indigo-400 mb-3 border border-indigo-800/60">
+                <i data-lucide="headphones" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Studio 音訊概覽 (AI Podcast 廣播)</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                透過 <code class="text-indigo-300 font-mono">studio_create</code> 一鍵將枯燥長文轉化為兩位 AI 主持人的生動英語/雙語對談廣播，通勤隨身聽。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-cyan-950 flex items-center justify-center text-cyan-400 mb-3 border border-cyan-800/60">
+                <i data-lucide="network" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">跨筆記本全域主題檢索</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                透過 <code class="text-cyan-300 font-mono">cross_notebook_query</code> 同時穿透文史筆記本、技術手冊筆記本與法規筆記本，進行跨領域綜合提煉。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-rose-950 flex items-center justify-center text-rose-400 mb-3 border border-rose-800/60">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">自動生成研讀指南與隨堂自測題</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                自動將繁雜資料提煉為：名詞釋義表、核心論點問答集、歷史事件時間軸與考前概念自測題目（Flashcards）。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-teal-950 flex items-center justify-center text-teal-400 mb-3 border border-teal-800/60">
+                <i data-lucide="folder-sync" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Google Drive 雲端資料即時同步</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                當您的雲端硬碟更新了研究論文或田野資料，透過 <code class="text-teal-300 font-mono">source_sync_drive</code> 即可無縫同步最新內容至筆記本。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-amber-950 flex items-center justify-center text-amber-400 mb-3 border border-amber-800/60">
+                <i data-lucide="file-output" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">研究成果一鍵導出至 Docs / 筆記</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                與 AI 對話獲取的研究洞察，可透過 <code class="text-amber-300 font-mono">chat_save_to_note</code> 或 Docs 外掛直接保存為長久知識資產。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 3：核心 MCP 工具 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="wrench" class="w-6 h-6 text-purple-400"></i>
+              <span>3. 核心 MCP 工具 API 對照表</span>
+            </h2>
+            <p class="text-slate-400 text-xs mt-1">gemini-notebook-mcp 向 Antigravity 註冊的底層微型工具：</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 bg-slate-900/50">
+                  <th class="py-2.5 px-3 font-semibold">功能領域</th>
+                  <th class="py-2.5 px-3 font-semibold">底層 MCP 工具名稱</th>
+                  <th class="py-2.5 px-3 font-semibold">功能作用與說明</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr>
+                  <td class="py-2.5 px-3 text-purple-400 font-sans font-medium">筆記本管理</td>
+                  <td class="py-2.5 px-3 text-slate-200">notebook_list, notebook_create, notebook_get</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">列出所有虛擬筆記本、建立特定專案研究筆記本與取得詳情</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-purple-400 font-sans font-medium">文獻來源</td>
+                  <td class="py-2.5 px-3 text-slate-200">source_add, source_sync_drive, source_get_content</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">匯入 PDF/URL/Drive 檔案作為研究底料，並同步雲端更新</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-purple-400 font-sans font-medium">研究檢索</td>
+                  <td class="py-2.5 px-3 text-slate-200">notebook_query, cross_notebook_query</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">針對指定筆記本（或跨多筆記本）發起帶有精確引用的研讀問答</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-purple-400 font-sans font-medium">語音與產出</td>
+                  <td class="py-2.5 px-3 text-slate-200">studio_create, report, download_artifact</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">生成雙人廣播音訊（Audio Overview）、深度研究總結報表與下載成品</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 區塊 4：10 大跨角色實戰應用範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-6 h-6 text-purple-400"></i>
+                <span>4. 我該如何使用？（10 大跨角色實戰 Prompt Playbook）</span>
+              </h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-950 text-purple-400 border border-purple-800">
+                學術研究到節目創作
+              </span>
+            </div>
+            <p class="text-slate-400 text-xs mt-1">無論您是研究生讀論文、文史工作者考證古籍、醫師查醫學期刊或 Podcast 製作人，複製提示詞即可啟動深度研析：</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5">
+
+            <!-- 範例 1：碩博士研究生 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-purple-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-purple-950 text-purple-400 text-xs font-semibold border border-purple-800">
+                    範例 01 · 碩博士研究生 / 學者
+                  </span>
+                  <h4 class="text-white font-bold text-sm">10 篇頂會論文 PDF 橫向比對與文獻綜述 (Literature Review) 撰寫</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>為寫畢業論文文獻探討，收集了 10 篇關於「視覺語言模型架構」的頂會論文，需比對各家優缺點與 Baseline 指標。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-purple-300 leading-relaxed mb-2">
+                &gt; 「在 NotebookLM 建立專案筆記本『VLM_Literature_2026』，匯入我 Drive 裡下載好的 10 篇 arXiv 論文 PDF。請幫我比對各篇論文在：1. 注意力機制創新；2. 預訓練數據規模；3. 在 MMBench 的準確率指標；並以 Markdown 表格輸出橫向對照表，每格附註論文名稱與段落出處。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>免去人工反覆翻閱 100 多頁英文論文，快速梳理出研究缺口（Research Gap）。</span>
+              </div>
+            </div>
+
+            <!-- 範例 2：地方文史工作者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                    範例 02 · 文史研究 / 田野工作者
+                  </span>
+                  <h4 class="text-white font-bold text-sm">口述訪談錄音逐字稿與古籍碑文綜合考證</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>手上有多位耆老的口述歷史訪談紀錄，以及清代《彰化縣志》相關記載，需要考證某座老廟建廟年代與水利開墾歷程。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                &gt; 「在筆記本匯入耆老口述訪談文字稿與《彰化縣志卷首》數位檔案。請比對口述歷史中提到的『道光年間大水災廟宇遷建』，在清代官修文獻中是否有相符的災情紀載？並幫我整理一份『沙鹿麻園十二庄水利信仰大事紀時間軸』。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>口述與官修史料無縫交會，考證嚴謹具學術價值。</span>
+              </div>
+            </div>
+
+            <!-- 範例 3：課綱研發教師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-emerald-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-emerald-950 text-emerald-400 text-xs font-semibold border border-emerald-800">
+                    範例 03 · 課綱研發教師 / 輔導團
+                  </span>
+                  <h4 class="text-white font-bold text-sm">跨冊課綱指標縱向銜接分析與素養導向命題題材庫</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要比對國小自然科三到六年級所有單元中的「能量轉換」學習內容，避免教學進度斷層或重疊。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-emerald-300 leading-relaxed mb-2">
+                &gt; 「匯入 108 課綱自然科學領域課程手冊。請以『能量轉換與守恆』為主軸，列出從三年級到六年級的學習表現（Performance）與學習內容（Content）演進表，並以生活化情境（如太陽能玩具車、水力發電）設計 3 道跨冊素養評量試題。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>課程縱向銜接一目了然，素養考題緊扣課綱標準。</span>
+              </div>
+            </div>
+
+            <!-- 範例 4：臨床醫師與醫學研究員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-rose-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-rose-950 text-rose-400 text-xs font-semibold border border-rose-800">
+                    範例 04 · 臨床醫師 / 醫學研究員
+                  </span>
+                  <h4 class="text-white font-bold text-sm">最新臨床試驗 (Phase III) 結果摘要與罕見藥物交互作用比對</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>面對剛發布的 3 篇 NEJM/Lancet 臨床三期試驗論文，需快速掌握其不良反應（Adverse Events）數據。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-rose-300 leading-relaxed mb-2">
+                &gt; 「在筆記本中載入這 3 篇標靶新藥的第三期臨床試驗 PDF。請對比對照組與實驗組在無進展生存期（PFS）、整體反應率（ORR）的數據，並特別列出發生率超過 5% 的第 3/4 級副作用。回答必須標註精確 Table 與文內段落。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>醫學研讀零虛構，所有劑量與數據精確有據。</span>
+              </div>
+            </div>
+
+            <!-- 範例 5：產業證券分析師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-blue-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-blue-950 text-blue-400 text-xs font-semibold border border-blue-800">
+                    範例 05 · 產業分析師 / 證券研究員
+                  </span>
+                  <h4 class="text-white font-bold text-sm">上市公司 10-K 年報交叉審閱與資本支出 (CapEx) 趨勢剖析</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需比較全球前三大晶圓代工廠過去三年的年報，分析各家在先進製程研發費用與資本支出的變化趨勢。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-blue-300 leading-relaxed mb-2">
+                &gt; 「匯入台積電、三星電子、英特爾近三年的 10-K/年報 PDF。請比對三家在『資本支出（CapEx）』與『研發投入占營收比重』的真實數字，並分析管理層討論（MD&A）中對先進封裝與 2nm 製程投產時程的說法差異。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>跨百頁枯燥財報自動萃取關鍵財務指標，產出具洞見的研報。</span>
+              </div>
+            </div>
+
+            <!-- 範例 6：長篇小說家與編劇 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-purple-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-purple-950 text-purple-400 text-xs font-semibold border border-purple-800">
+                    範例 06 · 故事編劇 / 奇幻小說家
+                  </span>
+                  <h4 class="text-white font-bold text-sm">龐大世界觀設定集一致性查核與人物關係破綻檢驗</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>創作 30 萬字科幻小說，人物多達 50 位且包含魔法體系與帝國法典，需確認第 20 章情節是否有設定吃書現象。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-purple-300 leading-relaxed mb-2">
+                &gt; 「在筆記本載入我的『世界觀設定手冊』與『前15章草稿』。請檢查主角在第 16 章使用的傳送法術，是否違反了設定集第三章所規定的『三次月相前不得連續施展空間位移』的法則？並列出是否有任何時間線自相矛盾之處。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>最強世界觀防呆助理，避免劇情吃書崩塌。</span>
+              </div>
+            </div>
+
+            <!-- 範例 7：法務合規專員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-teal-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-teal-950 text-teal-400 text-xs font-semibold border border-teal-800">
+                    範例 07 · 企業法務 / 合規專員
+                  </span>
+                  <h4 class="text-white font-bold text-sm">勞動法令最新判例與企業內部工作規則合規性審查</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>勞動部發布新工時指引，需審查現行員工工作手冊中「遠距上班出勤回報」與「加班費折算」條款是否合規。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-teal-300 leading-relaxed mb-2">
+                &gt; 「匯入最新版《勞基法修正條文與司法判決指引》及我公司的《員工工作手冊》。請逐條檢視手冊第 4 章考勤規範，指出有哪些條文存在被勞動檢查開罰的潛在法律風險，並參考指引範本給出合規修訂版本。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>專業法務查核滴水不漏，防範企業勞資爭議風險。</span>
+              </div>
+            </div>
+
+            <!-- 範例 8：Podcast 節目製作人 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-indigo-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-indigo-950 text-indigo-400 text-xs font-semibold border border-indigo-800">
+                    範例 08 · Podcast 製作人 / 數位媒體人
+                  </span>
+                  <h4 class="text-white font-bold text-sm">利用 Studio Audio Overview 一鍵生成高音質雙人廣播對談</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: studio_create, download_artifact
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>有一篇 8,000 字的深度 AI Agent 研討文章，想做成輕鬆有趣的 Podcast 節目供聽眾在 Spotify/YouTube 收聽。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-indigo-300 leading-relaxed mb-2">
+                &gt; 「在筆記本載入這篇《2026年AI Agent革命性突破》技術報告，呼叫 studio_create 生成一段 Audio Overview（AI 雙人對談音訊廣播）。完成後下載音訊成品，並同時產出一份完整的雙人逐字講稿（含發言者標籤與時間標記）。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>數分鐘內完成專業廣播級音訊製作，內容創作效率百倍提升。</span>
+              </div>
+            </div>
+
+            <!-- 範例 9：科技專欄作家 / 媒體記者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-cyan-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-cyan-950 text-cyan-400 text-xs font-semibold border border-cyan-800">
+                    範例 09 · 科技記者 / 專欄評論家
+                  </span>
+                  <h4 class="text-white font-bold text-sm">大型開發者大會 (Google I/O) 多份技術文檔快速解構</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>大會一口氣發布 20 款新技術產品與上百頁開發文檔，需在 2 小時內交出精準的「大會總結與趨勢快報」。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-cyan-300 leading-relaxed mb-2">
+                &gt; 「匯入 Google I/O 官方發布的 5 篇核心技術 Keynote 與白皮書網址。請為我梳理三大科技主軸：1. 開源模型與輕量化進展；2. 開發者工具鏈變革；3. 對現有軟體生態的衝擊與機遇，產出一篇 1,500 字深度快報大綱。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>搶得新聞發布先機，觀點精確且論據紮實。</span>
+              </div>
+            </div>
+
+            <!-- 範例 10：終身自學者 / 專業考照者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-slate-600 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                    範例 10 · 終身學習者 / 專業證照備考
+                  </span>
+                  <h4 class="text-white font-bold text-sm">經典大部頭專書深度導讀、概念卡片提煉與章節自測</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: source_add, notebook_query
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>在研讀 800 頁的電腦架構或專案管理 PMP 原文書，常讀完後面忘記前面，急需專屬隨身伴讀家教。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-200 leading-relaxed mb-2">
+                &gt; 「在筆記本載入《作業系統概念（恐龍書）》第 5~7 章。請為我整理『死鎖（Deadlock）』的四大必要條件，並以生活化實例說明銀行家演算法（Banker's Algorithm）的運作邏輯，最後出 5 題情境選擇題並附上詳解，測試我的理解程度。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>把厚重專書化為互動式智庫，學習吸收效率提升 3 倍以上。</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5：AI 音訊廣播 (Podcast) 密技 -->
+        <section id="audio-overview" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="mic" class="w-6 h-6 text-purple-400"></i>
+              <span>5. 為什麼 NotebookLM 的 Audio Overview 如此驚艷？</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-purple-400 font-bold text-sm mb-1">1. 擬真人性化對談語氣</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                不像傳統機械化 TTS 朗讀，NotebookLM 模擬兩位主持人的自然接話、驚嘆、笑聲與觀點碰撞，流暢度堪比真實錄製的 Podcast。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-purple-400 font-bold text-sm mb-1">2. 深入淺出化繁為簡</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動將複雜艱深的學術名詞轉化為貼切的生活比喻，聽眾在通勤散步時就能輕鬆吸收高密度論文的核心精華。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-purple-400 font-bold text-sm mb-1">3. 隨身研讀利器</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                可隨時將生成的音訊檔下載至手機或耳機播放，讓眼睛從長時間盯螢幕的疲勞中徹底解放。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6：常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-6 h-6 text-purple-400"></i>
+              <span>6. 常見問題與除錯 (FAQ)</span>
+            </h2>
+          </div>
+
+          <div class="space-y-3">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q1：它和一般 Gemini / ChatGPT 對話有何本質差別？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                一般 ChatGPT 是基於全網通識訓練，經常發生捏造事實（幻覺）；而 NotebookLM 則是「嚴格限定於您的資料來源（Grounded）」，未在您文件內提及的事實它會誠實告知「文件中未記載」，是學術與嚴謹研發的最佳夥伴。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q2：它可以同時匯入多少份文獻或網頁？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                每個 Notebook 支援高達 50 份資料來源（每份來源支援最多 50 萬字），一個筆記本即可容納相當於數十本書籍的超大知識庫！
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q3：我在 Antigravity 中需要另外安裝嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                Antigravity 系統內部已原生整合 <code class="text-purple-300 font-mono">gemini-notebook-mcp</code>，只要完成 Google 帳號授權登入，即可在任何對話中即時呼叫！
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="font-semibold text-slate-300 hover:text-white transition-colors">Antigravity Tools Hub</a>
+        <span>• Google NotebookLM 官方指南</span>
+      </div>
+      <div>
+        <span>本專案支援 GitHub Pages 即時瀏覽</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

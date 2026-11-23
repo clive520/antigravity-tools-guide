@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Cloud & Gemini Developer 擴充功能完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              900: '#1e3a8a',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-blue-600/15 to-cyan-500/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-indigo-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-full h-full text-blue-400" fill="currentColor">
+              <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Google Cloud & Gemini Developer 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與生態架構</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">3. 核心工具架構與 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#best-practices" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">5. FinOps 成本與資安守則</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">6. 安裝與認證設定 (ADC)</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-blue-400 hover:bg-slate-900/80 transition-colors">7. 常見問題與除錯指南</a>
+            </nav>
+          </div>
+
+          <!-- 快速狀態卡片 -->
+          <div class="glass-card rounded-2xl p-4 border border-blue-900/40 bg-gradient-to-br from-blue-950/40 to-slate-900/60">
+            <div class="flex items-center gap-2 mb-2 text-blue-400 text-xs font-semibold">
+              <i data-lucide="cpu" class="w-4 h-4"></i>
+              <span>Google 官方生態旗艦套件</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              整合 <code class="text-blue-300">gemini-api</code>、<code class="text-blue-300">google-cloud-developer</code> 與 <code class="text-blue-300">data-agent-kit</code>，為 Antigravity 提供百萬級多模態上下文、伺服器容器自動部署與 PB 級 BigQuery 分析能力。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區塊 -->
+      <main class="flex-1 min-w-0 space-y-12">
+
+        <!-- 頂部 Hero Header -->
+        <div class="space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-blue-900/60 text-blue-300 border border-blue-700/50">Build with Google 官方認證</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">Gemini 1.5/2.0 API & gcloud CLI</span>
+            <span class="px-2.5 py-1 rounded-md text-xs font-medium bg-cyan-900/50 text-cyan-300 border border-cyan-800/40">BigQuery Data Agent Kit</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center p-2 shadow-lg shadow-blue-500/20">
+              <svg viewBox="0 0 24 24" class="w-full h-full text-white" fill="currentColor">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/>
+              </svg>
+            </div>
+            Google Cloud & Gemini Developer
+          </h1>
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+            透過自然語言指揮 Google Cloud Platform (GCP) 全套雲端資源與 Gemini 前端多模態模型。從百萬 Token 影像/音訊深度理解、Cloud Run 無伺服器容器自動部署，到 BigQuery PB 級數據庫查詢與 FinOps 成本審計，Antigravity 將雲端架構師與 AI 開發者的工作流濃縮為毫秒級的自動化對話。
+          </p>
+        </div>
+
+        <!-- 區塊 1: 功能概述與生態架構 -->
+        <section id="overview" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="layers" class="w-5 h-5 text-blue-400"></i>
+            <h2>1. 功能概述與生態架構</h2>
+          </div>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            在現代雲端原生與生成式 AI 開發中，開發者常需在 GCP Console、gcloud CLI、BigQuery Studio 和 Gemini API Documentation 間頻繁切換。Antigravity 的 Google Cloud 系列外掛將這三層雲端能力徹底整合為一：
+          </p>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center mb-3">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">Gemini API Suite</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                整合 Gemini 2.0 Flash / 1.5 Pro 原生多模態 API、長達 2,000,000 tokens 上下文分析、結構化 JSON Schema 輸出與 Function Calling 規格生成。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-3">
+                <i data-lucide="cloud" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">Cloud Developer CLI</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                驅動 <code class="text-cyan-300">gcloud</code> 核心功能：Cloud Run 服務部署、Cloud Functions 事件觸發、IAM 最小權限審計與即時日誌流追蹤。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3">
+                <i data-lucide="database" class="w-4 h-4"></i>
+              </div>
+              <h3 class="font-bold text-sm text-slate-100 mb-1">BigQuery Data Agent Kit</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                支援 Dry-Run 預估掃描位元組數、PB 級巨量資料 SQL 自動優化、分區 (Partitioning) 與叢集 (Clustering) 健檢及自動報表管線建置。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 2: 這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-blue-400"></i>
+            <h2>2. 這個功能能做什麼？</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-blue-300 text-sm">
+                <i data-lucide="terminal" class="w-4 h-4"></i>
+                <span>無伺服器微服務快速交付 (Cloud Run)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                只需一句指令，Antigravity 可為後端程式碼產生最佳實務 Dockerfile、設定 Cloud SQL Auth Proxy 連線、掛載 Secret Manager 機密環境變數，並一鍵編譯部署至 Cloud Run 支援自動水平擴展。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-cyan-300 text-sm">
+                <i data-lucide="search-code" class="w-4 h-4"></i>
+                <span>BigQuery SQL 自動優化與防暴衝審計</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                內建安全查詢機制，在執行任何 SQL 前必定執行 <code class="text-cyan-200">dry-run</code> 估算查詢資料量，主動阻擋全表掃描（Full Table Scan），並自動改寫為分區日期過濾語法，省下昂貴查詢帳單。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-indigo-300 text-sm">
+                <i data-lucide="video" class="w-4 h-4"></i>
+                <span>Gemini 2.0 百萬多模態上下文分析</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                直接將本機 1 小時教學錄音檔、高解析度產品設計影片或上百頁技術規格 PDF 送交 Gemini 1.5 Pro / 2.0 Flash 進行毫秒級幀定位、逐字稿交叉比對與多模態問答提取。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-emerald-300 text-sm">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span>IAM 權限最小化與資安自動健檢</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                掃描 GCP 專案中所有的 Service Account 角色配置，自動偵測過度授權的 <code class="text-emerald-200">roles/editor</code> 或 <code class="text-emerald-200">roles/owner</code>，生成最小權限自訂角色 (Custom Role) 定義。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 3: 核心工具架構與 API -->
+        <section id="mcp-tools" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="cpu" class="w-5 h-5 text-blue-400"></i>
+            <h2>3. 核心工具架構與 MCP API</h2>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs text-slate-300">
+                <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-800 font-semibold uppercase tracking-wider">
+                  <tr>
+                    <th class="py-3 px-4">工具模組</th>
+                    <th class="py-3 px-4">MCP / CLI 指令</th>
+                    <th class="py-3 px-4">核心參數</th>
+                    <th class="py-3 px-4">功能說明與安全邊界</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 font-mono">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-blue-400 font-sans font-medium">gemini-api</td>
+                    <td class="py-3 px-4 text-slate-200">gemini_generate_content</td>
+                    <td class="py-3 px-4 text-slate-400">model, contents, config, tools</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">支援 Gemini 2.0 Flash / 1.5 Pro，支援多模態媒體輸入與 Structured JSON Schema</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-blue-400 font-sans font-medium">gemini-api</td>
+                    <td class="py-3 px-4 text-slate-200">gemini_count_tokens</td>
+                    <td class="py-3 px-4 text-slate-400">model, contents</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">發送前預先計算 Prompt 與媒體內容之 Token 消耗，精準控制 API 預算</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-cyan-400 font-sans font-medium">gcloud-developer</td>
+                    <td class="py-3 px-4 text-slate-200">gcloud_run_deploy</td>
+                    <td class="py-3 px-4 text-slate-400">service_name, image, region, env_vars</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">自動打包並佈署無伺服器容器至指定區域，自動配置 CPU/記憶體限制</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-cyan-400 font-sans font-medium">gcloud-developer</td>
+                    <td class="py-3 px-4 text-slate-200">gcloud_logging_tail</td>
+                    <td class="py-3 px-4 text-slate-400">filter, limit, timestamp_after</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">串流抓取 Cloud Run / GKE 崩潰堆疊日誌，自動過濾 ERROR 等級嚴重錯誤</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-indigo-400 font-sans font-medium">data-agent-kit</td>
+                    <td class="py-3 px-4 text-slate-200">bigquery_query_dry_run</td>
+                    <td class="py-3 px-4 text-slate-400">sql_query, project_id</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">強制安全檢查：驗證 SQL 語法並輸出將被掃描的位元組數 (Bytes Scanned)</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 text-indigo-400 font-sans font-medium">data-agent-kit</td>
+                    <td class="py-3 px-4 text-slate-200">bigquery_table_schema</td>
+                    <td class="py-3 px-4 text-slate-400">dataset, table_id</td>
+                    <td class="py-3 px-4 font-sans text-slate-300">讀取資料表欄位型態、分區欄位 (Partitioning) 與叢集鍵 (Clustering) 定義</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 4: 10 大跨角色實戰範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100">
+              <i data-lucide="sparkles" class="w-5 h-5 text-blue-400"></i>
+              <h2>4. 10 大跨角色實戰範例 (Real-World Prompts)</h2>
+            </div>
+            <span class="text-xs text-slate-400">包含真實情境、完整 Prompt 與回傳結果</span>
+          </div>
+
+          <p class="text-xs text-slate-400">
+            點擊各範例右上角的「複製 Prompt」按鈕，即可將經過專業實戰調校的指令貼入 Antigravity 對話框中立即執行：
+          </p>
+
+          <!-- 範例列表 (1-10) -->
+          <div class="space-y-6">
+
+            <!-- 範例 1: 全端 AI 工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 01</span>
+                  <span class="text-sm font-bold text-slate-200">全端 AI 工程師：Gemini 2.0 多模態結構化 JSON 輸出與原型開發</span>
+                </div>
+                <button onclick="copyCode('prompt-1')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 需在 Node.js/Python 前端微服務中整合 Gemini 2.0 Flash，將使用者上傳的發票相片直接解析為符合嚴格 TypeScript 介面的 JSON 格式，並拒絕任何非規格文字回覆。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-1">請使用 `gemini-api` 外掛，呼叫最新 `gemini-2.0-flash` 模型：
+1. 傳入我當前專案資料夾下的發票測試照片 `tests/fixtures/receipt_tw_01.jpg`。
+2. 要求模型嚴格以 JSON Schema 格式輸出，不得含有任何 Markdown 標記或額外問候語。
+3. JSON Schema 結構要求如下：
+   - `invoice_number`: string (格式如 AB-12345678)
+   - `date`: string (YYYY-MM-DD)
+   - `store_name`: string
+   - `items`: array of object { item_name: string, quantity: number, unit_price: number, subtotal: number }
+   - `tax_amount`: number
+   - `total_amount`: number
+4. 若有影像辨識不清晰或摺痕遮蔽之欄位，請在對應欄位填入 null 並在 `confidence_flags` 陣列中標記該欄位名稱。
+5. 完成後將輸出結果存入 `outputs/parsed_receipt.json`，並為我生成一段可直接運行的 Python 驗證測試腳本。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>Antigravity 調用 <code class="text-blue-300">gemini_generate_content</code> 配置 <code class="text-blue-300">response_mime_type="application/json"</code>，解析發票圖片並精確寫入 JSON 檔案，附帶 100% 欄位吻合的單元測試腳本。</p>
+              </div>
+            </div>
+
+            <!-- 範例 2: 雲端 SRE / DevOps 維運工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 02</span>
+                  <span class="text-sm font-bold text-slate-200">雲端 SRE 維運：Cloud Run 零停機藍綠部署與 Cloud Logging 即時告警</span>
+                </div>
+                <button onclick="copyCode('prompt-2')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 準備將新版 FastAPI 後端容器推上 GCP Cloud Run 服務，需先設定 10% 流量金絲雀 (Canary) 測試，並即時串流監控是否有 HTTP 5xx 或崩潰錯誤。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-2">請使用 `google-cloud-developer` 外掛，協助我執行生產環境發布程序：
+1. 針對當前微服務專案 `api-gateway`，檢查 Google Artifact Registry 中最新的容器映像檔標籤。
+2. 發布新的修訂版本 (Revision) 至 Cloud Run 服務 `prod-api-gateway`（區域：`asia-east1`，台灣）。
+3. 採用安全漸進發布策略：
+   - 先將新修訂版本設定為只分配 10% 流量，原有舊修訂版本保留 90% 流量。
+   - 啟用連線逾時 30 秒、最大實例數限制 20 台，並開啟 CPU 僅在請求期間配置。
+4. 佈署後立即啟動 `gcloud_logging_tail` 監聽最近 5 分鐘內新修訂版本的日誌：
+   - 篩選條件：`severity>=ERROR` 或 `httpRequest.status>=500`。
+   - 若 3 分鐘內未出現致命異常，輸出確認總結並準備一鍵將流量切換至 100%。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>Antigravity 自動呼叫 <code class="text-cyan-300">gcloud_run_deploy</code> 搭配流量權重參數，接著啟動日誌監聽，輸出彩色狀態回報卡片，保障線上業務不中斷。</p>
+              </div>
+            </div>
+
+            <!-- 範例 3: 企業數據分析師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 03</span>
+                  <span class="text-sm font-bold text-slate-200">數據分析師：BigQuery TB 級 SQL 查詢優化、Dry-Run 估算與分區檢查</span>
+                </div>
+                <button onclick="copyCode('prompt-3')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 需分析過去三個月全台電商訂單流向，但資料表總量超過 8TB，需嚴格防止因寫錯查詢而消耗數十美元查詢費用。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-3">請使用 `data-agent-kit-plugin` 協助我撰寫並安全執行 BigQuery 查詢：
+1. 目標資料表為 `enterprise-dw.ecommerce.orders_partitioned`。請先使用 `bigquery_table_schema` 讀取資料表結構，確認其分區欄位 (Partition Column) 與叢集鍵 (Clustering Keys)。
+2. 撰寫一份 SQL 統計「2026 年 Q1 各縣市每週客單價 (AOV) 與退貨率趨勢」：
+   - 必須嚴格使用分區欄位 `order_date BETWEEN '2026-01-01' AND '2026-03-31'` 作為 WHERE 條件首位。
+   - 避免使用 `SELECT *`，僅挑選計算所需之 6 個核心欄位。
+3. 嚴格執行防呆：在真正發送查詢前，務必先呼叫 `bigquery_query_dry_run` 計算該語法將掃描的總位元組數 (Bytes Processed) 並估算 GCP 計費金額。
+4. 若預估掃描量低於 50GB，才正式執行並將彙總結果轉為 Markdown 數據透視表。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>Antigravity 驗證 Schema 後自動產生利用 Partition 的高效 SQL，回傳 Dry Run 數據（如：掃描 4.2 GB / 估計成本 $0.026 USD），獲批准後執行並生成樞紐趨勢分析。</p>
+              </div>
+            </div>
+
+            <!-- 範例 4: 雲端財務營運長 (FinOps 審計師) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 04</span>
+                  <span class="text-sm font-bold text-slate-200">FinOps 成本審計：GCP 帳單異常偵測、閒置殭屍資源清理建議</span>
+                </div>
+                <button onclick="copyCode('prompt-4')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 公司本月 GCP 雲端支出突然比上月激增 35%，需快速盤點所有專案找出潛在的資源浪費與殭屍硬碟。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-4">請使用 `google-cloud-developer` 外掛，為我執行 GCP 專案全面 FinOps 健檢：
+1. 查詢當前 GCP 專案 `corp-production-ai` 在 Compute Engine、Cloud Storage、Cloud Run 與 BigQuery 上的資源清單。
+2. 重點清查以下「殭屍資源 (Zombie Resources)」：
+   - 未掛載至任何執行個體的孤兒永久磁碟 (Unattached Persistent Disks)。
+   - 未綁定至運作中虛擬機或負載平衡器的靜態保留外部 IP 位址 (Unused Static External IPs)。
+   - 超過 90 天未存取且未設定 Lifecycle 過期規則的 Cloud Storage 冷資料 Bucket。
+3. 產出一份專業的《GCP FinOps 成本優化建議報告》：
+   - 列出每個無效資源的名稱、區域、建立時間及每月浪費估計金額 (USD)。
+   - 提供安全的一鍵清理 gcloud 指令碼，並標註具破壞性指令的警告提示。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>列舉出 5 個閒置磁碟與 2 個未綁定公網 IP，計算出每月可省下約 $180 USD，並附帶安全的 Bash/PowerShell 清理腳本。</p>
+              </div>
+            </div>
+
+            <!-- 範例 5: 資安與合規架構師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 05</span>
+                  <span class="text-sm font-bold text-slate-200">資安架構師：GCP IAM 最小權限審計、金鑰過期檢查與 CIS Benchmark</span>
+                </div>
+                <button onclick="copyCode('prompt-5')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 準備接受 ISO 27001 與 SOC 2 資安合規稽核，需徹底清查 Service Account 是否持有危險的全域 Owner/Editor 權限或過期未輪替的 JSON 金鑰。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-5">請使用 `google-cloud-developer` 的 IAM 相關工具，執行專案資安合規性盤點：
+1. 檢索 `corp-prod-cluster` 專案所有的 IAM Policy Binding：
+   - 篩選出任何被直接賦予 `roles/owner`、`roles/editor` 原始角色的 Service Account。
+   - 標出是否有個人外部 Google 帳號 (@gmail.com) 具備高特權存取。
+2. 掃描所有服務帳戶金鑰 (Service Account Keys)：
+   - 列出建立時間超過 90 天且未輪替 (Rotate) 的使用中私鑰。
+3. 遵循「最小權限原則 (PoLP)」，為目前被過度授權的 CI/CD 服務帳戶 `github-actions-sa` 擬定一份精簡的 Custom Role YAML 定義，僅保留 Cloud Run 部署與 Secret Manager 唯讀權限。
+4. 將審計摘要彙整為一份合規查核表格，標明高、中、低風險項目。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>輸出結構化的 IAM 違規項目清單，生成符合 CIS GCP Foundation Benchmark 的 Custom Role 定義檔，協助企業輕鬆通過外部稽核。</p>
+              </div>
+            </div>
+
+            <!-- 範例 6: 行動後端工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 06</span>
+                  <span class="text-sm font-bold text-slate-200">後端工程師：Cloud Run 與 Cloud SQL (PostgreSQL) 連線池與 Secret Manager 配置</span>
+                </div>
+                <button onclick="copyCode('prompt-6')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 需將本機開發完成的 Go/Node.js 後端 API 上線，需透過 Unix Domain Socket 連線至受保護的 Cloud SQL PostgreSQL 實例，且密碼不得明文寫入程式碼。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-6">請使用 `google-cloud-developer` 外掛，協助我為後端服務設定安全連線架構：
+1. 目標服務：Cloud Run 服務 `user-auth-service`。
+2. 資料庫實例：`my-gcp-project:asia-east1:main-pg-db`。
+3. 執行步驟：
+   - 透過 Secret Manager 建立或讀取機密版本 `DB_CREDENTIALS`，內含資料庫密碼。
+   - 為 Cloud Run 配置 `--add-cloudsql-instances` 旗標以掛載 Cloud SQL Auth Proxy Unix Socket。
+   - 透過環境變數注入資料庫使用者與連線字串，密碼部分綁定至 Secret Manager 版本標籤。
+4. 生成完整的 `gcloud run services update` 指令並說明各參數之資安意涵。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>產生無明文洩漏的部署配置，利用 Cloud SQL Auth Proxy 機制確保傳輸層 TLS 1.3 雙向加密，實現最高等級雲端安全架構。</p>
+              </div>
+            </div>
+
+            <!-- 範例 7: 行銷技術與 SEO 數據工程師 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 07</span>
+                  <span class="text-sm font-bold text-slate-200">行銷技術師：Google Search Console / GA4 匯入 BigQuery 關鍵字異動分析</span>
+                </div>
+                <button onclick="copyCode('prompt-7')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 官網 Organic 搜尋流量在過去 14 天異常下滑 15%，需由 BigQuery 的 GSC 原始導出資料表中分析排名掉落嚴重的關鍵字群。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-7">請使用 `data-agent-kit-plugin` 查詢 BigQuery 資料集 `marketing_dw.searchconsole_export`：
+1. 查詢資料表 `searchdata_site_impression`，比對「最近 7 天」與「前 7 天」兩段時間區間的搜尋表現。
+2. 找出點擊數 (Clicks) 衰退超過 200 次、或平均排名 (Average Position) 下滑超過 3 名的核心關鍵字 (Query)。
+3. 請運用視窗函數 (Window Functions) 計算點擊率 (CTR) 與展示數 (Impressions) 的相對差異。
+4. 先執行 Dry-Run 評估查詢大小，無誤後取得前 20 個急需搶救的 SEO 頁面 URL，並由 Gemini 總結可能的降權原因（如意圖變化、核心演算法更新或競爭者搶佔）。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>自動產出高效率 SQL 語法，輸出關鍵字排名流失排行榜，並附帶具備 SEO 專業建議的挽救方案清單。</p>
+              </div>
+            </div>
+
+            <!-- 範例 8: 多模態內容創作者與產學研究員 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 08</span>
+                  <span class="text-sm font-bold text-slate-200">產學研究員：Gemini 1.5 Pro 200 萬 Token 長影片/音訊深度摘要與時間軸錨點</span>
+                </div>
+                <button onclick="copyCode('prompt-8')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 手邊有一份長達 90 分鐘的國際半導體技術研討會 MP4 錄音錄影檔，需整理出每個議程重點、關鍵投影片翻頁時機點與專家觀點摘要。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-8">請呼叫 `gemini-api`，選用支援 200 萬 Context Window 的 `gemini-1.5-pro`：
+1. 輸入檔案：專案儲存空間內的研討會錄影 `materials/semiconductor_keynote_2026.mp4`。
+2. 進行深度多模態理解，請完成以下工作：
+   - 提取整場研討會的 5 大核心技術突破結論。
+   - 製作一張精準的「時間軸錨點表 (Timestamp Index)」，精確標註每個講題開始的 MM:SS 時間點、講者姓名與該段落投影片的主要圖表內容。
+   - 挑出 Q&A 環節中台下學者提出的 3 個最具爭議之技術挑戰，並摘要講者的回應策略。
+3. 輸出為格式工整的 Markdown 研討會紀錄，並輸出至 `docs/conference_summary.md`。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>Gemini 1.5 Pro 完美理解影音時間序列，精準定位到特定秒數（例如 `24:18 - GAAFET 節能架構圖表展示`），省去數小時人工重播時間。</p>
+              </div>
+            </div>
+
+            <!-- 範例 9: 資料管線架構師 (Data Pipeline Engineer) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 09</span>
+                  <span class="text-sm font-bold text-slate-200">資料工程師：Cloud Pub/Sub + Cloud Functions + BigQuery 串流架構配置</span>
+                </div>
+                <button onclick="copyCode('prompt-9')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 需搭建一套高併發 IoT 即時感測器串流寫入管線，具備死信隊列 (Dead-Letter Queue) 容錯能力。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-9">請使用 `google-cloud-developer` 協助我建立即時資料串流管線：
+1. 建立 Pub/Sub 主題 `telemetry-stream` 與死信隊列主題 `telemetry-stream-dlq`。
+2. 建立訂閱 (Subscription) `telemetry-ingest-sub`，設定最大重試次數為 5 次，失敗後自動轉送至 DLQ 主題。
+3. 為我生成一支 Python 2nd-gen Cloud Functions 範本代碼：
+   - 接收 Pub/Sub 事件並解碼 base64 payload。
+   - 使用 BigQuery Storage Write API 批量寫入 `iot_raw.sensor_telemetry` 資料表。
+   - 處理格式損毀異常並主動記住錯誤屬性。
+4. 輸出自動化部署該 Cloud Functions 的完整 `gcloud functions deploy` CLI 指令。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>產生具備企業級容錯機制的 Pub/Sub 拓樸架構與二代 Cloud Functions 高速寫入程式碼，符合 Google 官方 Recommended Best Practices。</p>
+              </div>
+            </div>
+
+            <!-- 範例 10: 新創 CTO / 技術長 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">範例 10</span>
+                  <span class="text-sm font-bold text-slate-200">新創 CTO：一鍵生成 Staging / Production 雙環境 Terraform 架構與預算防線</span>
+                </div>
+                <button onclick="copyCode('prompt-10')" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-blue-300 bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg transition-colors">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製 Prompt</span>
+                </button>
+              </div>
+              <p class="text-xs text-slate-400">
+                <strong class="text-slate-300">情境描述：</strong> 新創團隊剛完成種子輪融資，需為全新 SaaS 平台建立 Staging 與 Production 兩套隔離的 GCP 專案，並配置嚴格的每月預算中斷告警。
+              </p>
+              <div class="relative">
+                <pre class="bg-slate-900/90 text-slate-200 p-3.5 rounded-xl text-xs overflow-x-auto border border-slate-800/80 leading-relaxed font-mono whitespace-pre-wrap" id="prompt-10">請結合 `google-cloud-developer` 與架構最佳實務，為我的團隊設計基礎設施代碼 (IaC)：
+1. 規劃 Staging 與 Production 兩個獨立的 GCP 專案架構：
+   - 啟用必要 APIs：`run.googleapis.com`, `sqladmin.googleapis.com`, `secretmanager.googleapis.com`。
+   - 建立共用 VPC 網路與私有服務存取通道 (Private Service Access)。
+2. 生成模組化 Terraform 配置（`main.tf`, `variables.tf`, `outputs.tf`）：
+   - 包含 Cloud Run、Cloud SQL、Artifact Registry 與 IAM 角色授權。
+3. 嚴防預算超支：
+   - 在 Billing 模組中配置 Cloud Billing Budget，設定每月 500 美元軟上限，於達到 50%、80%、100% 時發送 Pub/Sub 告警觸發 Slack 通知。
+4. 輸出執行 `terraform init && terraform plan` 的驗證步驟說明。</pre>
+              </div>
+              <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800/60 text-xs text-slate-400 space-y-1">
+                <div class="font-semibold text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                  <span>預期執行成果：</span>
+                </div>
+                <p>產出乾淨、即刻可部署的企業級 Terraform 模組，完整預算監控防線避免新創團隊遭遇非預期的巨額雲端帳單。</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5: FinOps 成本與資安守則 -->
+        <section id="best-practices" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-blue-400"></i>
+            <h2>5. FinOps 成本控制與資安四大防線</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-blue-300">
+                <i data-lucide="gauge" class="w-4 h-4"></i>
+                <span>防線一：BigQuery 查詢強制 Dry-Run</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                Antigravity 內建安全審查機制，在未提供分區條件或未估算位元組數前，絕不盲目執行 TB 級查詢。強烈建議在 BigQuery 中設定「Per-Query Bytes Billed Limit」專案層級上限。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-cyan-300">
+                <i data-lucide="key" class="w-4 h-4"></i>
+                <span>防線二：機密資訊一律外置於 Secret Manager</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                禁止在任何 Prompt、環境變數或程式碼中硬編碼 GCP 服務帳戶私鑰或資料庫密碼。應一律透過 GCP Secret Manager 掛載，並由 IAM 授予特定 Cloud Run 服務唯讀權限。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-indigo-300">
+                <i data-lucide="zap-off" class="w-4 h-4"></i>
+                <span>防線三：Gemini API Token 預先計數 (Count Tokens)</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                在上傳大量長影音或高解析度圖片至 Gemini API 前，先調用 <code class="text-indigo-200">gemini_count_tokens</code> 工具評估總消耗量，防止意外突破 Tier 速率限制 (RPM/TPM)。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 font-bold text-amber-300">
+                <i data-lucide="user-x" class="w-4 h-4"></i>
+                <span>防線四：拒絕全域 Owner/Editor 原始角色</span>
+              </div>
+              <p class="text-slate-400 leading-relaxed">
+                生產環境之 CI/CD 部署流水線或背景服務應嚴格依據最小權限原則 (Principle of Least Privilege)，使用自訂角色 (Custom Roles) 或精細的官方 Job Runner 預定義角色。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6: 安裝與認證設定 (ADC) -->
+        <section id="setup" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="sliders" class="w-5 h-5 text-blue-400"></i>
+            <h2>6. 安裝與認證設定 (ADC 授權)</h2>
+          </div>
+          <p class="text-slate-300 text-xs leading-relaxed">
+            Google Cloud 系列擴充功能支援 Google 官方標準的應用程式預設憑證 (Application Default Credentials, ADC)，無需手動管理任何高風險的 JSON 憑證私鑰檔。
+          </p>
+
+          <div class="space-y-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">1</span>
+                安裝外掛套件
+              </div>
+              <p class="text-xs text-slate-400">在 Antigravity 對話框中輸入安裝指令或點選擴充套件市場：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-blue-300 font-mono">/plugin install antigravity-plugins-official/plugin/gemini-api
+/plugin install google-cloud-developer
+/plugin install data-agent-kit-plugin</pre>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">2</span>
+                本機 gcloud CLI 登入與 ADC 授權綁定
+              </div>
+              <p class="text-xs text-slate-400">在終端機中執行標準登入流程，完成瀏覽器 OAuth 驗證授權：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-slate-200 font-mono"># 登入 gcloud CLI
+gcloud auth login
+
+# 生成應用程式預設憑證 (ADC)，供 Antigravity 及 SDK 自動存取
+gcloud auth application-default login
+
+# 設定預設專案與區域
+gcloud config set project [YOUR_GCP_PROJECT_ID]
+gcloud config set compute/region asia-east1</pre>
+            </div>
+
+            <div class="glass-card p-4 rounded-xl border border-slate-800 space-y-3">
+              <div class="font-bold text-sm text-slate-200 flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">3</span>
+                設定 Gemini API 金鑰（如需獨立調用 API）
+              </div>
+              <p class="text-xs text-slate-400">在環境變數或 Antigravity 設定檔中提供 Gemini API Key：</p>
+              <pre class="bg-slate-900 p-3 rounded-lg text-xs text-slate-200 font-mono"># Linux / macOS
+export GEMINI_API_KEY="AIzaSy..."
+
+# Windows PowerShell
+$env:GEMINI_API_KEY="AIzaSy..."</pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 7: 常見問題與除錯指南 -->
+        <section id="faq" class="doc-section space-y-5">
+          <div class="flex items-center gap-2.5 text-lg font-bold text-slate-100 border-b border-slate-800 pb-2">
+            <i data-lucide="help-circle" class="w-5 h-5 text-blue-400"></i>
+            <h2>7. 常見問題與除錯指南 (FAQ)</h2>
+          </div>
+          <div class="space-y-3 text-xs">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q1: 執行 gcloud 指令或 BigQuery 時出現「Re-authentication required」或憑證過期？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                這是因為 Google Cloud 的 OAuth Session 具有生命週期限制。請在終端機中重新執行 <code class="text-blue-300">gcloud auth application-default login</code>，完成瀏覽器驗證後，Antigravity 便會自動取得新權杖並恢復正常運作。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q2: Gemini API 呼叫時遇到 429 Resource Exhausted (配額不足) 該如何處理？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                429 通常代表達到了每分鐘請求數 (RPM) 或每分鐘 Token 數 (TPM) 的上限。免費方案 (Free Tier) 限額較嚴格；若用於生產或頻繁開發，建議前往 Google AI Studio 或 GCP Console 綁定帳單帳戶升級為 Pay-as-you-go 方案，並在 Antigravity 中選用輕量且高吞吐的 <code class="text-blue-300">gemini-2.0-flash</code>。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q3: BigQuery 查詢時如何避免不小心的巨額計費？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                三大安全習慣：1. 查詢前務必使用 Dry-Run 估算 bytes；2. 在 GCP BigQuery Quotas 中設定自訂的「查詢位元組配額上限」；3. 在所有日誌型與時間序列資料表上強制設定 Date-Partitioning 與 Require Partition Filter。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 group">
+              <summary class="font-bold text-slate-200 cursor-pointer list-none flex items-center justify-between">
+                <span>Q4: Antigravity 如何保證不會誤刪除生產環境的 Cloud 資源？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-slate-400 leading-relaxed">
+                所有具破壞性的指令（例如刪除資料庫、刪除 Cloud Run 服務、清空 GCS Bucket），Antigravity 皆預設採取嚴格的「審查確認提示」政策，絕不在未經使用者確認前靜默執行 <code class="text-red-400">--quiet</code> 刪除指令。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告與系列導航 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-6 h-6 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center">
+            <i data-lucide="cloud" class="w-4 h-4"></i>
+          </div>
+          <span class="text-slate-300 font-semibold">Antigravity Tools Hub · Google 生態系系列專題</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="index.html" class="hover:text-white transition-colors">首頁總覽</a>
+          <a href="google-drive-docs.html" class="hover:text-white transition-colors">Google Drive & Docs</a>
+          <a href="google-sheets.html" class="hover:text-white transition-colors">Google Sheets</a>
+          <a href="gmail-calendar.html" class="hover:text-white transition-colors">Gmail & Calendar</a>
+          <a href="google-slides.html" class="hover:text-white transition-colors">Google Slides</a>
+          <a href="google-notebooklm.html" class="hover:text-white transition-colors">NotebookLM</a>
+          <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
+          <a href="google-cloud-gemini.html" class="text-blue-400 font-semibold">Cloud & Gemini</a>
+          <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
+        </div>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>本專案非 Google 官方產品，商標權屬各對應權利人所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 複製按鈕腳本與 Lucide 初始化 -->
+  <script>
+    lucide.createIcons();
+
+    function copyCode(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        // 尋找對應按鈕提供視覺反饋
+        const btn = event.currentTarget;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i><span class="text-emerald-400 font-bold">已複製！</span>`;
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = originalHTML;
+          lucide.createIcons();
+        }, 2000);
+      }).catch(err => {
+        console.error('複製失敗:', err);
+      });
+    }
+  </script>
+</body>
+</html>

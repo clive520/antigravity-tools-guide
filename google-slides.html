@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Slides 擴充功能完整指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              900: '#78350f',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.6);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[600px] h-[400px] bg-gradient-to-tr from-amber-600/15 to-yellow-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[500px] h-[500px] bg-orange-600/10 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-full h-full text-amber-400">
+              <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7zm0 4h10v2H7zm0 4h7v2H7z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Google Slides 指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 側邊導航目錄 (Desktop Only) -->
+      <aside class="hidden lg:block w-64 shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="glass-card rounded-2xl p-4 border border-slate-800">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">目錄索引</h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與定位</a>
+              <a href="#capabilities" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">2. 這個功能能做什麼？</a>
+              <a href="#mcp-tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">3. 核心 MCP 工具 API</a>
+              <a href="#how-to-use" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">4. 10 大跨角色實戰範例</a>
+              <a href="#auth-setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">5. 安裝與授權流程</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-amber-400 hover:bg-slate-900/80 transition-colors">6. 常見問題與除錯 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-amber-950/40 to-slate-900 border border-amber-900/30 text-xs">
+            <div class="flex items-center gap-2 text-amber-400 font-bold mb-1">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Google 家族第四棒</span>
+            </div>
+            <p class="text-slate-400 leading-relaxed text-[11px]">
+              展示傳播與教學簡報的核心引擎！將 Google Docs 大綱與 Sheets 數據一鍵化為排版專業的投影片，更相容李俊儀教授 SOIL 六引擎工作流。
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow min-w-0 space-y-12">
+
+        <!-- 標頭英雄區 -->
+        <div id="overview" class="doc-section">
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-950 text-amber-400 border border-amber-800">
+              <span class="w-2 h-2 rounded-full bg-amber-400"></span> Google 官方原生擴充套件
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-slate-400 border border-slate-800">
+              Workspace Ecosystem
+            </span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-mono bg-slate-900 text-amber-300 border border-slate-800">
+              plugin/gslides
+            </span>
+          </div>
+
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center p-3 shadow-xl shrink-0">
+              <svg viewBox="0 0 24 24" class="w-10 h-10 text-amber-400">
+                <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7zm0 4h10v2H7zm0 4h7v2H7z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">Google Slides</h1>
+              <p class="text-slate-400 text-sm mt-1">開發者：<span class="text-slate-200 font-medium">Google Workspace Official</span></p>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 text-sm text-slate-300 leading-relaxed font-mono">
+            "Read, edit, draft, design layout, and export presentations directly in Google Slides with AI Agent automation."
+          </div>
+          <p class="mt-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+            **Google Slides 擴充套件**是 Antigravity 與視覺展示、課堂教學與商務 Pitch Deck 溝通的核心橋樑。它能讓 AI 直接將長篇文件大綱轉化為分頁邏輯清晰的簡報、套用母片版型、排版雙欄對照與概念卡片、自動生成講者備忘錄（Speaker Notes），並支援匯出 PDF 或圖片。
+          </p>
+        </div>
+
+        <!-- 區塊 2：這個功能能做什麼？ -->
+        <section id="capabilities" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="layers" class="w-6 h-6 text-amber-400"></i>
+              <span>2. 這個功能能做什麼？（核心簡報能力架構）</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-amber-950 flex items-center justify-center text-amber-400 mb-3 border border-amber-800/60">
+                <i data-lucide="presentation" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">大綱文字秒級生成完整投影片</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                只需給出會議紀錄、教案草稿或產品 PRD，AI 自動提煉頁面架構，建立包含封面、章節轉折、內容核心與總結的完整簡報。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-yellow-950 flex items-center justify-center text-yellow-400 mb-3 border border-yellow-800/60">
+                <i data-lucide="layout" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">結構化教學與商務專業版型</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                支援左右雙欄對照、三步驟流程圖卡片、概念關聯圖與痛點解決對照，避免滿版全是乾癟文字，大幅提升觀眾吸收率。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-orange-950 flex items-center justify-center text-orange-400 mb-3 border border-orange-800/60">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">自動撰寫演講者講稿 (Speaker Notes)</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                每頁投影片下方自動生成口語化演講腳本與時間控制提示（例如：「此頁建議停留 2 分鐘，重點強調右側數據」）。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-emerald-950 flex items-center justify-center text-emerald-400 mb-3 border border-emerald-800/60">
+                <i data-lucide="database" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">Sheets 試算表圖表數據聯動</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                讀取 Google Sheets 的最新統計數據，自動在簡報頁面插入長條圖、折線圖或圓餅圖，營收匯報與學力分析免手動截圖。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-blue-950 flex items-center justify-center text-blue-400 mb-3 border border-blue-800/60">
+                <i data-lucide="palette" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">母片配色與字體風格一致性</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                遵循專業動態與平面品味規範，自動採用三色主色調（主色、強調色、背景色），告別花花綠綠的災難投影片。
+              </p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border border-slate-800">
+              <div class="w-9 h-9 rounded-xl bg-purple-950 flex items-center justify-center text-purple-400 mb-3 border border-purple-800/60">
+                <i data-lucide="download" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-bold text-white text-base mb-1">簡報多格式匯出與即時分享</h3>
+              <p class="text-slate-400 text-xs leading-relaxed">
+                完成後可透過 MCP 直接匯出 PDF 講義或各頁的高解析度 PNG 圖檔，並生成 Google 雲端共享簡報連結。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 3：核心 MCP 工具 API -->
+        <section id="mcp-tools" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="wrench" class="w-6 h-6 text-amber-400"></i>
+              <span>3. 核心 MCP 工具 API 對照表</span>
+            </h2>
+            <p class="text-slate-400 text-xs mt-1">Google Slides 官方擴充套件向 Antigravity 註冊的底層微型工具：</p>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-800 text-slate-400 bg-slate-900/50">
+                  <th class="py-2.5 px-3 font-semibold">MCP 工具名稱</th>
+                  <th class="py-2.5 px-3 font-semibold">主要參數 (Parameters)</th>
+                  <th class="py-2.5 px-3 font-semibold">功能作用與說明</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 font-mono">
+                <tr>
+                  <td class="py-2.5 px-3 text-amber-400 font-sans font-medium">gslides_read</td>
+                  <td class="py-2.5 px-3 text-slate-200">presentationId</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">解析指定簡報的所有頁面結構、文字方塊、圖片與圖形元素</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-amber-400 font-sans font-medium">gslides_create</td>
+                  <td class="py-2.5 px-3 text-slate-200">title, folderId</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">在指定 Google Drive 資料夾建立全新的空白簡報文件</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-amber-400 font-sans font-medium">gslides_edit / batchUpdate</td>
+                  <td class="py-2.5 px-3 text-slate-200">presentationId, requests</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">批次新增投影片、插入標題、內文、排版卡片、設定顏色與 Speaker Notes</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 text-amber-400 font-sans font-medium">gslides_export</td>
+                  <td class="py-2.5 px-3 text-slate-200">presentationId, format (pdf / png)</td>
+                  <td class="py-2.5 px-3 text-slate-400 font-sans">將整份簡報或特定頁面匯出為可離線列印的 PDF 或圖片</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 區塊 4：10 大跨角色實戰應用範例 -->
+        <section id="how-to-use" class="doc-section space-y-6">
+          <div class="border-b border-slate-800 pb-3">
+            <div class="flex items-center justify-between flex-wrap gap-2">
+              <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-6 h-6 text-amber-400"></i>
+                <span>4. 我該如何使用？（10 大跨角色實戰 Prompt Playbook）</span>
+              </h2>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-950 text-amber-400 border border-amber-800">
+                教學備課到商業路演
+              </span>
+            </div>
+            <p class="text-slate-400 text-xs mt-1">無論您是老師做課堂教材、創業者做 Pitch Deck、PM 發布新功能或講者做演講，複製以下提示詞即可由 AI 產出簡報：</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-5">
+
+            <!-- 範例 1：全科教師 / SOIL 教學簡報 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                    範例 01 · 國小/高中教師 (SOIL 教學法)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">李俊儀教授 SOIL 六引擎教學簡報自動生成與課堂提問卡</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要將自然課「水循環與天氣現象」單元做成教學簡報，要求每頁符合教學認知負荷、具備概念對照與課堂提問互動頁。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                &gt; 「讀取我 Google Docs 裡的『水循環教學教案.docx』，採用 SOIL 教學簡報架構為我製作一份 10 頁的 Google Slides：1. 封面與前測提問卡；2. 蒸發、凝結、降水概念關係圖；3. 左右雙欄對照（雲與霧的成因差異）；4. 課堂思考題並於每頁下方寫入 100 字教師口語導讀腳本（Speaker Notes）。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>結構清晰具教學力，零金鑰原生形狀排版，直接投影上課。</span>
+              </div>
+            </div>
+
+            <!-- 範例 2：創業團隊創始人 (Founder) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-blue-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-blue-950 text-blue-400 text-xs font-semibold border border-blue-800">
+                    範例 02 · 創業團隊 / 新創 CEO
+                  </span>
+                  <h4 class="text-white font-bold text-sm">10 頁標準商業計畫募資路演簡報 (Pitch Deck) 快速搭建</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>下週要參加矽谷創投 Demo Day，需準備一份 10 頁標準 Sequoia 風格的募資 Pitch Deck。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-blue-300 leading-relaxed mb-2">
+                &gt; 「根據我們新產品的商業計畫書，製作一份 10 頁精煉的募資 Google Slides：1. 封面 (Hook)；2. 市場痛點 (Pain Point)；3. 獨家解方 (Our Solution)；4. 市場規模 (TAM/SAM/SOM)；5. 商業模式；6. 牽引力指標 (Traction)；7. 競品矩陣；8. 核心團隊；9. 財務預估；10. 募資額度與用途。採用深藍與金色科技感配色，附講稿。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>敘事邏輯嚴謹，投資人能在 3 分鐘內抓住核心價值。</span>
+              </div>
+            </div>
+
+            <!-- 範例 3：產品經理 (Product Manager) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-emerald-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-emerald-950 text-emerald-400 text-xs font-semibold border border-emerald-800">
+                    範例 03 · 產品經理 (PM)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">新產品版本發布 (Feature Launch) 與跨團隊成果簡報</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>新版本上線後，需在全體全員大會（All-Hands）向業務、客服與行銷部門展示新功能亮點。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-emerald-300 leading-relaxed mb-2">
+                &gt; 「讀取 Google Drive 裡的『v2.5版新功能規格與測試回饋』，產出一份 8 頁的跨團隊發布展示簡報：展示新功能痛點前後對照圖卡、操作三步驟走查、對業務與客服的具體價值，並在最後一頁列出常見 FAQ 與支援團隊聯絡窗口。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>跨部門對齊資訊零落差，減少重複宣導會議。</span>
+              </div>
+            </div>
+
+            <!-- 範例 4：研討會 Keynote 演講者 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-purple-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-purple-950 text-purple-400 text-xs font-semibold border border-purple-800">
+                    範例 04 · 國際年會 Keynote 講者
+                  </span>
+                  <h4 class="text-white font-bold text-sm">40 分鐘大型技術演講投影片、視覺節奏掌握與逐字備忘稿</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>受邀擔任 2026 AI Agent 年會的主講人，需規劃 25 頁簡報，避免字數過多且每頁需要精準的計時與台詞備忘。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-purple-300 leading-relaxed mb-2">
+                &gt; 「將我這篇 5,000 字論文『從工具調用到自主決策：AI Agent的下一階段』，改編為一份 25 頁的高視覺化 Keynote Google Slides。每頁文字精簡於 30 字以內，並在備忘稿（Speaker Notes）詳列講者開場白、案例轉折語氣與每頁建議停留秒數。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>大師級視覺節奏，演講者站在台上從容不迫。</span>
+              </div>
+            </div>
+
+            <!-- 範例 5：企業內部培訓師 / HRD -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-teal-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-teal-950 text-teal-400 text-xs font-semibold border border-teal-800">
+                    範例 05 · 企業人資培訓師 (HRD)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">新人入職培訓手冊轉化為互動教學簡報與課堂隨堂考</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>厚厚的公司新人規章與資安政策手冊無人願意細讀，需改編為輕鬆好懂的入職第一天培訓投影片。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-teal-300 leading-relaxed mb-2">
+                &gt; 「讀取『員工資安與行為守則.pdf』，為新進同仁設計一份 15 頁的入職培訓 Google Slides。以情境故事法呈現（例如：收到釣魚信該如何應對），包含三張即時隨堂問答頁（附解答倒數設計），讓新人訓練生動有趣。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>枯燥合規手冊變身互動教材，新人留存與法規遵循率顯著提高。</span>
+              </div>
+            </div>
+
+            <!-- 範例 6：文史文教策展人 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-amber-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-amber-950 text-amber-400 text-xs font-semibold border border-amber-800">
+                    範例 06 · 文化資產專員 / 策展人
+                  </span>
+                  <h4 class="text-white font-bold text-sm">地方歷史特展導覽簡報與文化資產田野調查成果展現</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>完成地方古蹟與信仰調研後，需向文化局評委與在地居民簡報特展規劃與展區動線。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-amber-300 leading-relaxed mb-2">
+                &gt; 「讀取 Drive 中的『沙鹿保安宮與三塊厝歷史研究.md』，製作一份 12 頁的文化特展企劃投影片。包含時空背景軸線、重要文物拓本介紹、三區展覽動線圖解與社區教育推廣計畫，配色採用沉穩的磚紅與仿古米黃。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>文史厚度與視覺美感兼備，爭取文教補助無往不利。</span>
+              </div>
+            </div>
+
+            <!-- 範例 7：軟體架構師 (Software Architect) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-sky-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-sky-950 text-sky-400 text-xs font-semibold border border-sky-800">
+                    範例 07 · 軟體系統架構師
+                  </span>
+                  <h4 class="text-white font-bold text-sm">分散式微服務架構演進歷程與容錯機制技術深度展示</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要向全體工程團隊闡述從單體架構（Monolith）拆分為事件驅動（Event-Driven）微服務的重構藍圖。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-sky-300 leading-relaxed mb-2">
+                &gt; 「根據系統架構規格書，製作一份 14 頁的技術重構架構簡報：包含舊版瓶頸拓撲圖、Kafka 訊息隊列解耦前後對照卡、資料一致性策略（Saga Pattern）、以及熔斷降級機制，代碼片段格式化呈現。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>技術邏輯層次分明，工程團隊秒懂重構願景與防禦策略。</span>
+              </div>
+            </div>
+
+            <!-- 範例 8：數位行銷總監 (CMO) -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-rose-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-rose-950 text-rose-400 text-xs font-semibold border border-rose-800">
+                    範例 08 · 數位行銷總監 (CMO)
+                  </span>
+                  <h4 class="text-white font-bold text-sm">季度行銷活動 ROI 檢討與跨通路數據視覺化投影片</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>需要整合 Google Sheets 裡的廣告投放數據與會員轉換率，產出一份向董事會報告的精美投影片。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-rose-300 leading-relaxed mb-2">
+                &gt; 「讀取 Google 試算表『2026_Q3行銷各渠道投報率』，建立一份 8 頁的董事會行銷成果匯報簡報。包含各渠道 ROAS 條狀對比圖、獲客成本（CAC）下降趨勢、三檔爆款活動回顧與下一季度預算重分配藍圖。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>數字會說話，用專業圖表征服董事會預算審查。</span>
+              </div>
+            </div>
+
+            <!-- 範例 9：大專院校學生 / 研究生 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-cyan-700/60 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-cyan-950 text-cyan-400 text-xs font-semibold border border-cyan-800">
+                    範例 09 · 大專院校生 / 專題研究
+                  </span>
+                  <h4 class="text-white font-bold text-sm">期末專題分組成果報告、研究方法論與問卷統計展示</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>期末專題發表倒數 2 天，四位組員整理好近萬字報告，急需轉化為 15 分鐘流暢的報告簡報。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-cyan-300 leading-relaxed mb-2">
+                &gt; 「讀取我們的期末論文報告，製作一份 12 頁的專題成果 Google Slides：包含研究動機、研究設計架構圖、500份問卷統計發現、假設驗證結論與未來限制，每頁附帶報告分配提示詞。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>分組報告不再臨時抱佛腳，排版工整直接拿高分。</span>
+              </div>
+            </div>
+
+            <!-- 範例 10：自由培訓講師 / 顧問 -->
+            <div class="glass-card p-5 rounded-2xl border border-slate-800 hover:border-slate-600 transition-all">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-300 text-xs font-semibold border border-slate-700">
+                    範例 10 · 商業培訓顧問 / 自由講師
+                  </span>
+                  <h4 class="text-white font-bold text-sm">收費實體工作坊系列教材、實戰破冰演練與引導簡報</h4>
+                </div>
+                <span class="text-[10px] bg-slate-800 text-slate-300 font-mono px-2 py-0.5 rounded">
+                  工具: gslides_create, gslides_edit, gslides_export
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 mb-2">
+                <strong>痛點情境：</strong>受聘為企業開設一整天「高效 AI 工作流」工作坊，需包含課堂講授、分組演練計時卡與回饋反思。
+              </p>
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800 font-mono text-xs text-slate-200 leading-relaxed mb-2">
+                &gt; 「為我製作一套全日工作坊的 Google Slides 講義（共 20 頁）：包含上午觀念打底、下午 3 個分組實作關卡引導頁（附步驟提示與計時提示）、課後 Q&A 互動頁，並直接幫我匯出一份學員 PDF 講義版本。」
+              </div>
+              <div class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-400 shrink-0"></i>
+                <span><strong>預期效益：</strong>講師只需專注於臨場互動，投影片與講義教材自動齊全。</span>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 區塊 5：安裝與授權流程 -->
+        <section id="auth-setup" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="key" class="w-6 h-6 text-amber-400"></i>
+              <span>5. 如何在 Antigravity 中啟用與授權？</span>
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-amber-400 font-bold text-sm mb-1">步驟 1：安裝套件</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                在「Skills & Customizations」$\rightarrow$「Marketplace」中搜尋並啟用 <code class="text-slate-200">Google Slides</code> 官方插件。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-amber-400 font-bold text-sm mb-1">步驟 2：登入授權</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                遵循彈出視窗完成 Google Workspace OAuth 授權，取得建立與編輯簡報權限。
+              </p>
+            </div>
+            <div class="glass-card p-4 rounded-xl border border-slate-800">
+              <div class="text-amber-400 font-bold text-sm mb-1">步驟 3：開始智慧做簡報</div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                隨時在聊天框要求 AI「把這份文件做成 10 頁簡報」或「為這頁簡報加上雙欄對照排版」！
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 區塊 6：常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="help-circle" class="w-6 h-6 text-amber-400"></i>
+              <span>6. 常見問題與除錯 (FAQ)</span>
+            </h2>
+          </div>
+
+          <div class="space-y-3">
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q1：AI 產出的簡報會不會是滿版大段文字？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                不會。套件遵循嚴格的教學認知負荷與簡報原則，自動提煉出標題、痛點對照與三點式卡片清單，並將冗長說明自動放入下方的 Speaker Notes。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q2：它可以套用我公司現有的簡報範本（Template）嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                可以！只需在提示詞中指定您既有簡報的 presentationId，AI 會複製該範本母片並保留其統一的標準字型、色系與 Logo。
+              </p>
+            </details>
+
+            <details class="glass-card rounded-xl p-4 border border-slate-800 cursor-pointer group">
+              <summary class="font-bold text-sm text-slate-200 flex items-center justify-between">
+                <span>Q3：產出後的簡報可以下載為 PowerPoint (.pptx) 嗎？</span>
+                <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-open:rotate-180 transition-transform"></i>
+              </summary>
+              <p class="mt-3 text-xs text-slate-400 leading-relaxed">
+                可以。所有產出的文件皆存放於您的 Google 雲端硬碟，在 Google 簡報介面點選「檔案 $\rightarrow$ 下載 $\rightarrow$ Microsoft PowerPoint (.pptx)」即可完全相容開啟。
+              </p>
+            </details>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 頁尾 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <a href="index.html" class="font-semibold text-slate-300 hover:text-white transition-colors">Antigravity Tools Hub</a>
+        <span>• Google Slides 官方指南</span>
+      </div>
+      <div>
+        <span>本專案支援 GitHub Pages 即時瀏覽</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>

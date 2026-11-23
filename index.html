@@ -63,7 +63,7 @@
         </div>
         <div>
           <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-sky-300 bg-clip-text text-transparent">Antigravity Tools Hub</span>
-          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-sky-950/80 text-sky-400 border border-sky-800/60 font-medium">官方擴充指南</span>
+          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-sky-950/80 text-sky-400 border border-sky-800/60 font-medium">Google 家族完整版</span>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -89,7 +89,7 @@
         <span class="bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">必備外掛與 MCP 工具</span>
       </h1>
       <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
-        從底層瀏覽器除錯、效能調校、自動化腳本到跨平台設計，全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
+        從底層瀏覽器除錯、Google Workspace 全家桶協作，到 Firebase 與 Google Cloud 旗艦雲端架構，全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
       </p>
     </div>
 
@@ -100,8 +100,8 @@
         <button onclick="filterCards('all')" class="filter-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sky-500 text-white transition-all shadow-sm shadow-sky-500/20" data-filter="all">全部工具 (All)</button>
         <button onclick="filterCards('workspace')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="workspace">Google 家族</button>
         <button onclick="filterCards('debug')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="debug">除錯與效能</button>
-        <button onclick="filterCards('automation')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="automation">瀏覽器自動化</button>
-        <button onclick="filterCards('design')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="design">創意設計</button>
+        <button onclick="filterCards('automation')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="automation">瀏覽器與自動化</button>
+        <button onclick="filterCards('design')" class="filter-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition-all" data-filter="design">創意設計與簡報</button>
       </div>
 
       <!-- 搜尋框 -->
@@ -122,14 +122,10 @@
 
       <!-- 卡片 1：Chrome DevTools MCP (主打推薦) -->
       <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="debug automation" data-title="Chrome DevTools MCP 除錯 效能 自動化 LCP a11y">
-        <!-- 標記光條 -->
         <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-sky-400 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        
         <div>
-          <!-- 頂部圖示與狀態 -->
           <div class="flex items-start justify-between mb-4">
             <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
-              <!-- Chrome DevTools Logo SVG -->
               <svg viewBox="0 0 48 48" class="w-full h-full">
                 <path fill="#4285F4" d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4z"/>
                 <path fill="#34A853" d="M24 14a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
@@ -144,8 +140,6 @@
               <span class="text-[10px] text-slate-500 font-mono">v1.10.1</span>
             </div>
           </div>
-
-          <!-- 標題與簡介 -->
           <h2 class="text-xl font-bold text-white mb-2 group-hover:text-sky-300 transition-colors flex items-center gap-2">
             <span>Chrome DevTools</span>
             <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-sky-400"></i>
@@ -153,8 +147,6 @@
           <p class="text-slate-400 text-xs leading-relaxed mb-4">
             以 Chrome DevTools Protocol 與 Puppeteer 為核心，提供 AI Agent 深度網頁自動化、效能分析（LCP/CWV）、無障礙審查及記憶體洩漏排錯能力。
           </p>
-
-          <!-- 核心指令預覽 -->
           <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
             <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
               <span>內建專屬指令與實戰手冊</span>
@@ -168,8 +160,6 @@
             </div>
           </div>
         </div>
-
-        <!-- 底部前往按鈕 -->
         <a href="chrome-devtools.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white shadow-lg shadow-sky-500/20 transition-all">
           <span>查看完整使用說明</span>
           <i data-lucide="chevron-right" class="w-4 h-4"></i>
@@ -178,11 +168,8 @@
 
       <!-- 卡片 2：Google Drive & Docs (Google家族第一棒) -->
       <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace" data-title="Google Drive Docs 文件 雲端硬碟 知識庫 辦公協作 備課 ADR PRD">
-        <!-- 標記光條 -->
         <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        
         <div>
-          <!-- 頂部圖示與狀態 -->
           <div class="flex items-start justify-between mb-4">
             <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
               <div class="relative w-full h-full flex items-center justify-center">
@@ -201,8 +188,6 @@
               <span class="text-[10px] text-slate-500 font-mono">Official MCP</span>
             </div>
           </div>
-
-          <!-- 標題與簡介 -->
           <h2 class="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors flex items-center gap-2">
             <span>Google Drive & Docs</span>
             <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-blue-400"></i>
@@ -210,8 +195,6 @@
           <p class="text-slate-400 text-xs leading-relaxed mb-4">
             AI 雲端知識庫與長文創作中心。支援全硬碟內文檢索、自動撰寫排版 Google 文件、修訂批註與跨部門協作權限分享。
           </p>
-
-          <!-- 核心能力預覽 -->
           <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
             <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
               <span>雙外掛整合 · 實戰手冊</span>
@@ -225,8 +208,6 @@
             </div>
           </div>
         </div>
-
-        <!-- 底部前往按鈕 -->
         <a href="google-drive-docs.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/20 transition-all">
           <span>查看完整使用說明</span>
           <i data-lucide="chevron-right" class="w-4 h-4"></i>
@@ -234,12 +215,9 @@
       </div>
 
       <!-- 卡片 3：Google Sheets (Google家族第二棒) -->
-      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace" data-title="Google Sheets 試算表 數據分析 報表 算成績 公式 QUERY XLOOKUP 洗資料">
-        <!-- 標記光條 -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace" data-title="Google Sheets 試算表 數據分析 報表 算成績 公式 QUERY XLOOKUP 洗資料 下載CSV範例">
         <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        
         <div>
-          <!-- 頂部圖示與狀態 -->
           <div class="flex items-start justify-between mb-4">
             <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 24 24" class="w-7 h-7 text-emerald-400">
@@ -250,48 +228,39 @@
               <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Google 家族二棒
               </span>
-              <span class="text-[10px] text-slate-500 font-mono">Official MCP</span>
+              <span class="text-[10px] text-slate-500 font-mono">10 份 CSV 下載</span>
             </div>
           </div>
-
-          <!-- 標題與簡介 -->
           <h2 class="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors flex items-center gap-2">
             <span>Google Sheets</span>
             <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-emerald-400"></i>
           </h2>
           <p class="text-slate-400 text-xs leading-relaxed mb-4">
-            AI 試算表與數據分析自動化中心。支援大規模儲存格批次讀寫、髒資料清洗去重、自動生成高階 QUERY / XLOOKUP 公式與警示熱圖。
+            AI 試算表與數據分析自動化中心。支援大規模儲存格批次讀寫、髒資料清洗去重、自動生成高階 QUERY / XLOOKUP 公式與 10 份實戰 CSV 下載。
           </p>
-
-          <!-- 核心能力預覽 -->
           <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
             <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
               <span>數據公式 · 實戰手冊</span>
-              <span class="text-emerald-400 font-mono text-[10px]">6 大工具 · 10 大角色範本</span>
+              <span class="text-emerald-400 font-mono text-[10px]">6 大工具 · 10 份練習 CSV</span>
             </div>
             <div class="flex flex-wrap gap-1.5 pt-1">
               <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-emerald-300">gsheets_read</span>
               <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-emerald-300">gsheets_write</span>
               <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-emerald-300">gsheets_format</span>
-              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 CSV 範本...</span>
             </div>
           </div>
         </div>
-
-        <!-- 底部前往按鈕 -->
         <a href="google-sheets.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/20 transition-all">
-          <span>查看完整使用說明</span>
+          <span>查看完整使用說明 & 下載資料</span>
           <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </a>
       </div>
 
       <!-- 卡片 4：Gmail & Google Calendar (Google家族第三棒) -->
       <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace" data-title="Gmail Google Calendar 郵件 日曆 行事曆 會議排程 秘書 早報 Meet 回信">
-        <!-- 標記光條 -->
         <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-rose-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        
         <div>
-          <!-- 頂部圖示與狀態 -->
           <div class="flex items-start justify-between mb-4">
             <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
               <div class="relative w-full h-full flex items-center justify-center">
@@ -310,8 +279,6 @@
               <span class="text-[10px] text-slate-500 font-mono">Official MCP</span>
             </div>
           </div>
-
-          <!-- 標題與簡介 -->
           <h2 class="text-xl font-bold text-white mb-2 group-hover:text-rose-300 transition-colors flex items-center gap-2">
             <span>Gmail & Calendar</span>
             <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-rose-400"></i>
@@ -319,8 +286,6 @@
           <p class="text-slate-400 text-xs leading-relaxed mb-4">
             個人 AI 秘書與日程通訊中樞。支援晨間未讀摘要、信件草稿智慧撰寫、跨時區空檔查詢、會議自動預約與防撞期排程。
           </p>
-
-          <!-- 核心能力預覽 -->
           <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
             <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
               <span>雙外掛整合 · 實戰手冊</span>
@@ -334,15 +299,185 @@
             </div>
           </div>
         </div>
-
-        <!-- 底部前往按鈕 -->
         <a href="gmail-calendar.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white shadow-lg shadow-rose-500/20 transition-all">
           <span>查看完整使用說明</span>
           <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </a>
       </div>
 
-      <!-- 卡片 3：GitHub CLI 與自動化 (預告) -->
+      <!-- 卡片 5：Google Slides (Google家族第四棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace design" data-title="Google Slides 簡報 投影片 SOIL 教學 提案 Pitch Deck 演講 Keynote 講者備忘稿">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-7 h-7 text-amber-400">
+                <path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 7h10v2H7V7zm0 4h10v2H7v-2zm0 4h7v2H7v-2z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-950/80 text-amber-400 border border-amber-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Google 家族四棒
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Official MCP</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors flex items-center gap-2">
+            <span>Google Slides</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-amber-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            AI 視覺簡報與演講生成引擎。支援 SOIL 教學簡報骨架架構、商業路演 Pitch Deck 排版、圖表生成與講者備忘稿 (Speaker Notes) 同步撰寫。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>視覺簡報 · 實戰手冊</span>
+              <span class="text-amber-400 font-mono text-[10px]">6 大工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">gslides_create</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">gslides_add_slide</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">speaker_notes</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="google-slides.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-500 hover:to-yellow-500 text-white shadow-lg shadow-amber-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 6：Google NotebookLM (Google家族第五棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace automation" data-title="Google NotebookLM 筆記 AI研究助理 Grounding 來源引用 音訊播客 Audio Overview 論文文獻 研究報告">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-7 h-7 text-purple-400">
+                <path fill="currentColor" d="M19 2H5c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 16H7v-2h10v2zm0-4H7v-2h10v2zm0-4H7V8h10v2z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-purple-950/80 text-purple-400 border border-purple-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span> Google 家族五棒
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">gemini-notebook-mcp</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors flex items-center gap-2">
+            <span>Google NotebookLM</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-purple-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            以來源錨定 (Source Grounding) 為核心的學術與深度研究中樞。支援數十萬字多源文獻交叉比對、註腳精確反查與雙主持人 AI 語音播客生成。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>文獻研析 · 實戰手冊</span>
+              <span class="text-purple-400 font-mono text-[10px]">10 大工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">notebook_query</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">research_start</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-purple-300">studio_create</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="google-notebooklm.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-lg shadow-purple-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 7：Firebase (Google家族第六棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="automation debug" data-title="Firebase Firestore NoSQL Auth 驗證 Hosting 靜態託管 Cloud Functions Security Rules 安全規則 全端後端">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-7 h-7 text-amber-500">
+                <path fill="currentColor" d="M3.89 15.672L6.255.461A.542.542 0 0 1 7.27.283l2.543 4.771zm16.794 3.692l-2.25-14a.54.54 0 0 0-.919-.295L3.316 19.365l7.857 4.427a1.62 1.62 0 0 0 1.587 0zM14.3 7.147l-1.82-3.482a.542.542 0 0 0-.96 0L3.52 17.615z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-950/80 text-amber-400 border border-amber-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Google 家族六棒
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Official Plugin</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors flex items-center gap-2">
+            <span>Firebase</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-amber-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            AI 全端應用程式後端與雲端基礎設施。支援 Firestore NoSQL 關聯設計、Hosting 一鍵全域 CDN 部署、Auth 驗證防護與 Security Rules 智慧審計。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>全端後端 · 實戰手冊</span>
+              <span class="text-amber-400 font-mono text-[10px]">7 大工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">firestore_rules</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">hosting_deploy</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">auth_tokens</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="firebase.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-white shadow-lg shadow-amber-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 8：Google Cloud & Gemini Developer (Google家族第七棒旗艦) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="workspace debug automation" data-title="Google Cloud GCP Gemini API 2.0 Flash 1.5 Pro Cloud Run BigQuery Data Agent Kit IAM FinOps SRE 雲端架構">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-7 h-7 text-blue-400" fill="currentColor">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-blue-950/80 text-blue-400 border border-blue-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Google 家族旗艦
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Official Suite</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-blue-300 transition-colors flex items-center gap-2">
+            <span>Cloud & Gemini Developer</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-blue-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            Google 雲端與原生多模態 AI 開發生態。涵蓋 Gemini 2.0/1.5 百萬上下文 API、Cloud Run 容器藍綠部署、BigQuery TB 級資料分析與 FinOps 成本資安防線。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>旗艦全生態 · 實戰手冊</span>
+              <span class="text-blue-400 font-mono text-[10px]">3 大外掛 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-blue-300">gemini-api</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-cyan-300">gcloud_run_deploy</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-indigo-300">bigquery_dryrun</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="google-cloud-gemini.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 via-sky-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white shadow-lg shadow-blue-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 9：GitHub CLI 與自動化 (預告) -->
       <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group opacity-75 hover:opacity-100" data-category="automation debug" data-title="GitHub CLI gh PR Issue Actions 自動化">
         <div>
           <div class="flex items-start justify-between mb-4">
@@ -356,12 +491,10 @@
               <span class="text-[10px] text-slate-500">準備中</span>
             </div>
           </div>
-
           <h2 class="text-xl font-bold text-white mb-2">GitHub CLI (`gh`)</h2>
           <p class="text-slate-400 text-xs leading-relaxed mb-4">
             讓 AI 與開發者直接在終端機建立 Pull Request、指派 Issue、觸發 GitHub Actions 工作流並管理 Release 發行。
           </p>
-
           <div class="space-y-1.5 mb-5 bg-slate-900/40 p-3 rounded-xl border border-slate-800/60">
             <div class="text-[11px] font-medium text-slate-400">主要能力亮點</div>
             <div class="flex flex-wrap gap-1.5 pt-1">
@@ -371,21 +504,20 @@
             </div>
           </div>
         </div>
-
         <button disabled class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-800/70 text-slate-400 cursor-not-allowed border border-slate-700/50">
           <i data-lucide="clock" class="w-3.5 h-3.5"></i>
           <span>教學即將上線</span>
         </button>
       </div>
 
-      <!-- 卡片 4：擴充預留提示卡 (Expandable placeholder) -->
+      <!-- 卡片 10：擴充預留提示卡 (Expandable placeholder) -->
       <div class="rounded-2xl border-2 border-dashed border-slate-800/80 hover:border-slate-700 p-6 flex flex-col items-center justify-center text-center transition-all bg-slate-950/40">
         <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-slate-500 mb-3 border border-slate-800">
           <i data-lucide="plus" class="w-6 h-6"></i>
         </div>
         <h3 class="font-bold text-slate-300 text-sm mb-1">更多工具持續擴充中</h3>
         <p class="text-xs text-slate-500 max-w-xs mb-3">
-          首頁具備模組化字卡結構，後續將陸續納入 n8n、Stripe、MongoDB Atlas 等實戰指南。
+          首頁具備模組化字卡結構，已完整收錄 Google 家族全系列，後續將陸續納入 n8n、Canva、Atlassian 等實戰指南。
         </p>
         <span class="text-[11px] text-sky-400/80 font-mono">持續更新 · 歡迎關注</span>
       </div>
@@ -395,14 +527,27 @@
   </main>
 
   <!-- 頁尾 -->
-  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 mt-16 text-center text-xs text-slate-500">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
-        <span>• 由 Antigravity AI 建立與維護</span>
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-10 mt-16 text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
+          <span>• Google 家族全套實戰指南已全數部署完畢</span>
+        </div>
+        <div class="flex flex-wrap gap-4 text-slate-400">
+          <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
+          <a href="google-sheets.html" class="hover:text-white transition-colors">Sheets (10 CSVs)</a>
+          <a href="gmail-calendar.html" class="hover:text-white transition-colors">Gmail & Calendar</a>
+          <a href="google-slides.html" class="hover:text-white transition-colors">Slides</a>
+          <a href="google-notebooklm.html" class="hover:text-white transition-colors">NotebookLM</a>
+          <a href="firebase.html" class="hover:text-white transition-colors">Firebase</a>
+          <a href="google-cloud-gemini.html" class="hover:text-white transition-colors">Cloud & Gemini</a>
+          <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
+        </div>
       </div>
-      <div>
-        <span>開源文件專案 · Hosted with GitHub Pages</span>
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-slate-900 pt-6">
+        <p>© 2026 Antigravity Tools Hub · 開源指南與社群實戰資源庫</p>
+        <p>Hosted with GitHub Pages</p>
       </div>
     </div>
   </footer>
