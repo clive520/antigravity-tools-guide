@@ -27,7 +27,7 @@
 - **Google Sheets 官方指南 (`google-sheets.html`)**：
   - Google 官方原生試算表外掛 (`gsheets`) 深度解析。
   - 結構化大數據讀寫、資料清洗去重、自動生成高階函數（QUERY / XLOOKUP / ARRAYFORMULA）、條件格式警示熱圖與跨分頁樞紐分析。
-  - **10 大跨角色實戰應用範例**：涵蓋導師成績加權排行、電商 ROAS 監控、財務報銷核銷、人資出勤異常核對、Scrum 燃盡圖、庫存安全存量預警、活動問卷電話正規化、業務階梯獎金試算、實驗室離群值篩除與個人外匯記帳。
+  - **10 大跨角色實戰應用範例（隨附 10 組真實練習 CSV 資料集）**：涵蓋導師成績加權排行、電商 ROAS 監控、財務報銷核銷、人資出勤異常核對、Scrum 燃盡圖、庫存安全存量預警、活動問卷電話正規化、業務階梯獎金試算、實驗室離群值篩除與個人外匯記帳。
   - 4 大神級公式解析與常見問答。
 
 ---
@@ -39,7 +39,9 @@ antigravity-tools-guide/
 ├── index.html              # 導覽首頁：模組化字卡網格系統
 ├── chrome-devtools.html    # Chrome DevTools MCP 詳細教學指南
 ├── google-drive-docs.html  # Google Drive & Docs 完整使用指南
-├── google-sheets.html      # Google Sheets 試算表與數據分析指南
+├── google-sheets.html      # Google Sheets 試算表與數據分析指南 (含 10 組 CSV 下載)
+├── data/
+│   └── sheets/             # 10 組情境擬真 UTF-8 BOM 練習用 CSV 資料檔
 ├── .nojekyll               # 確保 GitHub Pages 靜態檔案正常運作
 └── README.md               # 專案說明文件
 ```

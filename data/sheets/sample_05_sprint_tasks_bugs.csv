@@ -1,0 +1,13 @@
+﻿任務ID,類型,標題,負責人,優先級,預估故事點,實際耗時(時),當前狀態
+TASK-101,Feature,使用者個人檔案頭像剪裁上傳,林宏達,P1,5,8,Done
+TASK-102,Feature,重構認證模組支援JWT雙Token,張雅筑,P0,8,14,Done
+TASK-103,Bug,結帳流程在Safari瀏覽器點擊卡住,陳俊宇,P0,3,6,Review
+TASK-104,Feature,匯出訂單CSV批次匯出背景任務,林宏達,P2,3,4,Done
+TASK-105,Bug,商品清單頁分頁點擊閃退(Android),陳俊宇,P0,5,8,In Progress
+TASK-106,Task,升級Node.js運行環境至v22 LTS,張雅筑,P2,2,3,Done
+TASK-107,Feature,串接第三方電子發票開立API,黃少華,P1,8,12,In Progress
+TASK-108,Bug,優惠碼輸入小寫英文無法抵扣,陳俊宇,P1,2,3,In Progress
+TASK-109,Feature,後台權限管理角色RBAC設定,張雅筑,P1,5,7,Review
+TASK-110,Bug,發票手機條碼載入驗證正規表達式錯誤,陳俊宇,P0,3,5,To Do
+TASK-111,Task,編寫GraphQL端點單元測試覆蓋率,黃少華,P2,5,6,In Progress
+TASK-112,Bug,即時推播Notification延遲超過5分鐘,林宏達,P1,3,4,To Do
