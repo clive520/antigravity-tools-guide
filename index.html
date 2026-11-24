@@ -63,7 +63,7 @@
         </div>
         <div>
           <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-sky-300 bg-clip-text text-transparent">Antigravity Tools Hub</span>
-          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60 font-medium">19 大旗艦工具完整版</span>
+          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60 font-medium">20 大旗艦工具完整版</span>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -89,7 +89,7 @@
         <span class="bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">必備外掛與 MCP 工具</span>
       </h1>
       <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
-        從底層瀏覽器除錯、Google Workspace 全家桶、Canva 視覺設計，到工程自動化與雲端金流（GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo），全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
+        從底層瀏覽器除錯、Google Workspace 全家桶、Canva 視覺設計、Blender 3D 建模，到工程自動化與雲端金流（GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo），全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
       </p>
     </div>
 
@@ -930,16 +930,59 @@
         </a>
       </div>
 
-      <!-- 卡片 20：擴充預留提示卡 (Expandable placeholder) -->
+      <!-- 卡片 20：Blender 3D (本機軟體創作第十一棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="design automation" data-title="Blender 3D 建模 渲染 幾何 材質 燈光 Cycles Eevee 視口截圖 bpy 動畫 本機軟體">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-orange-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-orange-400" fill="currentColor">
+                <path d="M12.516 1.484a.994.994 0 0 0-.5.14L3.633 6.64a.998.998 0 0 0-.498.865v9.988c0 .363.195.698.51.87l8.383 4.604a.995.995 0 0 0 .972 0l8.383-4.604a.998.998 0 0 0 .51-.87V7.505a1 1 0 0 0-.5-.866L13.016 1.624a.998.998 0 0 0-.5-.14zm-.016 2.012 6.848 3.76-2.85 1.564-6.848-3.76 2.85-1.564zm-4.35 2.388 6.848 3.76-2.85 1.564-6.848-3.76 2.85-1.564zm-3.998 3.328 6.848 3.76v3.128l-6.848-3.76v-3.128zm8.848 3.76 6.848-3.76v3.128l-6.848 3.76v-3.128z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-orange-950/80 text-orange-400 border border-orange-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> 本機 3D 軟體
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">3D Modeling & bpy</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-orange-300 transition-colors flex items-center gap-2">
+            <span>Blender 3D</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-orange-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            本機開源 3D 建模與視覺創作中樞。支援自然語言生成 3D 幾何網格、PBR 著色器材質、三點電影級打光、多模態視口截圖自我審查，並能透過 Eevee/Cycles 快速算圖。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>3D 視覺創作 · 實戰手冊</span>
+              <span class="text-orange-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-orange-300">execute_bpy</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-orange-300">viewport_shot</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-orange-300">render_scene</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="blender.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-orange-600 via-amber-600 to-yellow-600 hover:from-orange-500 hover:to-amber-500 text-white shadow-lg shadow-orange-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 21：擴充預留提示卡 (Expandable placeholder) -->
       <div class="rounded-2xl border-2 border-dashed border-slate-800/80 hover:border-slate-700 p-6 flex flex-col items-center justify-center text-center transition-all bg-slate-950/40">
         <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-slate-500 mb-3 border border-slate-800">
           <i data-lucide="plus" class="w-6 h-6"></i>
         </div>
         <h3 class="font-bold text-slate-300 text-sm mb-1">更多工具持續擴充中</h3>
         <p class="text-xs text-slate-500 max-w-xs mb-3">
-          首頁具備模組化字卡結構，已完整收錄 Chrome DevTools、Google 家族 7 大神器、Canva、開發自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）以及擴充五棒（Cloudflare、Stripe、Linear、Atlassian、invideo），共 19 大旗艦工具指南。
+          首頁具備模組化字卡結構，已完整收錄 Chrome DevTools、Google 家族 7 大神器、Canva、開發自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）、擴充五棒（Cloudflare、Stripe、Linear、Atlassian、invideo）以及本機 3D 軟體旗艦 Blender，共 20 大旗艦工具指南。
         </p>
-        <span class="text-[11px] text-sky-400/80 font-mono">19 款工具上線 · 歡迎持續擴充</span>
+        <span class="text-[11px] text-sky-400/80 font-mono">20 款工具上線 · 歡迎持續擴充</span>
       </div>
 
     </div>
@@ -955,7 +998,7 @@
             <i data-lucide="palette" class="w-4 h-4"></i>
           </div>
           <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
-          <span>• 19 大旗艦工具（含 Google 家族、Canva、GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo）實戰指南全數上線</span>
+          <span>• 20 大旗艦工具（含 Google 家族、Canva、GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo、Blender 3D）實戰指南全數上線</span>
         </div>
         <div class="flex flex-wrap gap-4 text-slate-400">
           <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
@@ -976,6 +1019,7 @@
           <a href="linear.html" class="text-purple-400 font-semibold hover:text-white transition-colors">Linear</a>
           <a href="atlassian.html" class="text-blue-400 font-semibold hover:text-white transition-colors">Atlassian</a>
           <a href="invideo.html" class="text-rose-400 font-semibold hover:text-white transition-colors">invideo</a>
+          <a href="blender.html" class="text-orange-400 font-semibold hover:text-white transition-colors">Blender 3D</a>
           <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
         </div>
       </div>

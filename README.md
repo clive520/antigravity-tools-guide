@@ -10,7 +10,7 @@
 
 本專案收錄並整理 Antigravity 2.0 擴充套件市場（Marketplace）中官方與合作夥伴提供的關鍵工具使用指南，旨在幫助開發者、教育工作者、設計師、數據分析師與各領域專業人士充分發揮 AI Agent 的自動化、雲端協作與視覺生產力。
 
-目前已全面完成收錄 **Chrome DevTools**、**Google 家族（Google Family）全系列核心服務**、**Canva AI 視覺設計旗艦生態**、**開發者自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）**，以及**擴充第 6～10 棒（Cloudflare、Stripe、Linear、Atlassian TWG、invideo）**，共計 19 大專題頁面與 190 組以上跨角色實戰 Prompt。
+目前已全面完成收錄 **Chrome DevTools**、**Google 家族（Google Family）全系列核心服務**、**Canva AI 視覺設計旗艦生態**、**開發者自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）**、**擴充第 6～10 棒（Cloudflare、Stripe、Linear、Atlassian TWG、invideo）**，以及**本機軟體創作第十一棒（Blender 3D MCP）**，共計 20 大專題頁面與 200 組以上跨角色實戰 Prompt。
 
 ---
 
@@ -18,7 +18,7 @@
 
 ### 1. 核心首頁與導航 (`index.html`)
 - **模組化高擴充性字卡網格（Card Grid）**：支援即時關鍵字模糊搜尋、多類別標籤過濾（全部、辦公協作與知識庫、後端與除錯、自動化與 CLI、創意設計與視覺）。
-- **完整導覽連結**：一鍵直達 19 大工具專屬手冊，並具備優雅的暗黑毛玻璃（Dark Tech Glassmorphism）現代科技美學。
+- **完整導覽連結**：一鍵直達 20 大工具專屬手冊，並具備優雅的暗黑毛玻璃（Dark Tech Glassmorphism）現代科技美學。
 
 ### 2. Chrome DevTools MCP (`chrome-devtools.html`)
 - **官方維護版本**：由 Chrome DevTools 官方團隊維護的 MCP 擴充套件完整解析（v1.10.1）。
@@ -115,13 +115,19 @@
 - **核心能力**：自然語言一鍵生成分鏡劇本 (Prompt-to-Video)、神經網路擬真人聲配音、動態逐字卡 (Karaoke Captions)、真實多軌時間軸微調與 16:9 / 9:16 全通路重構。
 - **10 大跨角色實戰範例**：涵蓋 YouTube 創作者、電商行銷企劃、企業培訓師、房產經紀人、SaaS 產品經理、社群自媒體經營者等。
 
+### 21. Blender 3D (`blender.html`) · 本機軟體創作第十一棒
+- **本機桌面軟體橋接標竿**：`mcp-for-blender` 原生雙層橋接架構 (MCP Server + WebSocket + Blender Add-on)。
+- **核心能力**：自然語言程序化 3D 建模 (`bpy`/`bmesh`)、PBR 節點材質 (Principled BSDF) 自動架構、三點棚燈與 HDRI 環境佈光、多模態視覺閉環審查 (`get_viewport_screenshot`) 自我修正、Cycles/Eevee 高動態渲染輸出。
+- **使用者基本條件**：完整規範硬體配備 (8GB+ RAM / 獨立顯卡推薦)、軟體相容性 (Blender 3.6 LTS ~ 4.x)、具備 Vision 視覺理解之 AI 語言模型 (Claude 3.5 Sonnet / Gemini 2.0 / GPT-4o)、零程式門檻自然語言驅動，以及本機通訊埠 9876 安全沙盒驗證。
+- **10 大跨角色實戰範例**：涵蓋 3D 概念藝術家、電商產品視覺設計師、獨立遊戲開發者 (Indie Dev)、室內設計與建築表現師、動態圖像設計師 (Motion Designer)、科普教材教師、VFX 電影特效技術總監、3D 列印創客、珠寶配件設計師、科學數據視覺化研究員等。
+
 ---
 
 ## 📁 檔案結構
 
 ```tree
 antigravity-tools-guide/
-├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 19 大旗艦專題)
+├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 20 大旗艦專題)
 ├── chrome-devtools.html         # Chrome DevTools MCP 詳細教學指南
 ├── google-drive-docs.html       # Google Drive & Docs 完整使用指南
 ├── google-sheets.html           # Google Sheets 試算表與數據分析指南
@@ -141,6 +147,7 @@ antigravity-tools-guide/
 ├── linear.html                  # Linear 極速敏捷專案管理與 Cycles 指南
 ├── atlassian.html               # Atlassian TWG CLI Jira、Confluence 企業脈絡指南
 ├── invideo.html                 # invideo AI 影音創作與時間軸短影音指南
+├── blender.html                 # Blender 3D 程序建模、PBR 材質與視口截圖指南
 ├── data/
 │   └── sheets/                  # 10 組情境擬真 UTF-8 BOM 練習用 CSV 資料檔
 ├── .nojekyll                    # 確保 GitHub Pages 靜態檔案正常運作
