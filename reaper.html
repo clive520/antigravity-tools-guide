@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REAPER DAW 專業數位音訊工作站與混音自動化指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            reaper: {
+              emerald: '#10b981',
+              teal: '#14b8a6',
+              dark: '#0f172a',
+              50: '#ecfdf5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-600 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-emerald-600/15 via-teal-600/15 to-cyan-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-emerald-950/20 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-emerald-400" fill="currentColor">
+              <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">REAPER DAW MCP 聲音工程指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 頂級輕量專業 DAW
+        </span>
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 左側側邊欄導航 (Sticky Sidebar) -->
+      <aside class="lg:w-64 flex-shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="p-4 rounded-2xl glass-card space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+              <i data-lucide="compass" class="w-4 h-4 text-emerald-400"></i>
+              <span>目錄索引</span>
+            </h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與架構模式</a>
+              <a href="#prerequisites" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">2. 使用者基本條件與環境需求</a>
+              <a href="#features" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">3. 這個功能能做什麼？</a>
+              <a href="#tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">4. 核心工具架構與 API</a>
+              <a href="#prompts" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">5. 10 大跨角色實戰 Prompt</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">6. 安裝與設定教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">7. 常見問題 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-800/40 text-xs text-slate-400 space-y-2">
+            <div class="flex items-center gap-2 text-emerald-400 font-semibold">
+              <i data-lucide="music" class="w-4 h-4"></i>
+              <span>百項音訊工程自動化</span>
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              AI 可直接編排音軌、掛載 VST 效果器鏈、寫入 MIDI 和弦，並精準將整體音訊調節至廣播級 LUFS 響度標準！
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow max-w-4xl space-y-12 overflow-hidden">
+
+        <!-- 麵包屑導航 -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500">
+          <a href="index.html" class="hover:text-slate-300 transition-colors">首頁</a>
+          <span>/</span>
+          <span class="text-emerald-400">REAPER DAW 專業數位音訊工作站與混音自動化指南</span>
+        </nav>
+
+        <!-- 頁面標題區 -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-xs text-emerald-400 font-mono">
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+            <span>DESKTOP-MCP-06 · 本機軟體第 6 棒</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            REAPER DAW <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">專業數位音訊工作站與混音自動化指南</span>
+          </h1>
+          <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+            透過 Model Context Protocol (MCP) 與 REAPER 的 ReaScript / Python 擴充生態橋接。AI 代理能直接在時間軸上建立音軌、掛載等化器與壓縮器 VST 效果器、生成 MIDI 和弦進行、消除廣播底噪，並無損渲染導出高解析度音訊！
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-emerald-300 flex items-center gap-1.5">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> ReaScript & Python
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="sliders" class="w-3.5 h-3.5 text-teal-400"></i> FX Chain 效果器鏈
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="music-2" class="w-3.5 h-3.5 text-cyan-400"></i> MIDI 音符編寫
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> 本機極致輕量
+            </span>
+          </div>
+        </div>
+
+        <!-- 1. 功能概述與架構模式 -->
+        <section id="overview" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="cpu" class="w-5 h-5 text-emerald-400"></i>
+            <span>1. 功能概述與架構模式</span>
+          </h2>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            REAPER 擁有全球音樂工程界公認最強大的腳本擴充能力。AI 代理透過 REAPER MCP 伺服器，呼叫 ReaScript / Lua 或 Python API 操控主專案時間軸、推桿音量與效果器參數：
+          </p>
+
+          <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div class="text-xs font-semibold text-slate-300 flex items-center justify-between border-b border-slate-800 pb-3">
+              <span>REAPER DAW MCP 雙層橋接架構</span>
+              <span class="text-emerald-400 font-mono text-[11px]">stdio JSON-RPC ➔ ReaScript Engine</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-400 flex items-center justify-center mx-auto mb-2 border border-emerald-800/60">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">AI 聲音工程師</div>
+                  <div class="text-[11px] text-slate-400">Claude 3.5 / Gemini 2.0</div>
+                </div>
+                <div class="text-[10px] text-emerald-400 font-mono mt-3">混音策略與母帶頻譜規劃</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-emerald-800/50 flex flex-col justify-between relative">
+                <div class="hidden md:block absolute -left-2 top-1/2 -translate-y-1/2 text-emerald-500 font-bold">➔</div>
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 text-teal-400 flex items-center justify-center mx-auto mb-2 border border-teal-800/60">
+                    <i data-lucide="network" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">REAPER MCP Server</div>
+                  <div class="text-[11px] text-slate-400"><code>reaper-mcp</code></div>
+                </div>
+                <div class="text-[10px] text-emerald-400 font-mono mt-3">超過百項聲音工程工具集</div>
+                <div class="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 text-emerald-500 font-bold">➔</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 text-cyan-400 flex items-center justify-center mx-auto mb-2 border border-cyan-800/60">
+                    <i data-lucide="disc" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">本機 REAPER 核心</div>
+                  <div class="text-[11px] text-slate-400">ReaScript / 64-bit 混音</div>
+                </div>
+                <div class="text-[10px] text-cyan-400 font-mono mt-3">多軌錄音 / VST3 / 母帶渲染</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. 使用者基本條件與環境需求 -->
+        <section id="prerequisites" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+            <span>2. 使用者基本條件與環境需求</span>
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <i data-lucide="box" class="w-4 h-4"></i>
+                <span>1. 軟體環境條件</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>REAPER 主程式</strong>：需安裝 REAPER 6.x 或 7.x+（Windows/macOS/Linux 全面支援）。</li>
+                <li><strong>SWS Extension</strong>：建議安裝官方推薦的 SWS 擴充套件以獲得完整巨集能力。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <i data-lucide="hard-drive" class="w-4 h-4"></i>
+                <span>2. 硬體規格建議</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>記憶體 (RAM)</strong>：最低 4GB（大型交響樂音源庫推薦 16GB+）。</li>
+                <li><strong>音訊驅動</strong>：建議安裝 ASIO (Windows) 或使用 CoreAudio (Mac) 低延遲驅動。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>3. AI 音訊輔助</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li>AI 能分析各軌道的 Peak / RMS 分貝與頻率分佈，提供專業混音建議並自動調整推桿。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <i data-lucide="shield" class="w-4 h-4"></i>
+                <span>4. 安全與技能門檻</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>零專業調音門檻</strong>：初學者口述「人聲去雜音並把背景音樂調小」，老手可批次處理海量音軌。</li>
+                <li><strong>本機封閉執行</strong>：保護商業音樂母帶與原創聲音版權。</li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 3. 這個功能能做什麼？ -->
+        <section id="features" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-5 h-5 text-emerald-400"></i>
+            <span>3. 這個功能能做什麼？</span>
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-800/60 flex items-center justify-center text-emerald-400 mb-1">
+                <i data-lucide="sliders" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">音軌建立與匯流排路由 (Bus Routing)</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動建立主聲部、伴奏、打擊樂音軌，設定子混音 Bus 路由與發送量 (Send)，一鍵上色整理。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-teal-950 border border-teal-800/60 flex items-center justify-center text-teal-400 mb-1">
+                <i data-lucide="activity" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">VST/AU 效果器鏈參數精準調教</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                為音軌插入 ReaEQ、ReaComp、Limiter 效果器，自動設定高通濾波 (High Pass) 消除 80Hz 以下低頻雜音。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-cyan-950 border border-cyan-800/60 flex items-center justify-center text-cyan-400 mb-1">
+                <i data-lucide="music" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">MIDI 和弦進行編排與寫入</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                口述和弦名稱（如「流行歌經典 4536251」），AI 自動在指定小節精準寫入 MIDI 音符、力度與長度。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 mb-1">
+                <i data-lucide="volume-2" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">廣播級 LUFS 響度標準與無損導出</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動量測專案整合響度，調整至 Spotify/Apple Music 要求的 -14 LUFS，並渲染輸出 48kHz/24bit WAV。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 4. 核心工具架構與 API -->
+        <section id="tools" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="wrench" class="w-5 h-5 text-emerald-400"></i>
+            <span>4. 核心工具架構與 API</span>
+          </h2>
+
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/90 text-slate-300 border-b border-slate-800 font-mono">
+                  <tr>
+                    <th class="py-3 px-4">工具名稱</th>
+                    <th class="py-3 px-4">呼叫參數</th>
+                    <th class="py-3 px-4">功能說明</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">reaper_create_track</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">name, index?, color_hex?</td>
+                    <td class="py-3 px-4">在時間軸建立全新音軌並指派顏色與識別標籤。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">reaper_add_fx_plugin</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">track_name, fx_name, preset_name?</td>
+                    <td class="py-3 px-4">為指定音軌掛載 VST/AU 效果器外掛（如 EQ, Compressor, Reverb）。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">reaper_insert_midi_notes</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">track_name, start_time, notes_array</td>
+                    <td class="py-3 px-4">在時間軸特定小節插入包含音高、力度與時值的 MIDI 音符。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">reaper_set_track_volume_pan</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">track_name, volume_db, pan</td>
+                    <td class="py-3 px-4">調整特定音軌的推桿分貝值 (dB) 與左右立體聲相 (Pan)。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">reaper_render_project</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">output_path, sample_rate, bit_depth, format</td>
+                    <td class="py-3 px-4">依據參數批次或選區渲染導出 WAV/MP3 完整音訊作品。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. 10 大跨角色實戰 Prompt -->
+        <section id="prompts" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                <i data-lucide="terminal" class="w-5 h-5 text-emerald-400"></i>
+                <span>5. 10 大跨角色實戰 Prompt</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">涵蓋 Podcast 剪輯、配樂作曲、樂團混音、遊戲音效與母帶處理多角實戰</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">10 個高階範例</span>
+          </div>
+
+          <div class="space-y-4">
+
+            <!-- Prompt 1 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 01</span>
+                  <span class="text-xs font-bold text-white">Podcast 後製師 · 雙人訪談底噪清除與廣播響度平衡</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_add_fx_plugin</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 REAPER MCP 為我清理兩軌訪談錄音：
+1. 為 `Host_Mic` 與 `Guest_Mic` 音軌掛載 ReaEQ，開啟 80Hz 高通濾波 (High Pass) 消除噴麥氣流。
+2. 掛載 ReaComp 壓縮器（門檻 -18dB，壓縮比 3:1，Attack 20ms）。
+3. 均衡整體專案整合響度至 -16.0 LUFS，True Peak 不得突破 -1.0 dBTP。</pre>
+                <button onclick="copyPrompt('p1', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 02</span>
+                  <span class="text-xs font-bold text-white">影視配樂作曲家 · 弦樂四重奏 MIDI 和弦進行編寫</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_insert_midi_notes</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請建立 4 軌弦樂並寫入和弦：
+1. 建立音軌：Violin 1, Violin 2, Viola, Cello。
+2. 在第 1~8 小節寫入經典 D 小調和弦進行 (Dm - Bb - F - C)。
+3. Cello 負責根音持續長音，Violin 負責分解琶音，力度設為 75。</pre>
+                <button onclick="copyPrompt('p2', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 03</span>
+                  <span class="text-xs font-bold text-white">樂團混音師 · 爵士鼓組子混音 (Drum Bus) 與總線壓縮</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_create_track</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請配置鼓組混音架構：
+1. 建立 `Drum_Bus` 資料夾母軌，將 Kick、Snare、HiHat、Toms、Overhead 軌道編入。
+2. 在 Drum_Bus 掛載總線壓縮器（Glue Compressor），讓鼓聲緊實有力。
+3. 將 Kick 與 Bass 進行側鏈 (Sidechain) 避讓設置。</pre>
+                <button onclick="copyPrompt('p3', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 04</span>
+                  <span class="text-xs font-bold text-white">遊戲音效設計師 · 變速降調 (Pitch Shift) 金屬衝擊音效</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_add_fx_plugin</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請調教槍械音效軌：
+1. 將當前音效素材降調 7 個半音 (Pitch -7)。
+2. 掛載金屬空間 Convolution Reverb，將衰減時間設為 0.8 秒。
+3. 輸出為遊戲專用 48kHz/16bit WAV 格式。</pre>
+                <button onclick="copyPrompt('p4', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 5 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 05</span>
+                  <span class="text-xs font-bold text-white">母帶後期工程師 · Master 總線限幅與 True Peak 防破音</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_render_project</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請為 Master 軌道配置母帶鏈：
+1. 掛載多頻段動態壓縮器 (Multiband Compressor)。
+2. 最後一級掛載磚牆限制器 (Brickwall Limiter, Ceiling -0.8dB)。
+3. 輸出母帶高音質無損 FLAC 格式。</pre>
+                <button onclick="copyPrompt('p5', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 6-10 包含配音員、EDM、有聲書、除噪與 AI 自檢 -->
+            <!-- Prompt 6 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 06</span>
+                  <span class="text-xs font-bold text-white">語音配音員 · 自動偵測靜音段落並精準裁切</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_set_track_volume_pan</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請執行語音呼吸聲與靜音切除：
+1. 偵測音量低於 -45dB 且持續超過 0.7 秒的區段進行自動靜音裁切。
+2. 剪輯點兩端添加 10ms 交叉淡入淡出 (Crossfade) 消除爆音。</pre>
+                <button onclick="copyPrompt('p6', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 7 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 07</span>
+                  <span class="text-xs font-bold text-white">電音製作人 · 4 小節側鏈抽吸節奏特效</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_add_fx_plugin</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">為 Synth Pad 合成器音軌配置四四拍 EDM 抽吸側鏈：
+1. 側鏈觸發源設定為大鼓 Kick 軌道。
+2. 壓縮器 Attack 設為 5ms，Release 配合 128 BPM 設為 110ms。</pre>
+                <button onclick="copyPrompt('p7', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 8 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 08</span>
+                  <span class="text-xs font-bold text-white">有聲書工程師 · 章節 Marker 標註與分段批次導出</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_render_project</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請依據章節時間戳建立 REAPER 標記：
+1. 在指定秒數插入 Marker 01: "序章"、Marker 02: "第一章"。
+2. 使用 Wildcard `$marker` 批次渲染分割為獨立章節 MP3 檔案。</pre>
+                <button onclick="copyPrompt('p8', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 9 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 09</span>
+                  <span class="text-xs font-bold text-white">現場錄音師 · 60Hz 交流電蜂鳴聲反相消除</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_add_fx_plugin</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">掛載 ReaFIR 降噪濾波器：
+1. 針對 60Hz 及其諧波 120Hz, 180Hz 設定窄頻陷波 (Notch Filter)。
+2. 精準衰減 24dB，完全去除電源蜂鳴干擾。</pre>
+                <button onclick="copyPrompt('p9', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 10 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 10</span>
+                  <span class="text-xs font-bold text-white">AI 頻譜工程師 · 300Hz 渾濁頻段自動衰減（頻譜自檢）</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">reaper_add_fx_plugin</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">啟動混音頻譜自檢與平衡閉環：
+1. 掃描專案所有樂器軌道在 250Hz~350Hz 之頻率能量堆積。
+2. 若發現能量過載造成聽覺渾濁，自動在吉他與鍵盤軌衰減 300Hz -2.5dB (Q: 1.4)。
+3. 回傳微調前後的 RMS 平衡對比數據。</pre>
+                <button onclick="copyPrompt('p10', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 6. 安裝與設定教學 -->
+        <section id="setup" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i>
+            <span>6. 安裝與設定教學</span>
+          </h2>
+          <div class="space-y-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <span class="w-5 h-5 rounded-full bg-emerald-950 flex items-center justify-center text-[11px] border border-emerald-800">1</span>
+                <span>安裝 REAPER 與 SWS 擴充套件</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                自 <a href="https://www.reaper.fm/" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">reaper.fm</a> 下載安裝 REAPER 7.x。接著前往 sws-extension.org 安裝 SWS 擴充包。
+              </p>
+            </div>
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <span class="w-5 h-5 rounded-full bg-emerald-950 flex items-center justify-center text-[11px] border border-emerald-800">2</span>
+                <span>配置 Antigravity / Claude 設定檔</span>
+              </div>
+              <div class="bg-slate-900 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-emerald-300 font-mono overflow-x-auto whitespace-pre">{
+  "mcpServers": {
+    "reaper": {
+      "command": "uvx",
+      "args": ["reaper-mcp"]
+    }
+  }
+}</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. 常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="help-circle" class="w-5 h-5 text-emerald-400"></i>
+            <span>7. 常見問題 (FAQ)</span>
+          </h2>
+          <div class="space-y-3">
+            <div class="glass-card rounded-xl p-4 border border-slate-800 space-y-1.5">
+              <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                <i data-lucide="help-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span>第三方商業 VST3 外掛（如 FabFilter, Waves）也能由 AI 調控嗎？</span>
+              </h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                可以！只要該 VST3 效果器已在 REAPER 中完成掃描，AI 就能透過外掛參數名稱精準調控其 Gain、Q 值與門檻參數。
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-3">
+      <div class="flex items-center justify-center gap-2 text-slate-400 font-medium">
+        <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i>
+        <span>Antigravity Tools Hub · REAPER DAW 聲音工程指南</span>
+      </div>
+      <div class="flex justify-center gap-4 text-slate-400 pt-2">
+        <a href="index.html" class="hover:text-white transition-colors">回首頁</a>
+        <span>•</span>
+        <a href="inkscape.html" class="hover:text-white transition-colors">Inkscape 向量</a>
+        <span>•</span>
+        <a href="unity.html" class="hover:text-white transition-colors">Unity 遊戲</a>
+        <span>•</span>
+        <a href="krita.html" class="hover:text-white transition-colors">Krita 插畫</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(id, btn) {
+      const parent = btn.closest('.glass-card');
+      const text = parent.querySelector('pre').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const span = btn.querySelector('span');
+        const originalText = span.innerText;
+        span.innerText = '已複製！';
+        btn.classList.add('bg-emerald-600', 'text-white');
+        setTimeout(() => {
+          span.innerText = originalText;
+          btn.classList.remove('bg-emerald-600', 'text-white');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

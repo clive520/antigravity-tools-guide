@@ -10,7 +10,7 @@
 
 本專案收錄並整理 Antigravity 2.0 擴充套件市場（Marketplace）中官方與合作夥伴提供的關鍵工具使用指南，旨在幫助開發者、教育工作者、設計師、數據分析師與各領域專業人士充分發揮 AI Agent 的自動化、雲端協作與視覺生產力。
 
-目前已全面完成收錄 **Chrome DevTools**、**Google 家族（Google Family）全系列核心服務**、**Canva AI 視覺設計旗艦生態**、**開發者自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）**、**擴充第 6～10 棒（Cloudflare、Stripe、Linear、Atlassian TWG、invideo）**，以及**本機軟體創作第十一、十二棒（Blender 3D、OBS Studio）**，共計 21 大專題頁面與 210 組以上跨角色實戰 Prompt。
+目前已全面完成收錄 **Chrome DevTools**、**Google 家族（Google Family）全系列核心服務**、**Canva AI 視覺設計旗艦生態**、**開發者自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）**、**擴充第 6～10 棒（Cloudflare、Stripe、Linear、Atlassian TWG、invideo）**，以及**本機桌面軟體旗艦八棒（Blender 3D、OBS Studio、FreeCAD、Krita、Unity Editor、Inkscape、REAPER DAW、Adobe Photoshop）**，共計 27 大旗艦工具專題頁面與 270 組以上跨角色實戰 Prompt。
 
 ---
 
@@ -18,7 +18,7 @@
 
 ### 1. 核心首頁與導航 (`index.html`)
 - **模組化高擴充性字卡網格（Card Grid）**：支援即時關鍵字模糊搜尋、多類別標籤過濾（全部、辦公協作與知識庫、後端與除錯、自動化與 CLI、創意設計與視覺）。
-- **完整導覽連結**：一鍵直達 21 大工具專屬手冊，並具備優雅的暗黑毛玻璃（Dark Tech Glassmorphism）現代科技美學。
+- **完整導覽連結**：一鍵直達 27 大工具專屬手冊，並具備優雅的暗黑毛玻璃（Dark Tech Glassmorphism）現代科技美學。
 
 ### 2. Chrome DevTools MCP (`chrome-devtools.html`)
 - **官方維護版本**：由 Chrome DevTools 官方團隊維護的 MCP 擴充套件完整解析（v1.10.1）。
@@ -127,13 +127,49 @@
 - **使用者基本條件**：OBS Studio 28.0+（內建 WebSocket，100% 免額外裝外掛）、8GB+ RAM / 硬體編碼加速、具備 Vision 視覺理解能力之 AI 語言模型、零程式碼門檻、本機環回通訊埠 4455 安全沙盒驗證。
 - **10 大跨角色實戰範例**：涵蓋線上教學教師、遊戲實況主、SaaS 產品經理、跨國線上座談主持、影音播客 (Video Podcast)、虛擬 VTuber 實況、無障礙導讀員、軟體 QA 測試員、電商直播帶貨、AI 智慧導播總監等。
 
+### 23. FreeCAD (`freecad.html`) · 本機軟體創作第十三棒
+- **開源參數化 3D CAD/CAM 建模神器**：`freecad-mcp` 本機 RPC / Python API 服務橋接。
+- **核心能力**：自然語言草圖約束 (`Sketcher`)、PartDesign 實體特徵造型（拉伸/倒角/布林運算）、組裝關係約束、STEP/STL 工程檔解析與 3D 列印 G-code 切片參數核查。
+- **使用者基本條件**：FreeCAD 0.21+ / 1.0+（內建 Python 3 API）、8GB+ RAM / 支援 OpenGL 3.0+ 顯卡、具備空間拓撲推理之 AI 語言模型、零 Python 腳本門檻、本機環回通訊埠 9000 安全沙盒驗證。
+- **10 大跨角色實戰範例**：涵蓋機械工程師、3D 列印創客、工業產品設計師、機器人結構研發、建築與模組化構件師、工裝夾具技工、科普 STEM 教師、硬體新創原型師、逆向工程審計師、精密公差驗證工程師等。
+
+### 24. Krita (`krita.html`) · 本機軟體創作第十四棒
+- **開源專業數位繪畫與插畫中樞**：`krita-mcp` FastMCP + Krita 本機 Python Plugin (PyQt5)。
+- **核心能力**：自然語言畫布圖層管理（Blending Modes / 剪裁遮罩）、筆刷引擎動態切換、色環配色調色盤調配、視口畫布即時 Base64 快照視覺自檢與多圖層 PSD/KRA 匯出。
+- **使用者基本條件**：Krita 5.0+（內建 Python 腳本工具）、8GB+ RAM / 繪圖板支援、具備 Vision 視覺理解能力之 AI 語言模型、零腳本門檻、本機通訊埠 8080 安全沙盒驗證。
+- **10 大跨角色實戰範例**：涵蓋概念插畫家、動漫分鏡漫畫家、遊戲 2D 骨骼貼圖師、UI/UX 圖標繪製師、童書繪本創作者、美術概念設定總監、水彩擬真手繪畫家、社群縮圖視覺企劃、數位繪畫培訓教師、復古像素藝術家等。
+
+### 25. Unity Editor (`unity.html`) · 本機軟體創作第十五棒
+- **全球頂尖跨平台遊戲引擎與即時 3D 創作**：`unity-mcp` C# Editor Bridge WebSocket 連線。
+- **核心能力**：自然語言階層樹 (Hierarchy) 與場景物件巡檢、Inspector 元件參數動態微調、Prefabs 預製物實例化與關聯擺放、Console 報錯堆疊反查與場景相機視角截圖自檢。
+- **使用者基本條件**：Unity 2021.3 LTS / 2022.3 LTS / Unity 6、16GB+ RAM / 獨立顯卡加速、具備遊戲架構推理之 AI 語言模型、零 C# 繁瑣反射門檻、本機環回通訊埠 8080 安全沙盒驗證。
+- **10 大跨角色實戰範例**：涵蓋獨立遊戲製作人、關卡設計師 (Level Designer)、遊戲技術美術 (TA)、遊戲客戶端主程、Unity QA 自動化工程師、XR/VR 虛擬實境開發者、遊戲音效與音效觸發工程師、手機遊戲效能優化師、遊戲教學講師、UI 元件佈局工程師等。
+
+### 26. Inkscape (`inkscape.html`) · 本機軟體創作第十六棒
+- **開源專業向量向量插畫與標準 SVG 設計神器**：`inkscape-mcp` FastMCP + Inkscape Actions CLI。
+- **核心能力**：自然語言標準 W3C SVG 向量繪製、貝茲曲線節點與平滑優化、布林運算（聯集/交集/差集/打散）、幾何對齊與網格分佈、多解析度 PNG/PDF/WebP 批次算繪匯出。
+- **使用者基本條件**：Inkscape 1.2+ / 1.3+（支援完整 Actions 命令行介面）、4GB+ RAM、具備向量幾何空間推理之 AI 語言模型、零 CLI 指令門檻、本機無連網純檔案隔離沙盒驗證。
+- **10 大跨角色實戰範例**：涵蓋向量插畫家、UI 圖標設計師 (Icon Designer)、雷射雕刻與 CNC 創客、品牌識別 (Logo) 設計師、技術文件架構圖繪製員、字型與字體設計師 (Typography)、向量地圖繪製員、包裝刀模與紙模工程師、服裝與刺繡打版師、向量視覺藝術教育者等。
+
+### 27. REAPER DAW (`reaper.html`) · 本機軟體創作第十七棒
+- **極致輕量與極限擴充之專業數位音訊工作站**：`reaper-mcp` ReaScript / Python API (`reapy`)。
+- **核心能力**：多軌音訊排列與標籤管理、VST/AU 效果器鏈參數自動化調整、自然語言音訊波形切分與對齊 (Ripple Editing)、LUFS 響度正規化與即時音軌快照審查。
+- **使用者基本條件**：REAPER 6.x / 7.x（內建 ReaScript 擴充環境）、4GB+ RAM / ASIO 低延遲音效卡、具備專業音訊聲學理解之 AI 語言模型、零 ReaScript 寫碼門檻、本機通訊安全沙盒驗證。
+- **10 大跨角色實戰範例**：涵蓋 Podcast 剪輯後製師、音樂製作人 (Producer)、遊戲擬音與音效設計師 (Foley/Sound Designer)、配音錄音室工程師、影視配樂混音師、Mastering 母帶後期工程師、廣播電台成音工程師、有聲書製作總監、無障礙語音處理專員、成音工程教學講師等。
+
+### 28. Adobe Photoshop (`photoshop.html`) · 本機軟體創作第十八棒
+- **全球商業數位影像處理與視覺設計黃金標竿**：`photoshop-mcp` ExtendScript / UXP / WebSocket Bridge。
+- **核心能力**：多圖層樹狀階層管理、非破壞性調整圖層與智慧型濾鏡套用、精密選區與羽化遮罩建立、畫布畫板 (Artboards) 全尺寸動態重構、Web 格式批次裁切與自動化命名匯出。
+- **使用者基本條件**：Adobe Photoshop CC 2021+（支援 UXP / Generator / 腳本監聽器）、16GB+ RAM / GPU 加速支援、具備多模態視覺色彩審美之 AI 語言模型、零 ExtendScript 代碼門檻、本機通訊埠安全沙盒驗證。
+- **10 大跨角色實戰範例**：涵蓋商業修圖師 (Retoucher)、電商主圖與廣告設計師、電影海報視覺總監、社群視覺小編、數位霧面繪畫師 (Matte Painter)、攝影師後製助理、UI 設計資產切圖師、包裝印刷色彩管理師、視覺行銷藝術指導、影像合成教學名師等。
+
 ---
 
 ## 📁 檔案結構
 
 ```tree
 antigravity-tools-guide/
-├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 21 大旗艦專題)
+├── index.html                   # 導覽首頁：模組化字卡網格系統 (收錄 27 大旗艦專題)
 ├── chrome-devtools.html         # Chrome DevTools MCP 詳細教學指南
 ├── google-drive-docs.html       # Google Drive & Docs 完整使用指南
 ├── google-sheets.html           # Google Sheets 試算表與數據分析指南
@@ -155,8 +191,20 @@ antigravity-tools-guide/
 ├── invideo.html                 # invideo AI 影音創作與時間軸短影音指南
 ├── blender.html                 # Blender 3D 程序建模、PBR 材質與視口截圖指南
 ├── obs.html                     # OBS Studio 直播錄影與 AI 智慧導播指南
+├── freecad.html                 # FreeCAD 參數化 3D CAD/CAM 工程建模指南
+├── krita.html                   # Krita 數位繪圖、概念插畫與分鏡草稿指南
+├── unity.html                   # Unity Editor 遊戲引擎開發與場景物件指南
+├── inkscape.html                # Inkscape 向量插畫、UI 圖標與 SVG 繪圖指南
+├── reaper.html                  # REAPER DAW 數位音訊工作站與混音剪輯指南
+├── photoshop.html               # Adobe Photoshop 影像處理與圖層自動化指南
 ├── plans/                       # 桌面軟體 MCP 循序開發計畫書庫
-│   └── 01_obs_studio_mcp_plan.md# OBS Studio MCP 完整開發計畫書
+│   ├── 01_obs_studio_mcp_plan.md# OBS Studio MCP 完整開發計畫書
+│   ├── 02_freecad_mcp_plan.md   # FreeCAD MCP 完整開發計畫書
+│   ├── 03_krita_mcp_plan.md     # Krita MCP 完整開發計畫書
+│   ├── 04_unity_mcp_plan.md     # Unity Editor MCP 完整開發計畫書
+│   ├── 05_inkscape_mcp_plan.md  # Inkscape MCP 完整開發計畫書
+│   ├── 06_reaper_mcp_plan.md    # REAPER DAW MCP 完整開發計畫書
+│   └── 07_photoshop_mcp_plan.md # Adobe Photoshop MCP 完整開發計畫書
 ├── data/
 │   └── sheets/                  # 10 組情境擬真 UTF-8 BOM 練習用 CSV 資料檔
 ├── .nojekyll                    # 確保 GitHub Pages 靜態檔案正常運作

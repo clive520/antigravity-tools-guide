@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreeCAD 參數化 3D 實體建模與工程製造指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            freecad: {
+              red: '#dc2626',
+              dark: '#0f172a',
+              slate: '#334155',
+              50: '#fef2f2',
+              500: '#ef4444',
+              600: '#dc2626',
+              700: '#b91c1c',
+              900: '#7f1d1d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-red-600 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-red-600/15 via-rose-600/15 to-amber-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-red-950/20 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-red-500" fill="currentColor">
+              <path d="M12 2 2 7l10 5 10-5-10-5zm0 9L2 6v11l10 5 10-5V6l-10 5z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">FreeCAD MCP 工程指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-red-950/80 text-red-400 border border-red-800/60 font-mono">
+          <span class="w-2 h-2 rounded-full bg-red-500"></span> 參數化實體 CAD
+        </span>
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 左側側邊欄導航 (Sticky Sidebar) -->
+      <aside class="lg:w-64 flex-shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="p-4 rounded-2xl glass-card space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+              <i data-lucide="compass" class="w-4 h-4 text-red-400"></i>
+              <span>目錄索引</span>
+            </h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與架構模式</a>
+              <a href="#prerequisites" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-slate-900/80 transition-colors">2. 使用者基本條件與環境需求</a>
+              <a href="#features" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-slate-900/80 transition-colors">3. 這個功能能做什麼？</a>
+              <a href="#tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-slate-900/80 transition-colors">4. 核心工具架構與 API</a>
+              <a href="#prompts" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-slate-900/80 transition-colors">5. 10 大跨角色實戰 Prompt</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-slate-900/80 transition-colors">6. 安裝與設定教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-slate-900/80 transition-colors">7. 常見問題 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-red-950/40 to-slate-900 border border-red-800/40 text-xs text-slate-400 space-y-2">
+            <div class="flex items-center gap-2 text-red-400 font-semibold">
+              <i data-lucide="box" class="w-4 h-4"></i>
+              <span>製造級實體建模</span>
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              不同於純網格美術模型，FreeCAD 生成的是帶精確尺寸約束與特徵歷史樹的工程實體，直出 3D 列印 STL 與 CNC STEP 檔！
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow max-w-4xl space-y-12 overflow-hidden">
+
+        <!-- 麵包屑導航 -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500">
+          <a href="index.html" class="hover:text-slate-300 transition-colors">首頁</a>
+          <span>/</span>
+          <span class="text-red-400">FreeCAD 參數化 3D 實體建模與工程製造指南</span>
+        </nav>
+
+        <!-- 頁面標題區 -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-950/80 border border-red-800/60 text-xs text-red-400 font-mono">
+            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+            <span>DESKTOP-MCP-02 · 本機軟體第 2 棒</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            FreeCAD <span class="bg-gradient-to-r from-red-500 via-rose-400 to-amber-400 bg-clip-text text-transparent">參數化 3D 實體建模與工程製造指南</span>
+          </h1>
+          <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+            透過 Model Context Protocol (MCP) 橋接開源世界最強大的參數化實體 CAD 系統。使用自然語言精確描述長寬高、工程約束、特徵挖孔與拔模倒角，AI 自動生成 PartDesign 特徵樹並一鍵匯出製造級 STEP 與 3D 列印 STL 檔案！
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-red-300 flex items-center gap-1.5">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-red-400"></i> 參數化實體 CSG
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="file-output" class="w-3.5 h-3.5 text-amber-400"></i> STEP / STL 直出
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="code" class="w-3.5 h-3.5 text-emerald-400"></i> FreeCAD Python API
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="camera" class="w-3.5 h-3.5 text-blue-400"></i> 等角軸測視覺自檢
+            </span>
+          </div>
+        </div>
+
+        <!-- 1. 功能概述與架構模式 -->
+        <section id="overview" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="cpu" class="w-5 h-5 text-red-400"></i>
+            <span>1. 功能概述與架構模式</span>
+          </h2>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            在傳統 CAD 流程中，繪製一個機械零件需繁瑣地手動點擊平面草圖、設定尺寸幾何約束、擠出成型與挖孔。在 FreeCAD MCP 架構下，AI 代理直接編譯呼叫 FreeCAD 內部 Python API（`Part`、`PartDesign`、`Sketcher`），實現精確的代碼化實體建構：
+          </p>
+
+          <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div class="text-xs font-semibold text-slate-300 flex items-center justify-between border-b border-slate-800 pb-3">
+              <span>FreeCAD MCP 雙層橋接架構</span>
+              <span class="text-red-400 font-mono text-[11px]">Local RPC / Python Bridge</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-red-950 text-red-400 flex items-center justify-center mx-auto mb-2 border border-red-800/60">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">AI 思考與幾何規劃</div>
+                  <div class="text-[11px] text-slate-400">Claude 3.5 / Gemini 2.0</div>
+                </div>
+                <div class="text-[10px] text-red-400 font-mono mt-3">工程約束與特徵規劃</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-red-800/50 flex flex-col justify-between relative">
+                <div class="hidden md:block absolute -left-2 top-1/2 -translate-y-1/2 text-red-500 font-bold">➔</div>
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 text-amber-400 flex items-center justify-center mx-auto mb-2 border border-amber-800/60">
+                    <i data-lucide="network" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">FreeCAD MCP Server</div>
+                  <div class="text-[11px] text-slate-400"><code>freecad-mcp</code> (FastMCP/RPC)</div>
+                </div>
+                <div class="text-[10px] text-red-400 font-mono mt-3">stdio JSON-RPC ➔ 本機 RPC</div>
+                <div class="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 text-red-500 font-bold">➔</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 text-rose-400 flex items-center justify-center mx-auto mb-2 border border-rose-800/60">
+                    <i data-lucide="box" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">本機 FreeCAD 引擎</div>
+                  <div class="text-[11px] text-slate-400">OpenCASCADE 實體核心</div>
+                </div>
+                <div class="text-[10px] text-rose-400 font-mono mt-3">草圖約束 / 倒角 / STEP 匯出</div>
+              </div>
+            </div>
+            
+            <div class="p-3 rounded-xl bg-red-950/30 border border-red-800/40 text-[11px] text-slate-300 leading-relaxed">
+              <strong>💡 為什麼工程製造必須用 FreeCAD 而非網格軟體？</strong> 網格模型（如 OBJ/FBX）是由數以萬計的微小三角形平面拼湊而成，缺乏真實圓弧半徑與實體公差；而 FreeCAD 是 BREP（邊界表示法）實體幾何，圓形就是真正的數學圓，CNC 銑刀與 3D 切片軟體能精確解析加工路徑！
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. 使用者基本條件與環境需求 -->
+        <section id="prerequisites" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="check-circle" class="w-5 h-5 text-red-400"></i>
+            <span>2. 使用者基本條件與環境需求</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            開始使用 FreeCAD MCP 前，請確認您的電腦設備與工作環境已滿足以下 5 大基礎條件：
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-red-400 font-bold text-xs">
+                <i data-lucide="box" class="w-4 h-4"></i>
+                <span>1. 軟體環境條件（100% 免費開源）</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>FreeCAD 主程式</strong>：需已安裝 FreeCAD 0.20、0.21 或 1.0+（官方完全免費開源，無任何商業訂閱）。</li>
+                <li><strong>Python 與套件工具</strong>：本機具備 Python 3.10+，推薦安裝 <code>uv</code> 以便執行 <code>uvx freecad-mcp</code>。</li>
+                <li><strong>OpenCASCADE 核心支援</strong>：FreeCAD 官方安裝包已完整封裝幾何核心，無需額外編譯。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-red-400 font-bold text-xs">
+                <i data-lucide="hard-drive" class="w-4 h-4"></i>
+                <span>2. 硬體規格建議</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>記憶體 (RAM)</strong>：最低 8GB（複雜零件布林裁切推薦 16GB 以上）。</li>
+                <li><strong>顯示卡</strong>：支援 OpenGL 3.0+ 即可流暢旋轉 3D 幾何實體。</li>
+                <li><strong>儲存空間</strong>：保留 2GB 空間存放 FreeCAD 本體與匯出之 STEP/STL 模型檔。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-red-400 font-bold text-xs">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>3. AI 客戶端與 Vision 多模態支援</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>相容 MCP 之客戶端</strong>：Antigravity 2.0、Claude Desktop、Cursor 等。</li>
+                <li><strong>Vision 視覺模型推薦</strong>：搭配具備多模態視覺辨識之 LLM（Claude 3.5 Sonnet / Gemini 2.0），能自動讀取等角軸測圖快照，檢驗螺絲孔位與壁厚。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-red-400 font-bold text-xs">
+                <i data-lucide="shield" class="w-4 h-4"></i>
+                <span>4. 零程式門檻與本機安全防護</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>零 CAD 程式基礎</strong>：只需以日常中文說明「長 100mm 寬 50mm 厚 10mm，兩端開 M5 貫通螺孔」，AI 自行轉譯。</li>
+                <li><strong>封閉沙盒執行</strong>：RPC 通訊僅限本機環回位址 <code>127.0.0.1:9000</code>，保障機構專利安全。</li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 3. 這個功能能做什麼？ -->
+        <section id="features" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-5 h-5 text-red-400"></i>
+            <span>3. 這個功能能做什麼？</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            FreeCAD MCP 將傳統需要滑鼠拉扯約束的繁瑣 CAD 作業，轉變為工程意圖直達的代碼化生產力：
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-red-950 border border-red-800/60 flex items-center justify-center text-red-400 mb-1">
+                <i data-lucide="cube" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">參數化 CSG 實體幾何建構</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自然語言生成立方體、圓柱、球體，並自動執行布林聯集 (Fuse)、切除 (Cut) 與交集 (Common)，精準搭建多孔法蘭盤與機械外殼。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-amber-950 border border-amber-800/60 flex items-center justify-center text-amber-400 mb-1">
+                <i data-lucide="download" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">製造級 STEP 與 3D 列印 STL 匯出</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                完成幾何特徵後，一句話自動匯出乾淨水密（Watertight）的 <code>.stl</code> 供切片軟體列印，或輸出 <code>.step</code> 供 CNC 車銑複合加工。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-rose-950 border border-rose-800/60 flex items-center justify-center text-rose-400 mb-1">
+                <i data-lucide="sliders" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">特徵樹階層化管理與倒角</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動為實體邊緣施加 2mm 倒圓角 (Fillet) 或 45 度倒斜角 (Chamfer)，建立拔模斜度與加強肋骨，特徵歷史完整保留可隨時回溯。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-blue-400 mb-1">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">等角軸測圖快照視覺自檢</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                調用 <code>freecad_get_view_screenshot</code> 擷取 3D 視角截圖，AI 自主檢查孔位是否打偏、外壁是否過薄，達成幾何自檢閉環。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 4. 核心工具架構與 API -->
+        <section id="tools" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="wrench" class="w-5 h-5 text-red-400"></i>
+            <span>4. 核心工具架構與 API</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            FreeCAD MCP 伺服器提供 5 大核心工具，全方位覆蓋 CAD 建模、特徵調整與工程匯出：
+          </p>
+
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/90 text-slate-300 border-b border-slate-800 font-mono">
+                  <tr>
+                    <th class="py-3 px-4">工具名稱</th>
+                    <th class="py-3 px-4">呼叫參數 (Arguments)</th>
+                    <th class="py-3 px-4">功能說明</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-red-400 font-semibold">freecad_create_primitive</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">type, length, width, height, radius</td>
+                    <td class="py-3 px-4">在當前文件中建立標準幾何圖元（Box 立方體、Cylinder 圓柱體、Sphere 球體）。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-red-400 font-semibold">freecad_run_code</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">code: string</td>
+                    <td class="py-3 px-4">執行 FreeCAD Python 腳本，呼叫 <code>Part</code> 或 <code>PartDesign</code> 模組執行布林切除與倒角。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-red-400 font-semibold">freecad_export_file</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">object_name, file_path, format</td>
+                    <td class="py-3 px-4">將指定物件或整體裝配匯出為 <code>.stl</code>（3D 列印）、<code>.step</code>（工程製造）或 <code>.dxf</code>。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-red-400 font-semibold">freecad_get_document_info</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">無參數</td>
+                    <td class="py-3 px-4">查詢當前文件物件清單、特徵樹依賴關係、體積 (Volume) 與表面積幾何屬性。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-red-400 font-semibold">freecad_get_view_screenshot</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">view_type?: "Isometric" | "Top" | "Front"</td>
+                    <td class="py-3 px-4">擷取指定視角之高解析 3D CAD 等角軸測或正交三視圖快照，供視覺 AI 自我審核。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. 10 大跨角色實戰 Prompt -->
+        <section id="prompts" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                <i data-lucide="terminal" class="w-5 h-5 text-red-400"></i>
+                <span>5. 10 大跨角色實戰 Prompt</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">涵蓋 3D 列印創客、機械工程、木工自造、模具設計與 AI 幾何自檢多角實戰</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">10 個高階範例</span>
+          </div>
+
+          <div class="space-y-4">
+
+            <!-- Prompt 1 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 01</span>
+                  <span class="text-xs font-bold text-white">3D 列印創客 · 樹莓派外殼與散熱開孔參數化建模</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_run_code</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>需要為 Raspberry Pi 4 建立一個緊湊型保護底殼，帶有壁厚 2mm、四個 M2.5 銅柱安裝孔與側面散熱柵格。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 FreeCAD MCP 為我參數化建立一個樹莓派底殼實體：
+1. 建立一個外尺寸為 92mm x 62mm x 18mm 的實體 Box。
+2. 內抽空挖槽（壁厚均勻保留 2.0mm），底部保留 2mm 厚度。
+3. 四個角落內部生成四根高度 5mm、外徑 5mm 的支撐銅柱，中心各挖穿直徑 2.6mm 的螺栓貫通孔（間距為 58mm x 49mm）。
+4. 在側面長邊開出 Type-C 電源與雙 Micro-HDMI 接口避空槽。
+5. 檢查實體無破面後，匯出名為 `rpi4_case_bottom.stl` 的 3D 列印檔案。</pre>
+                <button onclick="copyPrompt('p1', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>FreeCAD 中生成帶特徵樹的精確 CAD 實體，並直接在硬碟產生水密無縫 STL 切片模型。
+              </div>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 02</span>
+                  <span class="text-xs font-bold text-white">機械工程師 · ISO 標準直齒輪與鍵槽傳動軸孔</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_run_code</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>需要快速生成一個模數 2.0、齒數 24 的直齒圓柱齒輪，齒面寬度 20mm，中心帶直徑 15mm 軸孔與 5mm 矩形鍵槽。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 FreeCAD 參數化生成標準漸開線齒輪：
+1. 齒輪參數：模數 (Module) = 2.0，齒數 (Teeth) = 24，壓力角 20度，齒寬 20mm。
+2. 在齒輪中心鑽出直徑 15mm 的傳動軸孔。
+3. 在軸孔上方挖切符合 DIN 6885 標準的平鍵槽（寬度 5mm，鍵槽深度 2.3mm）。
+4. 齒輪輪轂兩端施加 1.5mm 倒斜角以防刮手。
+5. 完成後匯出為標準工程檔案 `spur_gear_m2_z24.step`。</pre>
+                <button onclick="copyPrompt('p2', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>精確符合 ISO 漸開線標準齒形的實體零件，STEP 檔案可直接傳遞給 CNC 加工廠報價加工。
+              </div>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 03</span>
+                  <span class="text-xs font-bold text-white">工業產品造型師 · 圓潤人體工學吸塵器手柄造型</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_run_code</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>需要建立具備握持舒適度之人體工學曲面握把，需具備連續曲率倒角與防滑微紋理。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請在 FreeCAD 中使用放樣 (Loft) 或特徵倒角建構吸塵器把手：
+1. 建立截面橢圓（長軸 36mm、短軸 26mm），沿弧形導軌路徑掃掠擠出長度 140mm 的彎曲主柄。
+2. 外側邊緣套用半徑 R8mm 的平滑過渡倒圓角 (Fillet)。
+3. 在把手頂端開出直徑 12mm 的圓形按鈕安裝沉頭槽。
+4. 調用 freecad_get_view_screenshot 回傳等角軸測快照確認曲面連續性。</pre>
+                <button onclick="copyPrompt('p3', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>平滑無稜角的人體工學 CAD 握把實體，視圖快照即時呈現曲面光順質感。
+              </div>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 04</span>
+                  <span class="text-xs font-bold text-white">木工自造者 · 經典鳩尾榫 (Dovetail) 精確互鎖接合構件</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_run_code</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>製作實木抽屜接角，需要一組公母配對的鳩尾榫（梯形榫角 1:6 斜度，厚度 18mm），公母件需保留 0.15mm 木料干涉公差。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請在 FreeCAD 中建立一組木工鳩尾榫 (Dovetail Joint) 裝配：
+1. 建立木板 A（長 150mm、寬 80mm、厚 18mm），端面切出 3 個標準梯形榫頭 (Pins)，斜度比例 1:6。
+2. 建立木板 B（長 150mm、寬 80mm、厚 18mm），端面切出對應之梯形榫槽 (Tails)。
+3. 在接觸面保留 0.15mm 的組裝膠合間隙 (Tolerance)。
+4. 匯出公母兩件分離的 STL 與 2D 尺寸標註工程草圖。</pre>
+                <button onclick="copyPrompt('p4', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>精準吻合的榫卯結構 CAD 實體，尺寸符合傳統細木作比例。
+              </div>
+            </div>
+
+            <!-- Prompt 5 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 05</span>
+                  <span class="text-xs font-bold text-white">機器人機構架構師 · 六軸機械手臂夾爪安裝法蘭盤</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_create_primitive</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為 UR5 規格機械手臂末端轉接夾爪，需要繪製符合 ISO 9409-1-50-4-M6 標準的圓形安裝法蘭盤。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請建立符合 ISO 9409-1 規範之機器人末端法蘭盤：
+1. 建立外徑 63mm、厚度 10mm 之航空鋁合金主圓盤。
+2. 中心開直徑 20mm H7 級定位公差孔（深度 4mm）。
+3. 分度圓直徑 (PCD) 50mm 均佈 4 個 M6 螺紋沉頭孔。
+4. 在背面進行三角形掏空偷輕減重槽（保留 3mm 加強筋壁厚）。
+5. 回傳零件總體積 (cm³) 與質量預估（以 6061 鋁合金密度 2.7g/cm³ 計算）。</pre>
+                <button onclick="copyPrompt('p5', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>精確符合工業機械手臂標準接口法蘭，附帶重量與體積統計報告。
+              </div>
+            </div>
+
+            <!-- Prompt 6 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 06</span>
+                  <span class="text-xs font-bold text-white">建築構件工程師 · 鋼結構標準 I 型鋼梁與節點加勁板</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_run_code</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>需要建立長度 2500mm 的標準 HEB 200 工字鋼梁，端部包含螺栓連接端板與 2 塊三角斜加勁板。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請在 FreeCAD 中建構標準鋼結構構件：
+1. 繪製 HEB 200 工字鋼截面（高 200mm、寬 200mm、腹板厚 9mm、翼緣厚 15mm、根部圓弧 R18mm），沿 Z 軸擠出長度 2500mm。
+2. 在端部焊接一塊 240mm x 240mm x 20mm 的厚端板，包含 8 個直徑 22mm 之螺栓通孔。
+3. 在樑柱連接處加設兩塊厚度 10mm 的三角形垂直加勁板 (Stiffener Plate)。
+4. 匯出符合 IFC / STEP 格式標準之工程實體模型。</pre>
+                <button onclick="copyPrompt('p6', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>完全合規之鋼結構重型構件，可在 BIM 軟體中直接導入安裝模擬。
+              </div>
+            </div>
+
+            <!-- Prompt 7 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 07</span>
+                  <span class="text-xs font-bold text-white">逆向工程分析師 · 離散點雲輪廓重建實體特徵</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_run_code</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>取得光學量測得到的葉片剖面點座標 CSV，需利用 B-Spline 樣條曲線擬合並擠出為實體葉片。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請協助執行剖面逆向實體重建：
+1. 讀取翼型輪廓關鍵點座標陣列，使用 FreeCAD Part.BSplineCurve 進行封閉平滑插值曲線擬合。
+2. 檢查曲線無自相交 (Self-intersection)，並將其轉換為封閉面 (Face)。
+3. 將該面沿導軌旋轉拉伸 15 度形成螺旋扇葉實體。
+4. 檢查水密性並回傳模型體積數值。</pre>
+                <button onclick="copyPrompt('p7', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>由數學點位轉換為連續平滑的 3D 葉片 CAD 實體，擺脫手工描點誤差。
+              </div>
+            </div>
+
+            <!-- Prompt 8 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 08</span>
+                  <span class="text-xs font-bold text-white">注塑模具工程師 · 拔模斜度 (Draft Angle) 與內部加強肋 (Ribs)</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_run_code</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>塑膠外殼設計需考慮開模頂出順暢，需將四個外壁施加 1.5 度拔模斜度，並在內部以 1.2mm 厚度交錯生成加強肋。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請將現有塑膠盒子模型升級為可開模注塑零件：
+1. 針對四個外立面施加 1.5 度的拔模斜度 (Draft Angle)，以底面為分型基準面。
+2. 在內部空腔交錯生成 4 條厚度為 1.2mm 的十字加強肋條 (Ribs)，高度為內腔深度的 70%。
+3. 所有內角根部添加 R0.8mm 的過渡圓角，防止注塑應力集中。
+4. 匯出為高精度 `injection_case_mold_ready.step`。</pre>
+                <button onclick="copyPrompt('p8', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>符合模具工程量產標準的塑膠 CAD 零件，具備均勻壁厚與正確脫模斜度。
+              </div>
+            </div>
+
+            <!-- Prompt 9 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 09</span>
+                  <span class="text-xs font-bold text-white">大學機電系教授 · 基準面 (Datum Plane) 與完整約束教學示範件</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_run_code</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>為機械設計課程製作一個教學示範零件，展示基準面偏移、旋轉實體 (Revolve) 與特徵樹關聯。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請為大一機械設計課程建立標準教學示範模型：
+1. 在 XY 基準面建立階梯軸旋轉體草圖，包含 3 段不同直徑的圓柱同心段。
+2. 建立一個傾斜 45 度的基準面 (Datum Plane)，並在該面上挖出直徑 8mm 的斜向油孔通往軸心。
+3. 將特徵樹清晰命名：`Base_Shaft`、`Datum_Angle45`、`Oil_Hole`。
+4. 擷取 Isometric 等角軸測截圖並標註各特徵作用。</pre>
+                <button onclick="copyPrompt('p9', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>邏輯層次嚴謹的示範教學 CAD 檔案，適合投影展示 CAD 參數化精髓。
+              </div>
+            </div>
+
+            <!-- Prompt 10 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-950 text-red-400 border border-red-800/60">角色 10</span>
+                  <span class="text-xs font-bold text-white">AI 幾何自檢工程師 · 壁厚破面檢測與自動補償加厚（幾何閉環）</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">freecad_get_view_screenshot</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                <strong>場景情境：</strong>在零件即將送交 3D 列印或加工前，AI 需主動審查壁厚是否低於列印機噴嘴極限 (1.2mm)，若有薄弱處自主補強。
+              </p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請擔任我的幾何審核工程師，啟動模型自檢與補強閉環：
+1. 調用 freecad_get_document_info 檢索當前實體幾何外形邊界盒 (Bounding Box) 與外殼壁厚。
+2. 調用 freecad_get_view_screenshot 擷取上視圖 (Top View) 與正視圖 (Front View)。
+3. 用多模態視覺檢視：
+   - 螺孔邊緣至零件外壁之肉厚 (Wall Thickness) 是否小於 1.5mm？
+   - 是否存在無法脫模的倒扣 (Undercut) 幾何特徵？
+4. 若肉厚小於 1.5mm，請主動執行布林加厚修補代碼，並重新截圖確認。</pre>
+                <button onclick="copyPrompt('p10', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                  <span>複製</span>
+                </button>
+              </div>
+              <div class="text-[11px] text-slate-400 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800/60">
+                <strong>預期產出：</strong>AI 自主發現危險薄壁並執行加厚修補，徹底避免 3D 列印失敗破損的材料浪費。
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 6. 安裝與設定教學 -->
+        <section id="setup" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-5 h-5 text-red-400"></i>
+            <span>6. 安裝與設定教學</span>
+          </h2>
+          <p class="text-xs text-slate-400">
+            只需 3 步驟即可完成本機 FreeCAD 與 AI 代理之 MCP 通訊對接：
+          </p>
+
+          <div class="space-y-4">
+            
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-red-400 font-bold text-xs">
+                <span class="w-5 h-5 rounded-full bg-red-950 flex items-center justify-center text-[11px] border border-red-800">1</span>
+                <span>安裝 FreeCAD 官方主程式與 Python 環境</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                自 <a href="https://www.freecad.org/" target="_blank" rel="noopener noreferrer" class="text-red-400 hover:underline">freecad.org</a> 下載安裝 FreeCAD 0.21 或 1.0 版本。安裝完成後請確保本機命令列具備 Python 3.10+。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-red-400 font-bold text-xs">
+                <span class="w-5 h-5 rounded-full bg-red-950 flex items-center justify-center text-[11px] border border-red-800">2</span>
+                <span>配置 Antigravity / Claude Desktop MCP</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                在 <code>antigravity.json</code> 或 <code>claude_desktop_config.json</code> 設定檔中加入：
+              </p>
+              <div class="bg-slate-900 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-red-300 font-mono overflow-x-auto whitespace-pre">{
+  "mcpServers": {
+    "freecad": {
+      "command": "uvx",
+      "args": ["freecad-mcp"],
+      "env": {
+        "FREECAD_RPC_PORT": "9000"
+      }
+    }
+  }
+}</pre>
+              </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-red-400 font-bold text-xs">
+                <span class="w-5 h-5 rounded-full bg-red-950 flex items-center justify-center text-[11px] border border-red-800">3</span>
+                <span>重啟客戶端並測試第一條幾何命令</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                發送測試提示詞：<br>
+                <code class="px-2 py-0.5 bg-slate-900 text-red-400 rounded border border-slate-800 mt-1 inline-block">「請在 FreeCAD 中建立一個 50x50x50mm 立方體，並在正中央貫穿一個直徑 20mm 的圓孔。」</code>
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 7. 常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="help-circle" class="w-5 h-5 text-red-400"></i>
+            <span>7. 常見問題 (FAQ)</span>
+          </h2>
+
+          <div class="space-y-3">
+            
+            <div class="glass-card rounded-xl p-4 border border-slate-800 space-y-1.5">
+              <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                <i data-lucide="help-circle" class="w-4 h-4 text-red-400"></i>
+                <span>什麼是拓撲命名問題 (Topological Naming Problem)？AI 如何避開？</span>
+              </h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                在舊版 CAD 中，當上游特徵修改後，下游面（Face1, Face2）的編號可能會亂跳導致破面。FreeCAD 1.0+ 已原生整合 LinkStage3 拓撲命名解決方案；此外，AI 透過基準面 (Datum Plane) 錨定特徵，從根源避免依賴易跳號的邊界索引。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-xl p-4 border border-slate-800 space-y-1.5">
+              <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                <i data-lucide="help-circle" class="w-4 h-4 text-red-400"></i>
+                <span>沒有圖形介面（Headless 無頭模式）也能讓 AI 產出 3D 模型嗎？</span>
+              </h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                可以！FreeCAD 本體完全支援以純命令列無頭模式 (`FreeCADCmd`) 運行。AI 可以在雲端伺服器或本機背景執行 Python 幾何建構腳本，並直接產出 STL 或 STEP 檔案，不一定非要開啟視窗。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-xl p-4 border border-slate-800 space-y-1.5">
+              <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                <i data-lucide="help-circle" class="w-4 h-4 text-red-400"></i>
+                <span>匯出的 STEP 檔案可以用在 SolidWorks 或 Fusion 360 嗎？</span>
+              </h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                完全可以！STEP (ISO 10303) 是全球機械與工業製造領域的絕對通用標準交換格式。不論是 SolidWorks、Autodesk Inventor、Fusion 360 還是 Siemens NX，均能 100% 原始解析模型實體幾何。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-3">
+      <div class="flex items-center justify-center gap-2 text-slate-400 font-medium">
+        <i data-lucide="layers" class="w-4 h-4 text-red-400"></i>
+        <span>Antigravity Tools Hub · FreeCAD 參數化 CAD 實戰指南</span>
+      </div>
+      <p class="text-[11px] text-slate-600">
+        本指南專為 Antigravity 2.0、Claude Desktop 及 MCP 協定設計。所有開源專案商標歸原作者所有。
+      </p>
+      <div class="flex justify-center gap-4 text-slate-400 pt-2">
+        <a href="index.html" class="hover:text-white transition-colors">回首頁</a>
+        <span>•</span>
+        <a href="obs.html" class="hover:text-white transition-colors">OBS Studio</a>
+        <span>•</span>
+        <a href="blender.html" class="hover:text-white transition-colors">Blender 3D</a>
+        <span>•</span>
+        <a href="invideo.html" class="hover:text-white transition-colors">invideo AI</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(id, btn) {
+      const parent = btn.closest('.glass-card');
+      const text = parent.querySelector('pre').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const span = btn.querySelector('span');
+        const originalText = span.innerText;
+        span.innerText = '已複製！';
+        btn.classList.add('bg-red-600', 'text-white');
+        setTimeout(() => {
+          span.innerText = originalText;
+          btn.classList.remove('bg-red-600', 'text-white');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>

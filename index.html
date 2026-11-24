@@ -63,7 +63,7 @@
         </div>
         <div>
           <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-sky-300 bg-clip-text text-transparent">Antigravity Tools Hub</span>
-          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60 font-medium">21 大旗艦工具完整版</span>
+          <span class="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-950/80 text-purple-300 border border-purple-800/60 font-medium">27 大旗艦工具完整版</span>
         </div>
       </div>
       <div class="flex items-center gap-4">
@@ -89,7 +89,7 @@
         <span class="bg-gradient-to-r from-sky-400 via-cyan-300 to-blue-500 bg-clip-text text-transparent">必備外掛與 MCP 工具</span>
       </h1>
       <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
-        從底層瀏覽器除錯、Google Workspace 全家桶、Canva 視覺設計、Blender 3D、OBS Studio 直播錄影，到工程自動化與雲端金流（GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo），全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
+        從底層瀏覽器除錯、Google Workspace 全家桶、Canva 視覺設計、7 大本機專業軟體（Blender 3D、OBS Studio、FreeCAD、Krita、Unity Editor、Inkscape、REAPER、Photoshop），到工程自動化與雲端金流（GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo），全面解鎖 Antigravity 與 Model Context Protocol (MCP) 的極致生產力。
       </p>
     </div>
 
@@ -1016,16 +1016,268 @@
         </a>
       </div>
 
-      <!-- 卡片 22：擴充預留提示卡 (Expandable placeholder) -->
+      <!-- 卡片 22：FreeCAD (本機軟體創作第十三棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="design automation" data-title="FreeCAD CAD 3D 建模 實體 參數化 工程 零件 3D列印 STL STEP 本機軟體">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-red-500" fill="currentColor">
+                <path d="M12 2 2 7l10 5 10-5-10-5zm0 9L2 6v11l10 5 10-5V6l-10 5z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-red-950/80 text-red-400 border border-red-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span> 參數化 3D CAD
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Part & STEP</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors flex items-center gap-2">
+            <span>FreeCAD</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-red-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            本機開源參數化實體 CAD 系統。支援自然語言工程約束建模、CSG 布林幾何、零件特徵挖孔倒角，一鍵直出 3D 列印 STL 與 CNC STEP 製造標準檔。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>工程實體建模 · 實戰手冊</span>
+              <span class="text-red-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-red-300">freecad_primitive</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-red-300">export_step_stl</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="freecad.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-red-600 via-rose-600 to-amber-600 hover:from-red-500 hover:to-rose-500 text-white shadow-lg shadow-red-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 23：Krita (本機軟體創作第十四棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="design" data-title="Krita 數位繪圖 插畫 筆刷 圖層 漫畫 賽璐珞 畫布快照 視覺自檢 本機軟體">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-pink-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-pink-400" fill="currentColor">
+                <path d="M12 2C6.49 2 2 6.49 2 12c0 1.54.36 2.98.97 4.29L1 23l6.86-1.92C9.13 21.66 10.53 22 12 22c5.51 0 10-4.49 10-10S17.51 2 12 2zm0 18c-1.31 0-2.52-.33-3.6-.91l-.26-.14-4.22 1.18 1.14-4.09-.15-.27C4.32 14.67 4 13.38 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-pink-950/80 text-pink-400 border border-pink-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-pink-400"></span> 2D 數位插畫
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Python Plugin</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-pink-300 transition-colors flex items-center gap-2">
+            <span>Krita</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-pink-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            開源專業數位插畫與概念繪圖中樞。支援 AI 自動構建圖層與混合模式、筆刷色塊鋪排，並具備即時畫布快照視覺自檢閉環。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>數位繪藝自檢 · 實戰手冊</span>
+              <span class="text-pink-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-pink-300">krita_doc</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-pink-300">canvas_shot</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="krita.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-pink-600 via-fuchsia-600 to-purple-600 hover:from-pink-500 hover:to-fuchsia-500 text-white shadow-lg shadow-pink-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 24：Unity Editor (本機軟體創作第十五棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="automation design" data-title="Unity Editor 遊戲引擎 遊戲開發 3D 關卡 C# Hierarchy Inspector 物理 測試 Console 本機軟體">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-emerald-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-emerald-400" fill="currentColor">
+                <path d="M12 2 4.5 6.5v11L12 22l7.5-4.5v-11L12 2zm0 2.3 5.3 3.2-5.3 3.2-5.3-3.2L12 4.3zm-6 4.6 5.3 3.2v6.4L6 15.3V8.9zm12 6.4-5.3 3.2v-6.4l5.3-3.2v6.4z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 遊戲引擎開發
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">C# Bridge</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors flex items-center gap-2">
+            <span>Unity Editor</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-emerald-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            跨平台遊戲開發與 3D 互動中樞。AI 能直接在 Hierarchy 中建立 GameObject、掛載組件、執行單元測試並捕捉 Console 錯誤進行自愈。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>遊戲場景編排 · 實戰手冊</span>
+              <span class="text-emerald-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-emerald-300">unity_gameobject</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-emerald-300">run_tests</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="unity.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 25：Inkscape (本機軟體創作第十六棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="design automation" data-title="Inkscape 向量 繪圖 SVG LOGO 圖標 雷射切割 刀模 貝茲曲線 布林運算 本機軟體">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-amber-400" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-950/80 text-amber-400 border border-amber-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> 向量 SVG 引擎
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">Actions CLI</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-amber-300 transition-colors flex items-center gap-2">
+            <span>Inkscape</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-amber-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            開源向量繪圖與標準 SVG 設計中樞。支援自然語言幾何數學運算、路徑布林差集、雷射切割刀模排版與乾淨向量代碼直出。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>向量參數設計 · 實戰手冊</span>
+              <span class="text-amber-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">inkscape_path</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-amber-300">boolean_op</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="inkscape.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-amber-600 via-orange-600 to-yellow-600 hover:from-amber-500 hover:to-orange-500 text-white shadow-lg shadow-amber-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 26：REAPER DAW (本機軟體創作第十七棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="automation design" data-title="REAPER DAW 數位音訊 混音 聲音工程 Podcast 配樂 效果器 VST MIDI 響度 LUFS 本機軟體">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-teal-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-teal-400" fill="currentColor">
+                <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-950/80 text-teal-400 border border-teal-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-teal-400"></span> 專業 DAW 音訊
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">ReaScript</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-teal-300 transition-colors flex items-center gap-2">
+            <span>REAPER DAW</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-teal-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            極致輕量專業數位音訊工作站。AI 代理能直接在時間軸建立音軌、掛載 VST/AU 效果器鏈、編寫 MIDI 和弦進行，並調節廣播級 LUFS 響度。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>數位音訊工程 · 實戰手冊</span>
+              <span class="text-teal-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-teal-300">reaper_track</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-teal-300">reaper_fx</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="reaper.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-teal-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 27：Adobe Photoshop (本機軟體創作第十八棒) -->
+      <div class="tool-card glass-card rounded-2xl p-6 flex flex-col justify-between transition-all duration-300 relative group" data-category="design automation" data-title="Adobe Photoshop 圖像 修圖 PSD 圖層 遮罩 智慧物件 濾鏡 調色 畫板 批次切圖 本機軟體">
+        <div class="absolute -top-[1px] left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        <div>
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 24 24" class="w-6 h-6 text-sky-400" fill="currentColor">
+                <path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm3 2h3.5c1.4 0 2.5 1.1 2.5 2.5S13.9 13 12.5 13H10v3H9V8zm1 1v3h2.5c.8 0 1.5-.7 1.5-1.5S13.3 9 12.5 9H10z"/>
+              </svg>
+            </div>
+            <div class="flex flex-col items-end gap-1.5">
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-sky-950/80 text-sky-400 border border-sky-800/60">
+                <span class="w-1.5 h-1.5 rounded-full bg-sky-400"></span> 商業視覺修圖
+              </span>
+              <span class="text-[10px] text-slate-500 font-mono">ExtendScript</span>
+            </div>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-2 group-hover:text-sky-300 transition-colors flex items-center gap-2">
+            <span>Adobe Photoshop</span>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all text-sky-400"></i>
+          </h2>
+          <p class="text-slate-400 text-xs leading-relaxed mb-4">
+            商業影像處理與修圖標竿。支援 PSD 規範化圖層結構編排、無損調整圖層與遮罩、全通路畫板 (Artboards) 多尺寸自動批次切圖。
+          </p>
+          <div class="space-y-1.5 mb-5 bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+            <div class="text-[11px] font-medium text-slate-400 flex items-center justify-between">
+              <span>專業影像修圖 · 實戰手冊</span>
+              <span class="text-sky-400 font-mono text-[10px]">5 大核心工具 · 10 大角色範本</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-sky-300">ps_document</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-sky-300">batch_export</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] font-mono text-slate-400">+10 實戰範本...</span>
+            </div>
+          </div>
+        </div>
+        <a href="photoshop.html" class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-xs font-semibold bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:to-blue-500 text-white shadow-lg shadow-sky-500/20 transition-all">
+          <span>查看完整使用說明</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <!-- 卡片 28：擴充預留提示卡 (Expandable placeholder) -->
       <div class="rounded-2xl border-2 border-dashed border-slate-800/80 hover:border-slate-700 p-6 flex flex-col items-center justify-center text-center transition-all bg-slate-950/40">
         <div class="w-12 h-12 rounded-full bg-slate-900 flex items-center justify-center text-slate-500 mb-3 border border-slate-800">
           <i data-lucide="plus" class="w-6 h-6"></i>
         </div>
         <h3 class="font-bold text-slate-300 text-sm mb-1">更多工具持續擴充中</h3>
         <p class="text-xs text-slate-500 max-w-xs mb-3">
-          首頁具備模組化字卡結構，已完整收錄 Chrome DevTools、Google 家族 7 大神器、Canva、開發自動化前五棒（GitHub CLI、Figma、Notion、n8n、Supabase）、擴充五棒（Cloudflare、Stripe、Linear、Atlassian、invideo）、Blender 3D 與 OBS Studio 智慧導播，共 21 大旗艦工具指南。
+          首頁具備模組化字卡結構，已完整收錄 Chrome DevTools、Google 家族 7 大神器、Canva、開發自動化前五棒、擴充五棒，以及 8 大本機專業軟體（Blender 3D、OBS Studio、FreeCAD、Krita、Unity Editor、Inkscape、REAPER、Photoshop），共 27 大旗艦工具指南。
         </p>
-        <span class="text-[11px] text-sky-400/80 font-mono">21 款工具上線 · 歡迎持續擴充</span>
+        <span class="text-[11px] text-sky-400/80 font-mono">27 款工具上線 · 歡迎持續擴充</span>
       </div>
 
     </div>
@@ -1041,7 +1293,7 @@
             <i data-lucide="palette" class="w-4 h-4"></i>
           </div>
           <span class="font-semibold text-slate-300">Antigravity Tools Hub</span>
-          <span>• 21 大旗艦工具（含 Google 家族、Canva、GitHub、Figma、Notion、n8n、Supabase、Cloudflare、Stripe、Linear、Atlassian、invideo、Blender 3D、OBS Studio）實戰指南全數上線</span>
+          <span>• 27 大旗艦工具（含 Google 家族、Canva、開發與雲端十棒、8 大本機軟體）實戰指南全數上線</span>
         </div>
         <div class="flex flex-wrap gap-4 text-slate-400">
           <a href="google-drive-docs.html" class="hover:text-white transition-colors">Drive & Docs</a>
@@ -1064,6 +1316,12 @@
           <a href="invideo.html" class="text-rose-400 font-semibold hover:text-white transition-colors">invideo</a>
           <a href="blender.html" class="text-orange-400 font-semibold hover:text-white transition-colors">Blender 3D</a>
           <a href="obs.html" class="text-cyan-400 font-semibold hover:text-white transition-colors">OBS Studio</a>
+          <a href="freecad.html" class="text-red-400 font-semibold hover:text-white transition-colors">FreeCAD</a>
+          <a href="krita.html" class="text-pink-400 font-semibold hover:text-white transition-colors">Krita</a>
+          <a href="unity.html" class="text-emerald-400 font-semibold hover:text-white transition-colors">Unity</a>
+          <a href="inkscape.html" class="text-amber-400 font-semibold hover:text-white transition-colors">Inkscape</a>
+          <a href="reaper.html" class="text-teal-400 font-semibold hover:text-white transition-colors">REAPER</a>
+          <a href="photoshop.html" class="text-sky-400 font-semibold hover:text-white transition-colors">Photoshop</a>
           <a href="chrome-devtools.html" class="hover:text-white transition-colors">Chrome DevTools</a>
         </div>
       </div>

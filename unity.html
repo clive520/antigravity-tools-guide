@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unity Editor 遊戲引擎與場景自動化編排指南 | Antigravity Tools Hub</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            unity: {
+              emerald: '#10b981',
+              sky: '#0ea5e9',
+              dark: '#0f172a',
+              50: '#ecfdf5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    }
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .doc-section {
+      scroll-margin-top: 5rem;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-600 selection:text-white">
+
+  <!-- 背景光暈裝飾 -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 right-1/4 w-[650px] h-[450px] bg-gradient-to-tr from-emerald-600/15 via-teal-600/15 to-sky-600/15 blur-[140px] rounded-full"></div>
+    <div class="absolute top-1/2 -left-40 w-[550px] h-[550px] bg-emerald-950/20 blur-[130px] rounded-full"></div>
+  </div>
+
+  <!-- 頂部導航欄 -->
+  <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i>
+          <span>返回首頁</span>
+        </a>
+        <div class="h-4 w-[1px] bg-slate-800 hidden sm:block"></div>
+        <div class="items-center gap-2 hidden sm:flex">
+          <div class="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center p-0.5 border border-slate-800">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-emerald-400" fill="currentColor">
+              <path d="M12 2 4.5 6.5v11L12 22l7.5-4.5v-11L12 2zm0 2.3 5.3 3.2-5.3 3.2-5.3-3.2L12 4.3zm-6 4.6 5.3 3.2v6.4L6 15.3V8.9zm12 6.4-5.3 3.2v-6.4l5.3-3.2v6.4z"/>
+            </svg>
+          </div>
+          <span class="font-bold text-sm text-slate-200">Unity Editor MCP 遊戲開發指南</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 font-mono">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 跨平台遊戲引擎中樞
+        </span>
+        <a href="https://github.com/clive520/antigravity-tools-guide" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1.5 px-3 rounded-lg hover:bg-slate-900 border border-slate-800">
+          <i data-lucide="github" class="w-4 h-4"></i>
+          <span class="hidden sm:inline">GitHub 原始碼</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主版面內容 -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex-grow w-full">
+    <div class="flex flex-col lg:flex-row gap-10">
+
+      <!-- 左側側邊欄導航 (Sticky Sidebar) -->
+      <aside class="lg:w-64 flex-shrink-0">
+        <div class="sticky top-24 space-y-6">
+          <div class="p-4 rounded-2xl glass-card space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+              <i data-lucide="compass" class="w-4 h-4 text-emerald-400"></i>
+              <span>目錄索引</span>
+            </h3>
+            <nav class="space-y-1 text-xs">
+              <a href="#overview" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">1. 功能概述與架構模式</a>
+              <a href="#prerequisites" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">2. 使用者基本條件與環境需求</a>
+              <a href="#features" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">3. 這個功能能做什麼？</a>
+              <a href="#tools" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">4. 核心工具架構與 API</a>
+              <a href="#prompts" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">5. 10 大跨角色實戰 Prompt</a>
+              <a href="#setup" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">6. 安裝與設定教學</a>
+              <a href="#faq" class="block py-1.5 px-2.5 rounded-lg text-slate-300 hover:text-emerald-400 hover:bg-slate-900/80 transition-colors">7. 常見問題 (FAQ)</a>
+            </nav>
+          </div>
+
+          <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-800/40 text-xs text-slate-400 space-y-2">
+            <div class="flex items-center gap-2 text-emerald-400 font-semibold">
+              <i data-lucide="gamepad-2" class="w-4 h-4"></i>
+              <span>全自動遊戲場景搭建</span>
+            </div>
+            <p class="leading-relaxed text-[11px]">
+              AI 可直接操作 Hierarchy 樹結構、掛載組件、烘焙導航網格並讀取 Console 報錯進行代碼修復！
+            </p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 主要內容區 -->
+      <main class="flex-grow max-w-4xl space-y-12 overflow-hidden">
+
+        <!-- 麵包屑導航 -->
+        <nav class="flex items-center gap-2 text-xs text-slate-500">
+          <a href="index.html" class="hover:text-slate-300 transition-colors">首頁</a>
+          <span>/</span>
+          <span class="text-emerald-400">Unity Editor 遊戲引擎與場景自動化編排指南</span>
+        </nav>
+
+        <!-- 頁面標題區 -->
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/80 border border-emerald-800/60 text-xs text-emerald-400 font-mono">
+            <i data-lucide="box" class="w-3.5 h-3.5"></i>
+            <span>DESKTOP-MCP-04 · 本機軟體第 4 棒</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+            Unity Editor <span class="bg-gradient-to-r from-emerald-400 via-teal-300 to-sky-400 bg-clip-text text-transparent">遊戲引擎與場景自動化編排指南</span>
+          </h1>
+          <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+            透過 Model Context Protocol (MCP) 與 Unity 編輯器原生 C# Bridge，打破代碼編輯器與遊戲引擎介面的藩籬。AI 代理能直接在 Hierarchy 中建立 GameObject、配置物理組件、觸發自動化測試，並讀取 Console 錯誤進行自愈！
+          </p>
+          <div class="flex flex-wrap gap-2 pt-2">
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-emerald-300 flex items-center gap-1.5">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Unity C# Bridge
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="layers" class="w-3.5 h-3.5 text-teal-400"></i> Hierarchy & Components
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="terminal" class="w-3.5 h-3.5 text-sky-400"></i> Console 錯誤自愈
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs font-mono text-slate-300 flex items-center gap-1.5">
+              <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i> 本機 127.0.0.1:8080
+            </span>
+          </div>
+        </div>
+
+        <!-- 1. 功能概述與架構模式 -->
+        <section id="overview" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="cpu" class="w-5 h-5 text-emerald-400"></i>
+            <span>1. 功能概述與架構模式</span>
+          </h2>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            傳統遊戲開發需人工手動在 Inspector 拖拉元件與數值。在 Unity MCP 架構下，AI 客戶端透過本機 WebSocket 與 Unity 編輯器內部的 <code>MCPBridge.cs</code> 對話，直接呼叫 UnityEditor 與 UnityEngine 核心 API：
+          </p>
+
+          <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+            <div class="text-xs font-semibold text-slate-300 flex items-center justify-between border-b border-slate-800 pb-3">
+              <span>Unity Editor MCP 通訊架構</span>
+              <span class="text-emerald-400 font-mono text-[11px]">stdio JSON-RPC ➔ WebSocket 8080</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-400 flex items-center justify-center mx-auto mb-2 border border-emerald-800/60">
+                    <i data-lucide="bot" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">AI 遊戲工程師</div>
+                  <div class="text-[11px] text-slate-400">Claude 3.5 / Cursor</div>
+                </div>
+                <div class="text-[10px] text-emerald-400 font-mono mt-3">自然語言意圖與代碼規劃</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-emerald-800/50 flex flex-col justify-between relative">
+                <div class="hidden md:block absolute -left-2 top-1/2 -translate-y-1/2 text-emerald-500 font-bold">➔</div>
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 text-teal-400 flex items-center justify-center mx-auto mb-2 border border-teal-800/60">
+                    <i data-lucide="network" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">Unity MCP Server</div>
+                  <div class="text-[11px] text-slate-400"><code>unity-mcp</code> (Node.js)</div>
+                </div>
+                <div class="text-[10px] text-emerald-400 font-mono mt-3">stdio ➔ WebSocket 8080</div>
+                <div class="hidden md:block absolute -right-2 top-1/2 -translate-y-1/2 text-emerald-500 font-bold">➔</div>
+              </div>
+
+              <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col justify-between">
+                <div>
+                  <div class="w-8 h-8 rounded-lg bg-slate-900 text-sky-400 flex items-center justify-center mx-auto mb-2 border border-sky-800/60">
+                    <i data-lucide="box" class="w-4 h-4"></i>
+                  </div>
+                  <div class="text-xs font-bold text-white mb-1">Unity Editor</div>
+                  <div class="text-[11px] text-slate-400"><code>MCPBridge.cs</code></div>
+                </div>
+                <div class="text-[10px] text-sky-400 font-mono mt-3">Hierarchy / Inspector / Console</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. 使用者基本條件與環境需求 -->
+        <section id="prerequisites" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+            <span>2. 使用者基本條件與環境需求</span>
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <i data-lucide="box" class="w-4 h-4"></i>
+                <span>1. 軟體環境條件</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>Unity 編輯器版本</strong>：Unity 2021 LTS、2022 LTS 或 Unity 6+（個人免費版即可）。</li>
+                <li><strong>C# 橋接外掛</strong>：專案 Assets 內已導入 <code>MCPBridge.cs</code>。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <i data-lucide="hard-drive" class="w-4 h-4"></i>
+                <span>2. 硬體規格建議</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>記憶體 (RAM)</strong>：建議 16GB+ RAM（大型遊戲專案烘焙光照推薦 32GB）。</li>
+                <li><strong>顯示卡</strong>：獨立顯卡（GTX 1660 / RTX 3060 以上，或 Apple Silicon M 系列）。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                <span>3. AI 多模態模型</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li>搭配 Claude 3.5 Sonnet 或 Gemini 2.0，能自動閱讀 GameView 畫面與 Console 報錯進行代碼自我修復。</li>
+              </ul>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800/80 space-y-2.5">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <i data-lucide="shield" class="w-4 h-4"></i>
+                <span>4. 安全與技能門檻</span>
+              </div>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc list-inside leading-relaxed">
+                <li><strong>本機沙盒通訊</strong>：WebSocket 僅監聽本機 <code>127.0.0.1:8080</code>。</li>
+                <li><strong>新手友善</strong>：初學者可用口述搭建場景 Prototype，老手可用於自動化管線。</li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 3. 這個功能能做什麼？ -->
+        <section id="features" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="layers" class="w-5 h-5 text-emerald-400"></i>
+            <span>3. 這個功能能做什麼？</span>
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-emerald-950 border border-emerald-800/60 flex items-center justify-center text-emerald-400 mb-1">
+                <i data-lucide="box" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">Hierarchy 場景樹物件動態生成</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                一句話建立相機、光源、地板與帶碰撞體的立方體障礙物，並自動維持嚴謹的父子階層結構。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-teal-950 border border-teal-800/60 flex items-center justify-center text-teal-400 mb-1">
+                <i data-lucide="sliders" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">Inspector 組件掛載與參數微調</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                自動為物件掛載 Rigidbody（剛體）、BoxCollider、NavMeshAgent，並精準修改 Mass 與 Drag 物理數值。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-sky-950 border border-sky-800/60 flex items-center justify-center text-sky-400 mb-1">
+                <i data-lucide="terminal" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">Console 報錯捕捉與代碼自愈</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                讀取 Editor Console 紅字報錯堆疊，AI 自動分析 NullReferenceException 或編譯錯誤，修改代碼後觸發熱重載。
+              </p>
+            </div>
+
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center text-emerald-400 mb-1">
+                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+              </div>
+              <h3 class="text-sm font-bold text-white">自動化單元測試與功能表命令</h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                一鍵執行 Unity Test Runner 測試套件，或執行 AssetDatabase.Refresh 與專案建置 Build Pipeline。
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 4. 核心工具架構與 API -->
+        <section id="tools" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="wrench" class="w-5 h-5 text-emerald-400"></i>
+            <span>4. 核心工具架構與 API</span>
+          </h2>
+
+          <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900/90 text-slate-300 border-b border-slate-800 font-mono">
+                  <tr>
+                    <th class="py-3 px-4">工具名稱</th>
+                    <th class="py-3 px-4">呼叫參數</th>
+                    <th class="py-3 px-4">功能說明</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60 text-slate-300">
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">unity_create_gameobject</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">name, primitive_type, position, rotation, parent</td>
+                    <td class="py-3 px-4">在當前場景中建立全新遊戲物件並設定世界座標。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">unity_set_component_property</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">target_object, component_name, property_values</td>
+                    <td class="py-3 px-4">為物件掛載組件並在 Inspector 中設定其屬性數值。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">unity_get_scene_hierarchy</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">root_name?</td>
+                    <td class="py-3 px-4">檢索場景中所有物件階層樹、Tag、Layer 與組件清單。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">unity_run_tests_and_get_logs</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">mode: "EditMode" | "PlayMode"</td>
+                    <td class="py-3 px-4">執行自動化測試並抓取 Console 最新報錯記錄。</td>
+                  </tr>
+                  <tr class="hover:bg-slate-900/40">
+                    <td class="py-3 px-4 font-mono text-emerald-400 font-semibold">unity_execute_menu_item</td>
+                    <td class="py-3 px-4 font-mono text-slate-400 text-[11px]">menu_path: string</td>
+                    <td class="py-3 px-4">執行頂部功能表命令（如 "Assets/Refresh"、"File/Save"）。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. 10 大跨角色實戰 Prompt -->
+        <section id="prompts" class="doc-section space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div>
+              <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+                <i data-lucide="terminal" class="w-5 h-5 text-emerald-400"></i>
+                <span>5. 10 大跨角色實戰 Prompt</span>
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">涵蓋獨立遊戲、關卡設計、音效程式、UI 架構、物理模擬與 Console 錯誤自愈多角實戰</p>
+            </div>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 font-mono">10 個高階範例</span>
+          </div>
+
+          <div class="space-y-4">
+
+            <!-- Prompt 1 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 01</span>
+                  <span class="text-xs font-bold text-white">獨立遊戲開發者 · 3D 角色控制器 Prototype 一鍵搭建</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_create_gameobject</span>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed"><strong>場景情境：</strong>需要快速在空場景中搭建可移動的玩家角色控制器與地板。</p>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請使用 Unity MCP 建立玩家角色 Prototype：
+1. 建立一個 50x1x50 的平面 Floor（掛載 BoxCollider）。
+2. 在座標 (0, 1.5, 0) 建立名為 `Player` 的膠囊體 (Capsule)。
+3. 為 Player 物件掛載 Rigidbody（勾選 Freeze Rotation X 與 Z），並掛載 CharacterController 組件。
+4. 在 Player 上方添加子攝影機 Main Camera（座標 0, 0.8, 0），並將 Directional Light 旋轉 45 度模擬陽光。</pre>
+                <button onclick="copyPrompt('p1', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 2 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 02</span>
+                  <span class="text-xs font-bold text-white">關卡設計師 · 隨機生成 20 個障礙物並烘焙尋路網格</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_create_gameobject</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請為當前地圖生成隨機迷宮障礙：
+1. 在 40x40 區域內隨機分佈生成 20 個立方體障礙物（長寬 2x2，高度隨機 2~4m）。
+2. 將所有障礙物設為 Static（Navigation Static 勾選）。
+3. 執行選單命令觸發 Unity NavMesh 烘焙，並回傳烘焙成功狀態。</pre>
+                <button onclick="copyPrompt('p2', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 3 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 03</span>
+                  <span class="text-xs font-bold text-white">遊戲音效程式員 · 批次掛載 3D 空間音效與衰減曲線</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_set_component_property</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請掃描場景中所有 Tag 為 `Enemy` 的物件：
+1. 為每個敵人掛載 AudioSource 組件。
+2. 將 Spatial Blend 屬性調整為 1.0 (完全 3D 空間音效)。
+3. 設定 3D 音效衰減模式為 Logarithmic Rolloff（Min Distance: 2m, Max Distance: 25m）。</pre>
+                <button onclick="copyPrompt('p3', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 4 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 04</span>
+                  <span class="text-xs font-bold text-white">遊戲 UI/UX 架構師 · 自動建立 Canvas 血條與 HUD 介面</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_create_gameobject</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請建立遊戲 HUD 介面樹：
+1. 建立 Canvas（Render Mode 設為 Screen Space - Overlay，UI Scale Mode 設為 Scale With Screen Size）。
+2. 在左上角建立生命值 Slider（紅色填充條），附帶 TextMeshPro 生命數值。
+3. 在右上角建立金幣收集圖標與動態計數文字。</pre>
+                <button onclick="copyPrompt('p4', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 5 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 05</span>
+                  <span class="text-xs font-bold text-white">物理模擬工程師 · 骨牌連鎖碰撞連鎖反應</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_set_component_property</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請建立多米諾骨牌實驗：
+1. 沿曲線路徑均勻排布 30 片骨牌（寬 0.2m、高 1.0m、厚 0.1m，間距 0.5m）。
+2. 每片骨牌掛載 Rigidbody（Mass 0.2kg）與 BoxCollider。
+3. 在第一片骨牌後方施加初始推力 (AddForce)。</pre>
+                <button onclick="copyPrompt('p5', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 6 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 06</span>
+                  <span class="text-xs font-bold text-white">遊戲 QA 自動化測試員 · 執行單元測試並捕捉 Console 報錯</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_run_tests_and_get_logs</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請呼叫 unity_run_tests_and_get_logs 執行 EditMode 測試：
+1. 抓取 Console 報錯堆疊。
+2. 若有 NullReferenceException 或編譯警告，指出出錯的腳本與代碼行數。</pre>
+                <button onclick="copyPrompt('p6', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 7 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 07</span>
+                  <span class="text-xs font-bold text-white">特效美術師 · 爆炸火球粒子系統 (Particle System)</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_set_component_property</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請建立爆炸粒子特效 GameObject：
+1. 掛載 Particle System 組件，發射形狀設為 Sphere（半徑 0.5m）。
+2. 粒子生命週期 1.2 秒，起始顏色漸變（亮黃 ➔ 熾紅 ➔ 灰黑煙霧）。
+3. 疊加一個瞬間爆炸的 Point Light（強度 8.0，半徑 12m）。</pre>
+                <button onclick="copyPrompt('p7', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 8 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 08</span>
+                  <span class="text-xs font-bold text-white">多語在地化專員 · 批次替換 TextMeshPro 文本鍵值</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_get_scene_hierarchy</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請檢索所有 UI 元件：
+1. 找出所有硬編碼中文的 TextMeshPro 元件。
+2. 匯出其路徑與文本內容為 JSON 鍵值對，以便進行多語 Localization 替換。</pre>
+                <button onclick="copyPrompt('p8', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 9 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 09</span>
+                  <span class="text-xs font-bold text-white">VR/AR 互動工程師 · 配置 XR Origin 與雙手射線交互</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_create_gameobject</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請建立 XR VR 場景基礎設施：
+1. 建立 XR Origin（追蹤空間設為 Floor）。
+2. 在 Left/Right Controller 掛載 XR Ray Interactor 與直線光束渲染 (LineRenderer)。</pre>
+                <button onclick="copyPrompt('p9', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Prompt 10 -->
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800/60">角色 10</span>
+                  <span class="text-xs font-bold text-white">AI 架構總監 · 場景清理與孤兒節點自動修復（場景自檢）</span>
+                </div>
+                <span class="text-[11px] font-mono text-slate-500">unity_get_scene_hierarchy</span>
+              </div>
+              <div class="relative bg-slate-900/90 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono">請擔任 Unity 專案架構師，執行場景全檢與自愈閉環：
+1. 檢索當前場景所有 GameObject，標記所有包含 `Missing (Mono Behaviour)` 的損壞元件。
+2. 找出未掛載任何組件且沒有子物件的孤兒空物件，主動移除。
+3. 檢查所有 Camera 與 AudioListener，確保場景中僅有一個激活的 AudioListener 避免警告。
+4. 整理完畢後自動執行保存場景命令 (Save Scene)。</pre>
+                <button onclick="copyPrompt('p10', this)" class="absolute right-2.5 top-2.5 px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-300 transition-colors flex items-center gap-1 border border-slate-700/60">
+                  <i data-lucide="copy" class="w-3.5 h-3.5"></i><span>複製</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 6. 安裝與設定教學 -->
+        <section id="setup" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="settings" class="w-5 h-5 text-emerald-400"></i>
+            <span>6. 安裝與設定教學</span>
+          </h2>
+          <div class="space-y-4">
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <span class="w-5 h-5 rounded-full bg-emerald-950 flex items-center justify-center text-[11px] border border-emerald-800">1</span>
+                <span>導入 Unity MCPBridge.cs 外掛</span>
+              </div>
+              <p class="text-xs text-slate-300 leading-relaxed">
+                將 <code>MCPBridge.cs</code> 複製進 Unity 專案的 <code>Assets/Editor/</code> 資料夾內。編譯後上方工具列將出現「MCP ➔ Start Server」選單。
+              </p>
+            </div>
+            <div class="glass-card rounded-2xl p-5 border border-slate-800 space-y-2">
+              <div class="flex items-center gap-2 text-emerald-400 font-bold text-xs">
+                <span class="w-5 h-5 rounded-full bg-emerald-950 flex items-center justify-center text-[11px] border border-emerald-800">2</span>
+                <span>配置 Antigravity / Claude 設定檔</span>
+              </div>
+              <div class="bg-slate-900 rounded-xl p-3 border border-slate-800">
+                <pre class="text-xs text-emerald-300 font-mono overflow-x-auto whitespace-pre">{
+  "mcpServers": {
+    "unity": {
+      "command": "npx",
+      "args": ["-y", "unity-mcp"],
+      "env": {
+        "UNITY_PORT": "8080"
+      }
+    }
+  }
+}</pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. 常見問題 (FAQ) -->
+        <section id="faq" class="doc-section space-y-4">
+          <h2 class="text-xl font-bold text-white flex items-center gap-2.5">
+            <i data-lucide="help-circle" class="w-5 h-5 text-emerald-400"></i>
+            <span>7. 常見問題 (FAQ)</span>
+          </h2>
+          <div class="space-y-3">
+            <div class="glass-card rounded-xl p-4 border border-slate-800 space-y-1.5">
+              <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                <i data-lucide="help-circle" class="w-4 h-4 text-emerald-400"></i>
+                <span>在 PlayMode 運行時 AI 所做的修改會保留嗎？</span>
+              </h3>
+              <p class="text-xs text-slate-400 leading-relaxed">
+                Unity 預設在 PlayMode 運行時的修改會在退出遊戲時重置。AI 會在非運行狀態 (EditMode) 進行場景搭建與 Prefab 保存，確保所有幾何與組件變更永久持久化。
+              </p>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- 底部版權宣告 -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-3">
+      <div class="flex items-center justify-center gap-2 text-slate-400 font-medium">
+        <i data-lucide="gamepad-2" class="w-4 h-4 text-emerald-400"></i>
+        <span>Antigravity Tools Hub · Unity Editor 遊戲引擎實戰指南</span>
+      </div>
+      <div class="flex justify-center gap-4 text-slate-400 pt-2">
+        <a href="index.html" class="hover:text-white transition-colors">回首頁</a>
+        <span>•</span>
+        <a href="krita.html" class="hover:text-white transition-colors">Krita 插畫</a>
+        <span>•</span>
+        <a href="freecad.html" class="hover:text-white transition-colors">FreeCAD 3D</a>
+        <span>•</span>
+        <a href="obs.html" class="hover:text-white transition-colors">OBS Studio</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    function copyPrompt(id, btn) {
+      const parent = btn.closest('.glass-card');
+      const text = parent.querySelector('pre').innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const span = btn.querySelector('span');
+        const originalText = span.innerText;
+        span.innerText = '已複製！';
+        btn.classList.add('bg-emerald-600', 'text-white');
+        setTimeout(() => {
+          span.innerText = originalText;
+          btn.classList.remove('bg-emerald-600', 'text-white');
+        }, 2000);
+      });
+    }
+  </script>
+</body>
+</html>
